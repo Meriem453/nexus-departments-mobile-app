@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,8 +34,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -78,7 +81,7 @@ fun HomePage (){
 
         ) {
             scrollPosition = scrollState.value
-            scrollPercentage =if((scrollPosition.toFloat() / scrollState.maxValue).coerceIn(0f, 1f)<=0.5 )(scrollPosition.toFloat() / scrollState.maxValue).coerceIn(0f, 1f)*2 else 1F
+            scrollPercentage =if((scrollPosition.toFloat() / scrollState.maxValue).coerceIn(0f, 1f)<=0.25 )(scrollPosition.toFloat() / scrollState.maxValue).coerceIn(0f, 1f)*4 else 1F
             //Log.d("scroll",scrollPercentage.toString())
 
             Overview()
@@ -88,6 +91,9 @@ fun HomePage (){
 
 @Composable
 fun Overview() {
+    var progress by remember {
+        mutableFloatStateOf(.15F)
+    }
     Column(
         Modifier
             .fillMaxWidth()
@@ -111,8 +117,10 @@ fun Overview() {
                 //fontFamily = FontFamily.Cursive,
                 modifier = Modifier
                     .padding(10.dp)
-                    .fillMaxWidth(),
-                textAlign = TextAlign.End
+                    .fillMaxWidth()
+                    ,
+                textAlign = TextAlign.End,
+
             )
         }
         Text(text = "Department Overview",
@@ -128,8 +136,9 @@ fun Overview() {
 
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            NexusCard("30","Member", painterResource(id = R.drawable.members), Modifier.weight(1f))
             NexusCard("+9","Done projects", painterResource(id = R.drawable.power), Modifier.weight(1f))
+            NexusCard("30","Member", painterResource(id = R.drawable.members), Modifier.weight(1f))
+
 
         }
         Text(text = "Projects",
@@ -139,9 +148,31 @@ fun Overview() {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(16.dp)
         )
-        Image(painter = painterResource(id = R.drawable.power), contentDescription = "", modifier = Modifier
+        Text(text = "Nexuszero event",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            color = Color.White,
+            fontSize = 19.sp,
+            textAlign = TextAlign.Center
+            //fontFamily = FontFamily.Cursive,
+
+
+        )
+        Box(modifier = Modifier
             .fillMaxWidth()
-            .height(500.dp))
+            .padding(20.dp), contentAlignment = Alignment.Center){
+            CircularProgressIndicator(progress = progress, color = colorResource(id = R.color.green), modifier = Modifier
+                .height(200.dp)
+                .width(200.dp)
+                .shadow(
+                    5.dp, shape = CircleShape, spotColor = Color.White
+                ), strokeWidth = 35.dp, trackColor = colorResource(
+                id = R.color.card_bg
+            ))     
+            Text(text = "${(progress*100).toInt()}%", modifier = Modifier.fillMaxSize(), fontSize = 20.sp, color = Color.White, fontWeight = FontWeight.Bold, textAlign = TextAlign.Center)
+                          }
+     
 
     }
 }
