@@ -1,0 +1,99 @@
+{
+    ConstraintSets: {
+        start: {
+        profile_pic: {
+            width: 75,
+            height: 75,
+            start: ['parent', 'start'],
+            end: ['parent', 'end'],
+            top: ['parent', 'top', 16],
+            custom: {
+                background: '#FFFFFF'
+            }
+        },
+        username: {
+            top: ['profile_pic', 'bottom', 0],
+            end: ['parent', 'end'],
+            start: ['parent', 'start'],
+            custom: {
+                size: 23
+            }
+        },
+            department: {
+                top: ['username', 'bottom', 0],
+                end: ['parent', 'end'],
+                start: ['parent', 'start'],
+                custom: {
+                    size: 20
+                }
+            },
+            manager: {
+                top: ['department', 'bottom', 0],
+                end: ['parent', 'end'],
+                start: ['parent', 'start'],
+                bottom: ['parent', 'bottom', 5],
+                custom: {
+                    size: 20
+                }
+            },
+        box: {
+            width: 'spread',
+            height: 'spread',
+            start: ['parent', 'start'],
+            end: ['parent', 'end'],
+            top: ['parent', 'top'],
+            bottom: ['parent', 'bottom', -16],
+
+        }
+    },
+        end: {
+            profile_pic: {
+                width: 60,
+                height: 60,
+                end: ['parent', 'end', 16],
+                top: ['parent', 'top', 16],
+                custom: {
+                    size: 11
+                }
+            },
+            username: {
+                top: ['parent', 'top',16],
+                start: ['parent', 'start', 16],
+                custom: {
+                    size: 10
+                }
+            },
+            department: {
+                top: ['username', 'bottom',10],
+                start: ['parent', 'start', 16],
+                custom: {
+                    size: 10
+                }
+            },
+            manager: {
+                top: ['department', 'bottom',10],
+                start: ['parent', 'start', 16],
+
+            },
+            box: {
+                width: 'spread',
+                height: 'spread',
+                start: ['parent', 'start'],
+                end: ['parent', 'end'],
+                top: ['parent', 'top'],
+                bottom: ['parent', 'bottom', -16],
+            }
+        },
+
+    },
+    Transitions: {
+        default: {
+            from: 'start',
+            to: 'end',
+            pathMotionArc: 'startHorizontal',
+            KeyFrames: {
+
+            }
+        }
+    }
+}

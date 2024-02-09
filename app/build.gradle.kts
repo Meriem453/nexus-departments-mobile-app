@@ -70,6 +70,8 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+    //constraint layout
+    implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     //viewmodels
     implementation ("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.2")
     implementation ("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2")
@@ -78,7 +80,10 @@ dependencies {
     //navigation
     /*implementation ("io.github.raamcosta.compose-destinations:animations-core:1.6.14-beta")
     kapt ("io.github.raamcosta.compose-destinations:ksp:1.6.14-beta")*/
-
+    //Glide
+    implementation ("com.github.bumptech.glide:compose:1.0.0-alpha.5")
+    //coroutines
+    implementation ("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.2")
     // Dependency Injection
     implementation("com.google.dagger:hilt-android:2.44")
     kapt ("com.google.dagger:hilt-android-compiler:2.44")
