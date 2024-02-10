@@ -31,10 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.survisionapp.R
-import com.example.survisionapp.survey_pages.all_surveys_page.ReviseButton
-import com.example.survisionapp.survey_pages.all_surveys_page.StartSurveyButton
-import com.example.survisionapp.ui.theme.PurpleGrad
+
 
 @Preview
 @Composable

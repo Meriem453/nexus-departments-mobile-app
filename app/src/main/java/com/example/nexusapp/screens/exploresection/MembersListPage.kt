@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Scaffold
+//import androidx.wear.compose.material.Scaffold
 
 
 @Preview
@@ -36,7 +36,7 @@ fun MembersListPage() {
         Member("Jack", "Team A", "80")
     )
 
-    Scaffold {
+    /*Scaffold {
         MembersListHeader({}, {})
         Column {
             Spacer(modifier = Modifier.height(70.dp))
@@ -51,6 +51,6 @@ fun MembersListPage() {
 
         }
 
-    }
+    }*/
 }
 

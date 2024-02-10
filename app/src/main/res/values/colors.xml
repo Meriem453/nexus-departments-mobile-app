@@ -10,4 +10,7 @@
     <color name="green">#76E494</color>
     <color name="gray">#2A2A2A</color>
     <color name="card_bg">#373030</color>
+    <color name="hint"> #8D8E99</color>
+    <color name="forget"> #11DCE8</color>
+
 </resources>
