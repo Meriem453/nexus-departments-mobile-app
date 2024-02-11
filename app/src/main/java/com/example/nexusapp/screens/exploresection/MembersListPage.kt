@@ -17,6 +17,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -67,14 +68,9 @@ fun MembersListPage() {
     var newMemberName by remember { mutableStateOf("") }
     var newMemberTeam by remember { mutableStateOf("") }
     val openAddMemberDialog = remember { mutableStateOf(false) }
-
-
-        MembersListHeader({}, {openAddMemberDialog.value = true})
     when {
         openAddMemberDialog.value -> {
             Dialog(onDismissRequest = {openAddMemberDialog.value = false}) {
-
-
                 Card (
                     colors = CardDefaults.cardColors(
                         contentColor = Color.Black,
@@ -161,25 +157,29 @@ fun MembersListPage() {
                 }
 
             }
+            Toast.makeText(context, "dialog opened", Toast.LENGTH_SHORT).show()
 
         }
     }
-        Column {
-            Spacer(modifier = Modifier.height(70.dp))
-            MemberDataHeader()
-            Spacer(modifier = Modifier.height(10.dp))
-            Spacer(modifier = Modifier.height(5.dp))
-            LazyColumn( modifier = Modifier.padding(15.dp)) {
-                items(members.size) { index ->
-                    MemberDataView(members[index].name, members[index].team, members[index].points)
-                }
+
+
+
+    Scaffold {
+    it
+}
+
+    MembersListHeader({openAddMemberDialog.value = false}, {openAddMemberDialog.value = true})
+    Column {
+        Spacer(modifier = Modifier.height(90.dp))
+        MemberDataHeader()
+        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(5.dp))
+        LazyColumn(modifier = Modifier.padding(15.dp)) {
+            items(members.size) { index ->
+                MemberDataView(members[index].name, members[index].team, members[index].points)
+                Spacer(modifier = Modifier.height(5.dp))
             }
-
-
         }
 
-
-
     }
-
-
+}

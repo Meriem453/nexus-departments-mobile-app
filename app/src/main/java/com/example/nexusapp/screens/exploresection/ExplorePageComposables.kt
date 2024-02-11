@@ -1,5 +1,6 @@
 package com.example.survisionapp.nexustest
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.nexusapp.R
+
 
 @Preview
 @Composable
@@ -122,7 +125,7 @@ fun ExploreHeader (){
 
 @Composable
 fun MembersListHeader (onBackClick:()->Unit={},onAddClick:()->Unit={}){
-
+val context = LocalContext.current
     Box(
         modifier = Modifier
             .background(Color(0xFF2A2A2A))
@@ -137,7 +140,6 @@ fun MembersListHeader (onBackClick:()->Unit={},onAddClick:()->Unit={}){
                 .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween){
 
-            /*todo add back button*/
             Icon(
                 painter = painterResource(id = R.drawable.arrow_back),
                 contentDescription ="back",
@@ -155,13 +157,15 @@ fun MembersListHeader (onBackClick:()->Unit={},onAddClick:()->Unit={}){
                 textAlign = TextAlign.Center,
                 color = Color.White,
             )
-            /*todo add add button*/
+
             Icon(
                 painter = painterResource(id = R.drawable.add),
                 contentDescription ="back",
                 modifier = Modifier
                     .size(24.dp)
-                    .clickable { onAddClick() },
+                    .clickable {
+//                        Toast.makeText(context, "add clicked", Toast.LENGTH_SHORT).show()
+                        onAddClick() },
                 tint = Color.White,)
 
 
@@ -185,7 +189,7 @@ fun MemberDataView(name:String,Team:String,Points:String){
             modifier = Modifier.weight(2f),
             text = name,
             fontSize = 17.sp,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Start,
             color = Color.White,)
 
         Text(
@@ -199,7 +203,7 @@ fun MemberDataView(name:String,Team:String,Points:String){
             modifier = Modifier.weight(1f),
             text = Points,
             fontSize = 17.sp,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.End,
             color = Color.White,)
 
     }

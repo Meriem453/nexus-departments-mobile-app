@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
+
 @Preview
 @Composable
 fun Preview(){
@@ -24,6 +25,7 @@ fun Preview(){
 fun ExplorePage() {
     Scaffold(Modifier.background(Color(0xFF2A2A2A))) {
         it
+
         val exploreItemsList =
             listOf("Calendar", "Members List", "Meetings", "Tasks", "Projects", "Help and Problems")
         ExploreHeader()

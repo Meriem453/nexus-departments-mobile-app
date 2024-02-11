@@ -9,15 +9,19 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.nexusapp.screens.HomePage
 import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.example.survisionapp.nexustest.MembersListPage
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+            rememberSystemUiController().setStatusBarColor(Color(0xFF2A2A2A))
             NexusAppTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(
