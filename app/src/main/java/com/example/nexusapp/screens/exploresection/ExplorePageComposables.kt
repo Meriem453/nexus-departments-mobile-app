@@ -2,6 +2,7 @@ package com.example.survisionapp.nexustest
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,35 +12,40 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import com.example.survisionapp.R
-import com.example.survisionapp.survey_pages.all_surveys_page.ReviseButton
-import com.example.survisionapp.survey_pages.all_surveys_page.StartSurveyButton
-import com.example.survisionapp.ui.theme.PurpleGrad
+import com.example.nexusapp.R
 
 @Preview
 @Composable
 fun ExplorePagePrev() {
-    MemberDataView(name = "soufyan", Team ="ui ux" , Points = "58")
+AddMemberDialog( onDismiss = { /*TODO*/ }) {
+}
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -126,10 +132,20 @@ fun MembersListHeader (onBackClick:()->Unit={},onAddClick:()->Unit={}){
 
     ){
         Row (
-            modifier = Modifier .padding(20.dp),
+            modifier = Modifier
+                .padding(20.dp)
+                .fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween){
 
             /*todo add back button*/
+            Icon(
+                painter = painterResource(id = R.drawable.arrow_back),
+                contentDescription ="back",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onBackClick() },
+                tint = Color.White,
+                )
 
             Text(
                 text = "Members List",
@@ -140,6 +156,14 @@ fun MembersListHeader (onBackClick:()->Unit={},onAddClick:()->Unit={}){
                 color = Color.White,
             )
             /*todo add add button*/
+            Icon(
+                painter = painterResource(id = R.drawable.add),
+                contentDescription ="back",
+                modifier = Modifier
+                    .size(24.dp)
+                    .clickable { onAddClick() },
+                tint = Color.White,)
+
 
         }
 
@@ -160,21 +184,21 @@ fun MemberDataView(name:String,Team:String,Points:String){
         Text(
             modifier = Modifier.weight(2f),
             text = name,
-            fontSize = 12.sp,
+            fontSize = 17.sp,
             textAlign = TextAlign.Center,
             color = Color.White,)
 
         Text(
             modifier = Modifier.weight(1f),
             text = Team,
-            fontSize = 12.sp,
+            fontSize = 17.sp,
             textAlign = TextAlign.Center,
             color = Color.White,)
 
         Text(
             modifier = Modifier.weight(1f),
             text = Points,
-            fontSize = 12.sp,
+            fontSize = 17.sp,
             textAlign = TextAlign.Center,
             color = Color.White,)
 
@@ -192,28 +216,37 @@ fun MemberDataHeader(){
         Text(
             modifier = Modifier.weight(2f),
             text = "Member Name",
-            fontSize = 12.sp,
+            fontSize = 17.sp,
+            fontWeight = FontWeight(800),
+
             textAlign = TextAlign.Center,
             color = Color(0xFF76E494),
         )
         Text(
             modifier = Modifier.weight(1f),
             text = "Team",
-            fontSize = 12.sp,
+            fontSize = 17.sp,
+            fontWeight = FontWeight(800),
+
             textAlign = TextAlign.Center,
             color = Color(0xFF76E494))
         Text(
             modifier = Modifier.weight(1f),
             text = "Points",
-            fontSize = 12.sp,
+            fontWeight = FontWeight(800),
+
+            fontSize = 17.sp,
             textAlign = TextAlign.Center,
             color = Color(0xFF76E494))
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMemberDialog(name :String,team:String,onDismiss:()->Unit,onAdd:()->Unit){
+fun AddMemberDialog(vararg textFieldText: () -> Unit, onDismiss:()->Unit, onAdd:()->Unit){
     Dialog(onDismissRequest = {onDismiss()}) {
+        var textfieldstate by remember { mutableStateOf("") }
+
 
         Card (
             colors = CardDefaults.cardColors(
@@ -236,25 +269,61 @@ fun AddMemberDialog(name :String,team:String,onDismiss:()->Unit,onAdd:()->Unit){
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
                 modifier = Modifier.padding(15.dp)) {
-                Spacer(modifier = Modifier.height(18.dp))
+                Spacer(modifier = Modifier.height(10.dp))
 
                 Text(
-                    text = "add a new member",
+                    text = "Add A New Member",
                     fontSize = 15.sp,
 //                    fontFamily = FontFamily(Font(R.font.gotham_medium)) ,
-//                    fontWeight = FontWeight(800),
+                    fontWeight = FontWeight(800),
                     color = Color.White,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(15.dp))
+                Spacer(modifier = Modifier.height(18.dp))
 
-//                Button (onClick = {onAdd()})
+                Card(
+                    elevation = CardDefaults.cardElevation(
+                        defaultElevation = 3.dp
+                    )
+                ){
+                    OutlinedTextField(
+                        value = textfieldstate,
+                        onValueChange = {textfieldstate = it },
+                        placeholder = {
+                            Text(text = "enter the member’s name")
+                        },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color.White,
+                            unfocusedBorderColor = Color.White,
+                            cursorColor = Color.LightGray)
+                        ,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(RoundedCornerShape(12.dp))
+                            .background(Color.White)
+                        ,
+                        singleLine = true
+                    )
+
                 }
+                Spacer(modifier = Modifier.height(15.dp))
+                Button(onClick = { onAdd()  }) {
+                    Text(text = "Add",
+                        color = Color.White,
+                        fontSize = 15.sp,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+                }
+
                 Spacer(modifier = Modifier.height(15.dp))
 
 
         }
-        
+
     }
+
 }
+
