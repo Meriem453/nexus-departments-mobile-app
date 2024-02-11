@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.nexusapp.screens.Calendar
 import com.example.nexusapp.screens.HomePage
 import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.example.survisionapp.nexustest.MembersListPage
@@ -29,7 +30,8 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
 //                   HomePage()
-                    MembersListPage()
+                    //MembersListPage()
+                   Calendar()
                 }
             }
         }
@@ -48,6 +50,6 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 @Composable
 fun GreetingPreview() {
     NexusAppTheme {
-       HomePage()
+       //HomePage()
     }
 }
