@@ -9,6 +9,7 @@
     >
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
@@ -30,55 +31,59 @@
             android:textColor="@color/white"
             android:textSize="32sp"
             android:textStyle="bold" />
+
         <EditText
+            android:id="@+id/username"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_margin="20dp"
-            android:id="@+id/username"
             android:background="@drawable/input"
-            android:hint="username"
-            android:textColor="@color/white"
-            android:textColorHint="@color/hint"
-            android:padding="5dp"
-
             android:drawableStart="@drawable/baseline_person_24"
+            android:hint="@string/username"
+            android:padding="5dp"
+            android:textColor="@color/white"
+
+            android:textColorHint="@color/hint"
 
             />
+
         <EditText
+            android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="48dp"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="7dp"
-            android:id="@+id/password"
             android:background="@drawable/input"
-            android:hint="password"
+            android:drawableStart="@drawable/baseline_lock_24"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:padding="5dp"
             android:textColor="@color/white"
             android:textColorHint="@color/hint"
-            android:padding="5dp"
-android:inputType="textPassword"
-            android:drawableStart="@drawable/baseline_lock_24"
 
             />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="40dp"
             android:layout_marginBottom="50dp"
-            android:text="Forget password ?"
+            android:text="@string/forget_password"
             android:textColor="@color/forget"
             android:textSize="12sp"
 
             />
+
         <Button
             android:id="@+id/signInBtnId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/botton"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
             android:layout_marginBottom="100dp"
-            android:text="Sign in"
+            android:background="@drawable/botton"
+            android:text="@string/sign_in"
             android:textColor="@color/gray"
 
             android:textSize="24sp"
@@ -86,4 +91,15 @@ android:inputType="textPassword"
 
             />
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/login_progressBar"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

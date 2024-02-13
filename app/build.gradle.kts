@@ -99,5 +99,16 @@ dependencies {
     //system ui controller
     implementation ("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
 
+    // Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+
+// Converter for JSON serialization and deserialization
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
+
+// Converter for XML serialization and deserialization (if needed)
+// implementation 'com.squareup.retrofit2:converter-simplexml:2.9.0'
+
+// Logging interceptor for debugging (optional)
+    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
 
 }
