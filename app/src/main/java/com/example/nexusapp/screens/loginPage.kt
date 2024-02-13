@@ -45,10 +45,11 @@ class loginPage : AppCompatActivity() {
                 RetrofitClient.instance.userLogin(email, password)
                     .enqueue(object: Callback<LoginResponse>{
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
-                            Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
-                            etEmail.setText(t.message)
+                            Toast.makeText(this@loginPage, t.message, Toast.LENGTH_LONG).show()
+                            progressBar.visibility = View.GONE
                         }override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                            if(response.body()?.token!!.toString()!="User not found" && response.body()?.token!!.toString()!="Check your credentials"){
+
+                            if(response.isSuccessful){
 
                                 sharedPrefManager = SharedPrefManager(this@loginPage)
                                 val token = response.body()?.token!!
@@ -61,11 +62,13 @@ class loginPage : AppCompatActivity() {
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
 
-
                             }else{
+                                val errorMessage = response.errorBody()?.string() ?:"Unknown error!"
+                                Toast.makeText(this@loginPage, "Error :$errorMessage", Toast.LENGTH_SHORT).show()
                                 progressBar.visibility = View.GONE
-                                Toast.makeText(applicationContext, response.body()?.token!!, Toast.LENGTH_LONG).show()
                             }
+
+
 
                         }
                     })
