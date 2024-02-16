@@ -1,14 +1,12 @@
 package com.example.nexusapp.screens
 
-import android.util.Log
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.detectTransformGestures
-import androidx.compose.foundation.gestures.rememberScrollableState
-import androidx.compose.foundation.gestures.scrollBy
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,14 +15,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,47 +29,73 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import androidx.constraintlayout.compose.layoutId
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.nexusapp.R
-import kotlinx.coroutines.launch
+import com.example.nexusapp.Repo.Resource
+import com.example.nexusapp.viewmodels.HomePageVM
 
 @Composable
-fun HomePage (){
+fun HomePage(bottomPadding: Dp) {
+    val viewModel= hiltViewModel<HomePageVM>()
     Scaffold {
         it
-        Column(Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+            ) {
+           if(viewModel.userInfo is Resource.Loading) {
+               val infiniteTransition = rememberInfiniteTransition(label = "")
+               val rotationValue by infiniteTransition.animateFloat(
+                   initialValue = 0f,
+                   targetValue = 360f,
+                   animationSpec = InfiniteRepeatableSpec(
+                       animation = tween(2000),
+                       repeatMode = RepeatMode.Restart
+                   ), label = ""
+               )
+               CircularProgressIndicator(
+                   modifier = Modifier
+                       .size(50.dp)
+                       .rotate(rotationValue)
 
-
+                   ,
+                   color = colorResource(id = R.color.green)
+               )
+           }
+           if(viewModel.userInfo is Resource.Failed) {
+               Text(
+                   text = "Check your connection",
+                   fontSize = 16.sp,
+                   color = Color.Gray
+               )
+           }
+               if(viewModel.userInfo is Resource.Success){
         var scrollPosition by remember { mutableStateOf(0) }
         var scrollPercentage by remember { mutableStateOf(0f) }
         val scrollState = rememberScrollState()
-            ProfileHeader(progress = scrollPercentage)
+            ProfileHeader(progress = scrollPercentage,viewModel=viewModel)
         Column(
             Modifier
                 .fillMaxSize()
@@ -84,16 +107,17 @@ fun HomePage (){
             scrollPercentage =if((scrollPosition.toFloat() / scrollState.maxValue).coerceIn(0f, 1f)<=0.25 )(scrollPosition.toFloat() / scrollState.maxValue).coerceIn(0f, 1f)*4 else 1F
             //Log.d("scroll",scrollPercentage.toString())
 
-            Overview()
+            Overview(viewModel=viewModel,bottomPadding)
         }
-    }}
+    }}}
 }
 
 @Composable
-fun Overview() {
+fun Overview(viewModel: HomePageVM, bottomPadding: Dp) {
     var progress by remember {
         mutableFloatStateOf(.15F)
     }
+    progress=(viewModel.userInfo.data!!.project.progress.toFloat() / 100)
     Column(
         Modifier
             .fillMaxWidth()
@@ -104,14 +128,14 @@ fun Overview() {
                 .padding(16.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(colorResource(id = R.color.card_bg))) {
-                   Text(text = "Figma Workshop",
+                   Text(text = viewModel.userInfo.data!!.event.name,
                        color = Color.White,
                        fontSize = 16.sp,
                        //fontFamily = FontFamily.Cursive,
                        fontWeight = FontWeight.Bold,
                        modifier = Modifier.padding(10.dp)
                        )
-            Text(text = "Tomorrow",
+            Text(text = viewModel.userInfo.data!!.event.date,
                 color = Color.White,
                 fontSize = 15.sp,
                 //fontFamily = FontFamily.Cursive,
@@ -131,13 +155,13 @@ fun Overview() {
             modifier = Modifier.padding(16.dp)
         )
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            NexusCard("30","Member", painterResource(id = R.drawable.members), Modifier.weight(1f))
-            NexusCard("+9","Done projects", painterResource(id = R.drawable.power), Modifier.weight(1f))
+            NexusCard(viewModel.userInfo.data!!.members_number.toString(),"Member's number", painterResource(id = R.drawable.members), Modifier.weight(1f))
+            NexusCard(viewModel.userInfo.data!!.done_projects.toString(),"Done projects", painterResource(id = R.drawable.power), Modifier.weight(1f))
 
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            NexusCard("+9","Done projects", painterResource(id = R.drawable.power), Modifier.weight(1f))
-            NexusCard("30","Member", painterResource(id = R.drawable.members), Modifier.weight(1f))
+            NexusCard(viewModel.userInfo.data!!.pending_projects.toString(),"Pending projects", painterResource(id = R.drawable.power), Modifier.weight(1f))
+            NexusCard("30","Other", painterResource(id = R.drawable.members), Modifier.weight(1f))
 
 
         }
@@ -148,7 +172,7 @@ fun Overview() {
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(16.dp)
         )
-        Text(text = "Nexuszero event",
+        Text(text = viewModel.userInfo.data!!.project.title,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -161,7 +185,13 @@ fun Overview() {
         )
         Box(modifier = Modifier
             .fillMaxWidth()
-            .padding(20.dp), contentAlignment = Alignment.Center){
+            .padding(
+                top=20.dp,
+                start = 20.dp,
+                end = 20.dp,
+                bottom = bottomPadding + 20.dp
+
+                ), contentAlignment = Alignment.Center){
             CircularProgressIndicator(progress = progress, color = colorResource(id = R.color.green), modifier = Modifier
                 .height(200.dp)
                 .width(200.dp)
@@ -210,7 +240,7 @@ fun NexusCard(bold: String, thin: String, painterResource: Painter,modifier: Mod
 
 @OptIn(ExperimentalMotionApi::class, ExperimentalGlideComposeApi::class)
 @Composable
-fun ProfileHeader(progress: Float) {
+fun ProfileHeader(progress: Float, viewModel: HomePageVM) {
     val context = LocalContext.current
     val motionScene = remember {
         context.resources
@@ -228,32 +258,32 @@ fun ProfileHeader(progress: Float) {
             .background(colorResource(id = R.color.gray))
 
     ) {
-        /*GlideImage(model = "https://firebasestorage.googleapis.com/v0/b/residence-47d76.appspot.com/o/images%2F7s28g4ICpPWBmrjKBgwLVfzCSTz2.jpg?alt=media&", contentDescription ="" ,
+        GlideImage(model = viewModel.userInfo.data!!.userData.image, contentDescription ="" ,
             modifier = Modifier
                 .clip(CircleShape)
-                .layoutId("profile_pic"))*/
-        Image(
+                .layoutId("profile_pic"))
+        /*Image(
             painter = painterResource(id = R.drawable.members),
             contentDescription = null,
             modifier = Modifier
                 .clip(CircleShape)
                 .layoutId("profile_pic")
-        )
+        )*/
         Text(
-            text = "Meriem",
+            text = viewModel.userInfo.data!!.userData.name,
             fontSize = 23.sp,
             modifier = Modifier.layoutId("username"),
             fontWeight = FontWeight.Bold,
             color = colorResource(id = R.color.green)
         )
         Text(
-            text = "Development Department",
+            text = viewModel.userInfo.data!!.userData.role,
             fontSize = 20.sp,
             modifier = Modifier.layoutId("department"),
             color = colorResource(id = R.color.green)
         )
         Text(
-            text = "Member",
+            text = "Manager",
             fontSize = 20.sp,
             modifier = Modifier.layoutId("manager"),
             color = Color.White

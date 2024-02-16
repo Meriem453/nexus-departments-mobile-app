@@ -47,26 +47,24 @@ class loginPage : AppCompatActivity() {
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                             Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
                             etEmail.setText(t.message)
-                        }override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
-                            if(response.body()?.token!!.toString()!="User not found" && response.body()?.token!!.toString()!="Check your credentials"){
+                        }
+                        override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
 
+                            if(response.body()?.token!=null){
                                 sharedPrefManager = SharedPrefManager(this@loginPage)
                                 val token = response.body()?.token!!
                                 sharedPrefManager.token = token
 
-                                Toast.makeText(applicationContext,sharedPrefManager.token , Toast.LENGTH_SHORT).show()
+                                //Toast.makeText(applicationContext,sharedPrefManager.token , Toast.LENGTH_SHORT).show()
                                 progressBar.visibility = View.GONE
 
                                 val intent = Intent(applicationContext, MainActivity::class.java)
                                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 startActivity(intent)
-
-
                             }else{
                                 progressBar.visibility = View.GONE
-                                Toast.makeText(applicationContext, response.body()?.token!!, Toast.LENGTH_LONG).show()
+                                Toast.makeText(applicationContext, response.message(), Toast.LENGTH_LONG).show()
                             }
-
                         }
                     })
 
@@ -75,16 +73,5 @@ class loginPage : AppCompatActivity() {
 
         }
 
-    override fun onStart() {
-        super.onStart()
-        sharedPrefManager = SharedPrefManager(this@loginPage)
-        // Check if token is available
-        val token = sharedPrefManager.token
-        if (token != null && token.isNotEmpty()) {
-            // Token is available, navigate to main screen
-            Toast.makeText(this, token, Toast.LENGTH_SHORT).show()
-            val intent = Intent(this,MainActivity::class.java)
-            startActivity(intent)
-        }
-    }
+
     }

@@ -4,13 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.AnimatedContentTransitionScope
-import androidx.compose.animation.ContentTransform
-import androidx.compose.animation.core.EaseIn
-import androidx.compose.animation.core.EaseOut
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.with
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -34,8 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.focusModifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
@@ -48,8 +39,10 @@ import com.example.nexusapp.screens.HomePage
 import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.example.survisionapp.nexustest.ExplorePage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import dagger.hilt.android.AndroidEntryPoint
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -117,7 +110,7 @@ fun Content(){
             ) { active = 2 }
         }}}
     ) {
-        it
+
         Box (
             Modifier
                 .fillMaxSize()
@@ -126,7 +119,7 @@ fun Content(){
 
         ) { page->
             when(page){
-                0-> HomePage()
+                0-> HomePage( it.calculateBottomPadding())
                 1-> ExplorePage()
                 //2->SettingsPage()
             }
