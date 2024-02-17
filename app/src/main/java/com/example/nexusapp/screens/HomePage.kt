@@ -236,7 +236,8 @@ fun NexusCard(bold: String, thin: String, painterResource: Painter,modifier: Mod
              modifier = Modifier.padding(10.dp)
 
          )
-     }}
+     }
+}
 
 @OptIn(ExperimentalMotionApi::class, ExperimentalGlideComposeApi::class)
 @Composable
