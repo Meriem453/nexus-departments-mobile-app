@@ -1,6 +1,5 @@
 package com.example.survisionapp.nexustest
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -177,7 +176,7 @@ val context = LocalContext.current
 }
 
 @Composable
-fun MemberDataView(name:String,Team:String,Points:String){
+fun MemberDataView(name:String, points: Int, team:String){
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -188,21 +187,21 @@ fun MemberDataView(name:String,Team:String,Points:String){
         Text(
             modifier = Modifier.weight(2f),
             text = name,
-            fontSize = 17.sp,
+            fontSize = 15.sp,
             textAlign = TextAlign.Start,
             color = Color.White,)
 
         Text(
             modifier = Modifier.weight(1f),
-            text = Team,
-            fontSize = 17.sp,
+            text = team,
+            fontSize = 15.sp,
             textAlign = TextAlign.Center,
             color = Color.White,)
 
         Text(
             modifier = Modifier.weight(1f),
-            text = Points,
-            fontSize = 17.sp,
+            text = points.toString(),
+            fontSize = 15.sp,
             textAlign = TextAlign.End,
             color = Color.White,)
 
@@ -214,7 +213,7 @@ fun MemberDataHeader(){
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp),
+            .padding(start = 10.dp, end = 30.dp),
 
     ) {
         Text(

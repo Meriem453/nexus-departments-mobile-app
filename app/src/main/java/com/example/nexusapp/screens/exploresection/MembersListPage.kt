@@ -6,20 +6,26 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,6 +42,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.nexusapp.models.MemberResponse
+import com.example.nexusapp.viewmodels.MembersListVM
+import kotlinx.coroutines.delay
 
 
 @Preview
@@ -50,24 +60,27 @@ fun MembersListPagePrev() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MembersListPage() {
-    data class Member(val name:String, val team:String, val points:String)
+
+    val membersViewModel = viewModel(modelClass = MembersListVM::class.java)
+    val state by membersViewModel.state.collectAsState()
+
+    var loading by remember { mutableStateOf(true) }
+
+
+    LaunchedEffect(Unit) {
+        delay(3000L) // 3 seconds
+        loading = false // Hide the progress bar after 3 seconds
+    }
+
+
     val context = LocalContext.current
-    val membersList = listOf(
-        Member("Alice", "Team A", "50"),
-        Member("Bob", "Team B", "30"),
-        Member("Charlie", "Team A", "70"),
-        Member("David", "Team C", "40"),
-        Member("Eva", "Team B", "85"),
-        Member("Frank", "Team C", "60"),
-        Member("Grace", "Team A", "75"),
-        Member("Henry", "Team B", "90"),
-        Member("Ivy", "Team C", "55"),
-        Member("Jack", "Team A", "80")
-    )
-    var members by remember { mutableStateOf(membersList) }
+
+    var members by remember { mutableStateOf(state) }
     var newMemberName by remember { mutableStateOf("") }
     var newMemberTeam by remember { mutableStateOf("") }
     val openAddMemberDialog = remember { mutableStateOf(false) }
+
+
     when {
         openAddMemberDialog.value -> {
             Dialog(onDismissRequest = {openAddMemberDialog.value = false}) {
@@ -134,7 +147,7 @@ fun MembersListPage() {
                         Button(onClick = {
                             // adding member logic in the online DB
                             // ++ gotta save it in shared preferences
-                            members = members + Member(newMemberName, newMemberTeam, "0")
+                            members = members + MemberResponse(newMemberName, 0, newMemberTeam)
                             newMemberName = ""
                             newMemberTeam = ""
                             Toast.makeText(context, "Member added", Toast.LENGTH_SHORT).show()
@@ -170,16 +183,50 @@ fun MembersListPage() {
 
     MembersListHeader({openAddMemberDialog.value = false}, {openAddMemberDialog.value = true})
     Column {
+
         Spacer(modifier = Modifier.height(90.dp))
         MemberDataHeader()
         Spacer(modifier = Modifier.height(10.dp))
         Spacer(modifier = Modifier.height(5.dp))
-        LazyColumn(modifier = Modifier.padding(15.dp)) {
-            items(members.size) { index ->
-                MemberDataView(members[index].name, members[index].team, members[index].points)
-                Spacer(modifier = Modifier.height(5.dp))
+        if (loading && state.isEmpty()) {
+            // Show CircularProgressIndicator while loading
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(align = Alignment.Center)
+            )
+        } else if (state.isEmpty()) {
+            // Data is not received and loading is false, display a "No members" message
+            Text(
+                text = "No members",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                textAlign = TextAlign.Center, color = Color.White
+            )
+        } else{
+            LazyColumn(modifier = Modifier.padding(15.dp)) {
+                items(state) {item: MemberResponse ->
+                    MemberDataView(name = item.name, points = item.points , team = item.team)
+                    Spacer(modifier = Modifier.height(5.dp))
+                }
+
+
+
+
             }
         }
 
+        if (!loading && state.isEmpty()) {
+            Text(
+                text = "check your internet connection.",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                textAlign = TextAlign.Center, color = Color.White
+            )
+        }
+
     }
+
 }

@@ -1,5 +1,4 @@
-package com.example.survisionapp.nexustest
-
+import android.annotation.SuppressLint
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -8,65 +7,57 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-
+import com.example.survisionapp.nexustest.ExploreHeader
+import com.example.survisionapp.nexustest.ExploreItemCard
+import com.example.survisionapp.nexustest.MembersListPage
 
 @Preview
 @Composable
 fun Preview(){
     ExplorePage()
 }
+
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun ExplorePage() {
-    Scaffold(Modifier.background(Color(0xFF2A2A2A))) {
-        it
+    var currentScreen by remember { mutableStateOf<Screen?>(null) }
 
-        val exploreItemsList =
-            listOf("Calendar", "Members List", "Meetings", "Tasks", "Projects", "Help and Problems")
+    Scaffold(Modifier.background(Color(0xFF2A2A2A))) {
+        val exploreItemsList = listOf("Calendar", "Members List", "Meetings", "Tasks", "Projects", "Help and Problems")
         ExploreHeader()
 
         Column(
             Modifier.padding(start = 25.dp, end = 25.dp)
-
                 .fillMaxSize(),
             verticalArrangement = Arrangement.Center,
         ) {
-            exploreItemsList.forEach {
-                ExploreItemCard(title = it)
+            exploreItemsList.forEach { item ->
+                ExploreItemCard(title = item)
                 {
-                    when (it) {
-                        "Calendar" -> {/* TODO: navigate to calendar page*/
-                        }
-
-                        "Members List" -> {/* TODO: navigate to member list page*/
-                        }
-
-                        "Meetings" -> {/* TODO: navigate to meetings page*/
-                        }
-
-                        "Tasks" -> { /* TODO: navigate to tasks page*/
-                        }
-
-                        "Projects" -> {/* TODO: navigate to projects page*/
-                        }
-
-                        "Help and Problems" -> {/* TODO: navigate to help page*/
-                        }
+                    when (item) {
+                        "Members List" -> currentScreen = Screen.MembersList
+                        // the other items here
                     }
                 }
                 Spacer(modifier = Modifier.height(25.dp))
-
-
             }
-
-
         }
 
-
+        currentScreen?.let { screen ->
+            when (screen) {
+                Screen.MembersList -> MembersListPage()
+            }
+        }
     }
+}
+
+enum class Screen {
+    MembersList,
+    // All explore screens here
 }

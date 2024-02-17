@@ -4,9 +4,12 @@ import android.content.SharedPreferences
 import android.util.Log
 import com.example.nexusapp.api.Api
 import com.example.nexusapp.models.HomePageResponse.HomePageResponse
+import com.example.nexusapp.models.MemberResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class Repository @Inject constructor(
@@ -28,4 +31,17 @@ try {
     emit(Resource.Failed(e.localizedMessage))
 }
 }
+
+    suspend fun getMembersList():List<MemberResponse>
+             {
+                 return try{
+                     api.membersList(token!!)
+                 }catch (_: Exception){
+                     emptyList<MemberResponse>()
+                 }
+
+
+
+
+    }
 }

@@ -2,6 +2,7 @@ package com.example.nexusapp.api
 
 import com.example.nexusapp.models.HomePageResponse.HomePageResponse
 import com.example.nexusapp.models.LoginResponse
+import com.example.nexusapp.models.MemberResponse
 import retrofit2.Call
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -22,4 +23,9 @@ interface Api {
     suspend fun homePage(
         @Path("token") token:String
     ):HomePageResponse
+
+    @GET("member/departmentMembers/{token}")
+    suspend fun membersList(
+        @Path("token") token:String
+    ):List<MemberResponse>
 }

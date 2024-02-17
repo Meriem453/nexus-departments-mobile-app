@@ -1,5 +1,6 @@
 package com.example.nexusapp
 
+import ExplorePage
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nexusapp.screens.HomePage
 import com.example.nexusapp.ui.theme.NexusAppTheme
-import com.example.survisionapp.nexustest.ExplorePage
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 
