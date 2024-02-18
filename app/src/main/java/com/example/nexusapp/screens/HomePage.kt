@@ -42,6 +42,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -57,12 +58,16 @@ import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.viewmodels.HomePageVM
 
 
+
 @Composable
 fun HomePage(bottomPadding: Dp) {
     val viewModel= hiltViewModel<HomePageVM>()
-    Scaffold {
+    Scaffold(Modifier.background(colorResource(id = R.color.gray))) {
         it
-        Column(Modifier.fillMaxSize(),
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(colorResource(id = R.color.gray)),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
             ) {
@@ -96,7 +101,7 @@ fun HomePage(bottomPadding: Dp) {
         var scrollPosition by remember { mutableStateOf(0) }
         var scrollPercentage by remember { mutableStateOf(0f) }
         val scrollState = rememberScrollState()
-            ProfileHeader(progress = scrollPercentage , viewModel=viewModel)
+            ProfileHeader(progress = scrollPercentage , viewModel = viewModel)
         Column(
             Modifier
                 .fillMaxSize()
@@ -162,7 +167,7 @@ fun Overview(viewModel: HomePageVM, bottomPadding: Dp) {
         }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
             NexusCard(viewModel.userInfo.data!!.pending_projects.toString(),"Pending projects", painterResource(id = R.drawable.power), Modifier.weight(1f))
-            NexusCard("30","Other", painterResource(id = R.drawable.members), Modifier.weight(1f))
+            NexusCard(viewModel.userInfo.data!!.task_count.toString(),"Task's number", painterResource(id = R.drawable.members), Modifier.weight(1f))
 
 
         }
@@ -187,12 +192,12 @@ fun Overview(viewModel: HomePageVM, bottomPadding: Dp) {
         Box(modifier = Modifier
             .fillMaxWidth()
             .padding(
-                top=20.dp,
+                top = 20.dp,
                 start = 20.dp,
                 end = 20.dp,
                 bottom = bottomPadding + 20.dp
 
-                ), contentAlignment = Alignment.Center){
+            ), contentAlignment = Alignment.Center){
             CircularProgressIndicator(progress = progress, color = colorResource(id = R.color.green), modifier = Modifier
                 .height(200.dp)
                 .width(200.dp)

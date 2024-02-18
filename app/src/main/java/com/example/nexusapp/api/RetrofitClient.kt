@@ -9,7 +9,7 @@ object RetrofitClient {
 
     private val AUTH = "Basic "+ Base64.encodeToString("moussa:khofash".toByteArray(), Base64.NO_WRAP)
 
-    private const val BASE_URL = "http://10.7.0.17:8080/api/"
+    private const val BASE_URL = "http://192.168.42.23:8080/api/"
 
     private val okHttpClient = OkHttpClient.Builder()
         .addInterceptor { chain ->

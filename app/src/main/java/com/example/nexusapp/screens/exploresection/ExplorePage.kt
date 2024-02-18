@@ -13,9 +13,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.destinations.CalendarDestination
+import com.example.destinations.IssuesPageDestination
+import com.example.destinations.MeetingsPageDestination
+import com.example.destinations.ProjectsPageDestination
 import com.example.survisionapp.nexustest.ExploreHeader
 import com.example.survisionapp.nexustest.ExploreItemCard
 import com.example.survisionapp.nexustest.MembersListPage
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.annotation.RootNavGraph
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Preview
@@ -44,8 +50,13 @@ fun ExplorePage(navigator:DestinationsNavigator) {
                     when (item) {
                         "Members List" -> {
                             currentScreen = Screen.MembersList
-                            //TODO("navigate here")
+                            navigator.navigate(MeetingsPageDestination())
                         }
+                        "Calendar"-> navigator.navigate(CalendarDestination)
+                        "Meetings"->navigator.navigate(MeetingsPageDestination)
+                        "Projects" -> navigator.navigate(ProjectsPageDestination)
+                        "Help and Problems"-> navigator.navigate(IssuesPageDestination)
+
                         // the other items here
                     }
                 }

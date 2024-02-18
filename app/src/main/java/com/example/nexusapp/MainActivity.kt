@@ -36,13 +36,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavGraph
+import com.example.NavGraphs
 import com.example.nexusapp.screens.HomePage
 import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.DestinationsNavHost
 import com.ramcosta.composedestinations.annotation.Destination
-import com.ramcosta.composedestinations.spec.NavGraphSpec
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -54,14 +55,13 @@ class MainActivity : ComponentActivity() {
             rememberSystemUiController().setStatusBarColor(Color(0xFF2A2A2A))
             NexusAppTheme {
                 DestinationsNavHost(navGraph = NavGraphs.root)
-                Content()
             }
         }
     }
 }
 @Destination(start = true)
 @Composable
-fun Content(){
+fun Content(navigator: DestinationsNavigator){
     var active by remember {
         mutableStateOf(0)
     }
@@ -125,7 +125,7 @@ fun Content(){
         ) { page->
             when(page){
                 0-> HomePage( it.calculateBottomPadding())
-                1-> ExplorePage()
+                1-> ExplorePage(navigator)
                 //2->SettingsPage()
             }
         }}
@@ -176,6 +176,6 @@ Column (horizontalAlignment = Alignment.CenterHorizontally,
 @Composable
 fun GreetingPreview() {
     NexusAppTheme {
-      Content()
+      //Content()
     }
 }

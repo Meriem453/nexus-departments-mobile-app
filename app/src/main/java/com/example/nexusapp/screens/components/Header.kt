@@ -24,7 +24,8 @@ import com.example.nexusapp.R
 fun Header(
      title:String,
      icon:Painter,
-     onBackPressed:()->Unit
+     onBackPressed:()->Unit,
+     onActionPressed:()->Unit
 ) {
     Row (
         Modifier
@@ -46,7 +47,11 @@ fun Header(
         Icon(painter = icon,
             contentDescription ="" ,
             tint = Color.White,
-            modifier = Modifier.padding(16.dp))
+            modifier = Modifier
+                .padding(16.dp)
+                .clickable { onActionPressed() }
+
+        )
 
 
     }

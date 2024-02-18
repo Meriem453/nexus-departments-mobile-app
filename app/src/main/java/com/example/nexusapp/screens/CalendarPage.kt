@@ -39,7 +39,7 @@ import com.example.nexusapp.screens.components.Header
 import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.ramcosta.composedestinations.annotation.Destination
 
-data class day(val num:Int,val letter:String,val state:Boolean)
+data class day(val num:Int,val letter:String)
 @Destination
 @Composable
 fun Calendar() {
@@ -47,15 +47,15 @@ fun Calendar() {
     var days by remember {
         mutableStateOf(
             listOf(
-                day(23,"M",true),
-                day(24,"T",true),
-                day(25,"W",false),
-                day(26,"T",false),
-                day(27,"F",false),
-                day(28,"S",true),
-                day(29,"S",false),
-                day(30,"M",false),
-                day(31,"T",false),
+                day(23,"M"),
+                day(24,"T"),
+                day(25,"W"),
+                day(26,"T"),
+                day(27,"F"),
+                day(28,"S"),
+                day(29,"S"),
+                day(30,"M"),
+                day(31,"T"),
 
                 ))
     }
@@ -70,7 +70,10 @@ Scaffold(
             .background(colorResource(id = R.color.gray)), horizontalAlignment = Alignment.CenterHorizontally) {
        Header(
            "Calendar",
-           painterResource(id = R.drawable.calendar)
+           painterResource(id = R.drawable.calendar),
+           {
+               //TODO("idk what to do")
+           }
        ){
            //TODO("naviagte to main menu")
        }
@@ -165,7 +168,7 @@ fun TimeLine(days:List<day>) {
              ) {
                 Text(text = day.num.toString(),
                     fontSize = 16.sp,
-                    color = if (day.state) colorResource(id = R.color.gray)
+                    color = if (position==selectedDay) colorResource(id = R.color.gray)
                     else Color.White,
                     modifier = Modifier.padding(top=15.dp, start = 15.dp, end = 15.dp)
                     )
@@ -174,7 +177,7 @@ fun TimeLine(days:List<day>) {
                      .size(10.dp))
                  Text(text = day.letter,
                      fontSize = 16.sp,
-                     color = if (day.state) colorResource(id = R.color.gray)
+                     color = if (position==selectedDay) colorResource(id = R.color.gray)
                      else Color.White,
                      modifier = Modifier.padding(bottom =15.dp, start = 15.dp, end = 15.dp)
                  )

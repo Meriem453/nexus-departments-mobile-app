@@ -1,6 +1,7 @@
 package com.example.nexusapp.models.HomePageResponse
 
 data class HomePageResponse(
+    val task_count:Int,
     val departmentName: String,
     val done_projects: Int,
     val event: Event,

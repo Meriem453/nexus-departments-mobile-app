@@ -36,9 +36,12 @@ Column(modifier = Modifier
 ) {
     Header(
         title = "Meetings",
-        icon = painterResource(id = R.drawable.add)
-    ) {
+        icon = painterResource(id = R.drawable.add),
+        {
         //TODO("add new meeting")
+             }
+    ) {
+        //TODO("back")
     }
 val list= listOf(
     MeetingResponse(1,"New meeting","4/5/2024",2),
