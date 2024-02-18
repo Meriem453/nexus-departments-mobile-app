@@ -46,7 +46,6 @@ class loginPage : AppCompatActivity() {
                     .enqueue(object: Callback<LoginResponse>{
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                             Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
-                            etEmail.setText(t.message)
                         }
                         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
 
@@ -55,7 +54,6 @@ class loginPage : AppCompatActivity() {
                                 val token = response.body()?.token!!
                                 sharedPrefManager.token = token
 
-                                //Toast.makeText(applicationContext,sharedPrefManager.token , Toast.LENGTH_SHORT).show()
                                 progressBar.visibility = View.GONE
 
                                 val intent = Intent(applicationContext, MainActivity::class.java)
@@ -63,7 +61,8 @@ class loginPage : AppCompatActivity() {
                                 startActivity(intent)
                             }else{
                                 progressBar.visibility = View.GONE
-                                Toast.makeText(applicationContext, response.message(), Toast.LENGTH_LONG).show()
+                                val errorMessage = response.errorBody()?.string()
+                                Toast.makeText(applicationContext, response.message()+"h:"+ errorMessage, Toast.LENGTH_LONG).show()
                             }
                         }
                     })
