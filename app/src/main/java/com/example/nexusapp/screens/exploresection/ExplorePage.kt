@@ -16,16 +16,17 @@ import androidx.compose.ui.unit.dp
 import com.example.survisionapp.nexustest.ExploreHeader
 import com.example.survisionapp.nexustest.ExploreItemCard
 import com.example.survisionapp.nexustest.MembersListPage
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 @Preview
 @Composable
 fun Preview(){
-    ExplorePage()
+    //ExplorePage()
 }
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
-fun ExplorePage() {
+fun ExplorePage(navigator:DestinationsNavigator) {
     var currentScreen by remember { mutableStateOf<Screen?>(null) }
 
     Scaffold(Modifier.background(Color(0xFF2A2A2A))) {
@@ -41,7 +42,10 @@ fun ExplorePage() {
                 ExploreItemCard(title = item)
                 {
                     when (item) {
-                        "Members List" -> currentScreen = Screen.MembersList
+                        "Members List" -> {
+                            currentScreen = Screen.MembersList
+                            //TODO("navigate here")
+                        }
                         // the other items here
                     }
                 }

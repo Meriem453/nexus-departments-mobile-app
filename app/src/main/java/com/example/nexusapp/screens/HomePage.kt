@@ -56,6 +56,7 @@ import com.example.nexusapp.R
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.viewmodels.HomePageVM
 
+
 @Composable
 fun HomePage(bottomPadding: Dp) {
     val viewModel= hiltViewModel<HomePageVM>()
@@ -95,7 +96,7 @@ fun HomePage(bottomPadding: Dp) {
         var scrollPosition by remember { mutableStateOf(0) }
         var scrollPercentage by remember { mutableStateOf(0f) }
         val scrollState = rememberScrollState()
-            ProfileHeader(progress = scrollPercentage,viewModel=viewModel)
+            ProfileHeader(progress = scrollPercentage , viewModel=viewModel)
         Column(
             Modifier
                 .fillMaxSize()

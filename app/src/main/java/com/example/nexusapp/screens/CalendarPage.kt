@@ -1,12 +1,12 @@
 package com.example.nexusapp.screens
 
-import android.preference.PreferenceActivity
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,7 +25,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -37,8 +35,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.nexusapp.R
+import com.example.nexusapp.screens.components.Header
 import com.example.nexusapp.ui.theme.NexusAppTheme
+import com.ramcosta.composedestinations.annotation.Destination
+
 data class day(val num:Int,val letter:String,val state:Boolean)
+@Destination
 @Composable
 fun Calendar() {
 
@@ -66,7 +68,12 @@ Scaffold(
         Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.gray)), horizontalAlignment = Alignment.CenterHorizontally) {
-       Header()
+       Header(
+           "Calendar",
+           painterResource(id = R.drawable.calendar)
+       ){
+           //TODO("naviagte to main menu")
+       }
         Text(text = "February",
             color = Color.White,
             fontSize = 16.sp,
@@ -133,22 +140,28 @@ fun TimeLine(days:List<day>) {
             .padding(end = 16.dp)
             .border(
                 2.dp,
-                Brush.horizontalGradient(startX = .5f,colors = listOf( colorResource(id = R.color.gray), colorResource(id = R.color.green)
-                )
-            ),
+                Brush.horizontalGradient(
+                    startX = .5f, colors = listOf(
+                        colorResource(id = R.color.gray), colorResource(id = R.color.green)
+                    )
+                ),
                 RoundedCornerShape(12.dp)
             )
     ){
          itemsIndexed(days){position,day->
+             var selectedDay by remember {
+                 mutableStateOf(0)
+             }
              Column(
                  horizontalAlignment = Alignment.CenterHorizontally,
                  modifier = Modifier
                      .padding(15.dp)
                      .clip(RoundedCornerShape(13.dp))
                      .background(
-                         if (day.state) colorResource(id = R.color.green)
+                         if (selectedDay==position) colorResource(id = R.color.green)
                          else colorResource(id = R.color.gray)
                      )
+                     .clickable { selectedDay = position }
              ) {
                 Text(text = day.num.toString(),
                     fontSize = 16.sp,
@@ -171,30 +184,7 @@ fun TimeLine(days:List<day>) {
     }
 }
 
-@Composable
-fun Header(){
-    Row (
-        Modifier
-            .fillMaxWidth()
-            .background(colorResource(id = R.color.gray)), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically){
-       Icon(painter = painterResource(id = R.drawable.arrow_back),
-           contentDescription ="" ,
-           tint = Color.White,
-           modifier = Modifier.padding(16.dp))
-        Text(text = "Calendar",
-            color = Color.White,
-            fontSize = 25.sp,
-            modifier = Modifier.padding(16.dp),
-            textAlign = TextAlign.Center
-            )
-        Icon(painter = painterResource(id = R.drawable.calendar),
-            contentDescription ="" ,
-            tint = Color.White,
-            modifier = Modifier.padding(16.dp))
 
-
-    }
-}
 @Preview(showBackground = true)
 @Composable
 fun Preview() {

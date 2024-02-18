@@ -45,6 +45,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nexusapp.models.MemberResponse
 import com.example.nexusapp.viewmodels.MembersListVM
+import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.delay
 
 
@@ -58,6 +59,7 @@ fun MembersListPagePrev() {
 
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Destination
 @Composable
 fun MembersListPage() {
 

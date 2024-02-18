@@ -36,9 +36,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavGraph
 import com.example.nexusapp.screens.HomePage
 import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.ramcosta.composedestinations.DestinationsNavHost
+import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.spec.NavGraphSpec
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -49,12 +53,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             rememberSystemUiController().setStatusBarColor(Color(0xFF2A2A2A))
             NexusAppTheme {
+                DestinationsNavHost(navGraph = NavGraphs.root)
                 Content()
             }
         }
     }
 }
-
+@Destination(start = true)
 @Composable
 fun Content(){
     var active by remember {

@@ -82,8 +82,8 @@ dependencies {
     implementation ("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
 
     //navigation
-    /*implementation ("io.github.raamcosta.compose-destinations:animations-core:1.6.14-beta")
-    kapt ("io.github.raamcosta.compose-destinations:ksp:1.6.14-beta")*/
+    implementation ("io.github.raamcosta.compose-destinations:animations-core:1.6.14-beta")
+    kapt ("io.github.raamcosta.compose-destinations:ksp:1.6.14-beta")
     //Glide
     implementation ("com.github.bumptech.glide:compose:1.0.0-alpha.5")
     //coroutines
