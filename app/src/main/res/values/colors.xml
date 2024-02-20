@@ -12,5 +12,6 @@
     <color name="card_bg">#373030</color>
     <color name="hint"> #8D8E99</color>
     <color name="forget"> #11DCE8</color>
+    <color name="pink"> #F2285D</color>
 
 </resources>

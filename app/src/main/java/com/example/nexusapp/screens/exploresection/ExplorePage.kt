@@ -16,6 +16,7 @@ import androidx.compose.ui.unit.dp
 import com.example.destinations.CalendarDestination
 import com.example.destinations.IssuesPageDestination
 import com.example.destinations.MeetingsPageDestination
+import com.example.destinations.MembersListPageDestination
 import com.example.destinations.ProjectsPageDestination
 import com.example.survisionapp.nexustest.ExploreHeader
 import com.example.survisionapp.nexustest.ExploreItemCard
@@ -50,7 +51,7 @@ fun ExplorePage(navigator:DestinationsNavigator) {
                     when (item) {
                         "Members List" -> {
                             currentScreen = Screen.MembersList
-                            navigator.navigate(MeetingsPageDestination())
+                            navigator.navigate(MembersListPageDestination())
                         }
                         "Calendar"-> navigator.navigate(CalendarDestination)
                         "Meetings"->navigator.navigate(MeetingsPageDestination)

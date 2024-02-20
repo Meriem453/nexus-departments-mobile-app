@@ -1,6 +1,7 @@
 package com.example.nexusapp.screens
 
-import android.media.Image
+
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -17,10 +18,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissState
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -32,9 +33,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -45,14 +48,28 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.nexusapp.R
 import com.example.nexusapp.models.ProjectResponse
+import com.example.nexusapp.screens.components.DeleteDialog
 import com.example.nexusapp.screens.components.Header
 import com.ramcosta.composedestinations.annotation.Destination
+val list = listOf(
+    ProjectResponse(1,"Project","1","5","3"),
+    ProjectResponse(1,"Project","1","5","3"),
+    ProjectResponse(1,"Project","1","5","3"),
+    ProjectResponse(1,"Project","1","5","3"),
+    ProjectResponse(1,"Project","1","5","3"),
+    ProjectResponse(1,"Project","1","5","3"),
+
+    )
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Destination
 @Composable
 fun ProjectsPage() {
+    val c = LocalContext.current
     var showAdd by remember {
+        mutableStateOf(false)
+    }
+    var showDelete by remember {
         mutableStateOf(false)
     }
     var currentItem by remember {
@@ -73,15 +90,6 @@ fun ProjectsPage() {
             showAdd=true
 
         }
-        val list = listOf(
-            ProjectResponse(1,"Project","1","5","3"),
-            ProjectResponse(1,"Project","1","5","3"),
-            ProjectResponse(1,"Project","1","5","3"),
-            ProjectResponse(1,"Project","1","5","3"),
-            ProjectResponse(1,"Project","1","5","3"),
-            ProjectResponse(1,"Project","1","5","3"),
-
-        )
         LazyColumn(
             modifier= Modifier
                 .fillMaxWidth()
@@ -91,8 +99,21 @@ fun ProjectsPage() {
                 var dismissState by remember {
                     mutableStateOf(DismissState(DismissValue.Default))
                 }
+                if(dismissState.currentValue==DismissValue.DismissedToEnd){
+                    currentItem=item
+                    showAdd=true
+                }
+                if(dismissState.currentValue==DismissValue.DismissedToStart){
+                    currentItem=item
+                    showDelete=true
+                }
+                if (dismissState.currentValue!=DismissValue.Default)
+                    dismissState= DismissState(DismissValue.Default)
+
+
                 SwipeToDismiss(state = dismissState,
                     background = {
+
                                 Row(horizontalArrangement = Arrangement.SpaceBetween,
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier
@@ -100,22 +121,28 @@ fun ProjectsPage() {
                                         .padding(10.dp)
                                         .clip(RoundedCornerShape(20.dp))
                                         .background(
-                                        if (dismissState==DismissState(DismissValue.DismissedToEnd))
+                                        if (dismissState.dismissDirection==DismissDirection.StartToEnd)
                                             colorResource(id = R.color.green)
-                                        else Color.Red
+                                        else colorResource(id = R.color.pink)
                                     )
                                     ) {
                                     Text(text = "Edit",
                                         color = Color.White,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(10.dp)
+                                        modifier = Modifier.padding(10.dp).alpha(
+                                            if (dismissState.dismissDirection==DismissDirection.StartToEnd) 1f
+                                            else 0f
+                                        )
                                         )
                                     Text(text = "Delete",
                                         color = Color.White,
                                         fontSize = 20.sp,
                                         fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(10.dp)
+                                        modifier = Modifier.padding(10.dp).alpha(
+                                            if (dismissState.dismissDirection==DismissDirection.StartToEnd) 0f
+                                            else 1f
+                                        )
                                     )
                                 }
                 }, dismissContent = {
@@ -140,45 +167,43 @@ fun ProjectsPage() {
                         Row (
                             Modifier
                                 .fillMaxWidth()
-                                .padding(20.dp), horizontalArrangement = Arrangement.SpaceBetween){
-                            Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
-                            Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
-                        }
-                        Text(text = "${item.completed_tasks}/${item.total_tasks} ${item.completed_tasks.toInt() * 100 / item.total_tasks.toInt()}%",
-                            fontSize = 15.sp,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(start=20.dp)
-                        )
-                        Row (
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp), horizontalArrangement = Arrangement.SpaceBetween){
+                                .padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween){
                             Text(text = item.title,
-                                fontSize = 20.sp,
+                                fontSize = 16.sp,
                                 color = Color.White,
-                                fontWeight = FontWeight.Bold
+                                fontWeight = FontWeight.Bold,
+                                //modifier =Modifier.padding(start = 16.dp)
                             )
-                            Text(text = "Till 4/5/2024",
+                            Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
+                            //Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
+                        }
+
+                            Text(text = "${item.completed_tasks}/${item.total_tasks} ${item.completed_tasks.toInt() * 100 / item.total_tasks.toInt()}% Tasks",
                                 fontSize = 15.sp,
                                 color = Color.Gray,
+                                modifier = Modifier.padding(start=16.dp, bottom = 16.dp)
+                            )
+                            /*Text(text = "Till 4/5/2024",
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+                                )*/
 
 
-                                )
-
-                        }
                     }
                 })
             }
         }
     }
     if(showAdd){
-        Dialog(onDismissRequest = { showAdd=false }) {
+        Dialog(onDismissRequest = {
+            showAdd=false
+        currentItem=null
+        }) {
 
         var title by remember {
-            mutableStateOf("")
-        }
-        var date by remember {
-            mutableStateOf("")
+            mutableStateOf(
+                currentItem?.title ?: ""
+            )
         }
         Column(
             Modifier
@@ -193,8 +218,8 @@ fun ProjectsPage() {
                     .fillMaxWidth()
                     .padding(16.dp)
             ){
-                Text(text = "Add new project",
-                    fontSize = 15.sp,
+                Text(text = "${if(currentItem!=null) "Edit" else "Add new"} project",
+                    fontSize = 20.sp,
                     color = Color.White,
 
                     )
@@ -203,7 +228,7 @@ fun ProjectsPage() {
             }
 
             Text(text = "Project title",
-                fontSize = 10.sp,
+                fontSize = 15.sp,
                 color = Color.White,
                 modifier = Modifier
                     .fillMaxWidth()
@@ -221,41 +246,17 @@ fun ProjectsPage() {
                 ),
                 placeholder = {
                     Text(text = "Enter the project's title",
-                        fontSize = 10.sp,
+                        fontSize = 15.sp,
                         color = Color.Gray,
 
                         )}
             )
             Spacer(modifier = Modifier.height(20.dp))
 
-            Text(text = "Project deadline",
-                fontSize = 10.sp,
-                color = Color.White,
-                textAlign = TextAlign.Start,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, bottom = 10.dp)
-
-            )
-            TextField(value = date, onValueChange ={date=it},
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp)
-                    .clip(RoundedCornerShape(10.dp)),
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.White,
-                    unfocusedContainerColor = Color.White
-                ),
-                placeholder = {
-                    Text(text = "Select date",
-                        fontSize = 10.sp,
-                        color = Color.Gray,
-
-                        )}
-            )
             Button(onClick = {
-                /*TODO("add project")*/
+                /*TODO("add or edit project")*/
                 showAdd=false
+                currentItem=null
 
             },
                 modifier = Modifier
@@ -266,14 +267,30 @@ fun ProjectsPage() {
                 )
             ) {
                 Text(
-                    text = "Add project",
-                    fontSize = 11.sp,
+                    text = "${if(currentItem!=null) "Edit" else "Add"} project",
+                    fontSize = 15.sp,
                     color = colorResource(id = R.color.gray),
                     modifier = Modifier.padding(5.dp)
                 )
             }
         }
     }
-}}
+}
+if(showDelete){
+    DeleteDialog(
+        "Delete Project",
+        "project",
+        {showDelete=false},
+        {
+            Toast.makeText(c,"Project deleted",Toast.LENGTH_SHORT).show()
+            //TODO("delete project")
+            showDelete=false
+        }
+    )
+}
+
+}
+
+
 
 
