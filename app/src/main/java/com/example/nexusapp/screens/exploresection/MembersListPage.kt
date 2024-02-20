@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -44,6 +45,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -98,6 +100,12 @@ fun MembersListPage() {
                     mutableStateOf("")
                 }
                 var team by remember {
+                    mutableStateOf("")
+                }
+                var email by remember {
+                    mutableStateOf("")
+                }
+                var password by remember {
                     mutableStateOf("")
                 }
                 Column(
@@ -173,13 +181,71 @@ fun MembersListPage() {
 
                                 )}
                     )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(text = "Email",
+                        fontSize = 15.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, bottom = 10.dp)
+
+                    )
+                    TextField(value = email, onValueChange ={email=it},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp)
+                            .clip(RoundedCornerShape(10.dp)),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        ),
+                        placeholder = {
+                            Text(text = "Enter email",
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+
+                                )},
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
+                    Text(text = "Password",
+                        fontSize = 15.sp,
+                        color = Color.White,
+                        textAlign = TextAlign.Start,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, bottom = 10.dp)
+
+                    )
+                    TextField(value = password, onValueChange ={password=it},
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp)
+                            .clip(RoundedCornerShape(10.dp)),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        ),
+                        placeholder = {
+                            Text(text = "Enter password",
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+
+                                )},
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password)
+                    )
+                    Spacer(modifier = Modifier.height(20.dp))
                     Button(onClick = {
-                        members = members + MemberResponse(name, 0, team)
+                        //members = members + MemberResponse(name, 0, team)
+                        //TODO("add member")
                         name = ""
                         team= ""
+                        email=""
+                        password=""
                         Toast.makeText(context, "Member added", Toast.LENGTH_SHORT).show()
                         openAddMemberDialog.value = false
-                        //TODO("add member")
+
 
                     },
                         modifier = Modifier
