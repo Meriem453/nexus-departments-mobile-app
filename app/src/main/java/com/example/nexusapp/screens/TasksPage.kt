@@ -1,8 +1,10 @@
 package com.example.nexusapp.screens
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -79,16 +82,15 @@ val list = listOf(
     var showDelete by remember{
         mutableStateOf(false)
     }
-    /*var currentItem by remember {
+    var currentItem by remember {
         mutableStateOf<TasksResponse?>(null)
-    }*/
+    }
     var scroll = rememberScrollState()
 
     Column(
         Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(colorResource(id = R.color.gray))
-            .scrollable(state = scroll, orientation = Orientation.Vertical)
     ) {
         Header(
             title = project.title,
@@ -97,153 +99,179 @@ val list = listOf(
             showAdd = true
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = "ToDo",
-            fontSize = 20.sp,
-            color = Color.White,
-            modifier = Modifier.padding(start = 16.dp)
-        )
-        LazyRow(
-            Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp)){
-            itemsIndexed(list){ position,item ->
-                if(item.status=="ToDo"){
-                Card(
-                    modifier = Modifier
-                        .padding(7.dp)
-                        .width(150.dp),
-                    shape = RoundedCornerShape(20.dp),
-                    colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.card_bg)),
-                    onClick = {
-                        showDetails=true
-                    }
-                ) {
-                    Column(Modifier.padding(10.dp)) {
-                        Spacer(modifier =Modifier.height(10.dp))
-                        Text(
-                            text = item.team,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                            )
-                        Spacer(modifier =Modifier.height(10.dp))
-                        Text(
-                            text = item.title,
-                            fontSize = 20.sp,
-                            color = Color.White,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Spacer(modifier =Modifier.height(10.dp))
-                        Text(
-                            text = item.deadline,
-                            fontSize = 15.sp,
-                            color = Color.Gray
-                        )
-                        Spacer(modifier =Modifier.height(10.dp))
-
-                    }}
-                }
-            }
-        }
-        Spacer(modifier = Modifier.height(20.dp))
-        Text(
-            text = "In progress",
-            fontSize = 20.sp,
-            color = Color.White,
-            modifier = Modifier.padding(start = 16.dp)
-        )
         Column(
             Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, end = 16.dp)){
+                .verticalScroll(state = scroll)
+        ) {
 
-            list.forEachIndexed{ position,item ->
 
-                if(item.status=="InProgress"){
-                    var dismissState = rememberDismissState(DismissValue.Default)
-                    if(dismissState.currentValue==DismissValue.DismissedToEnd){
-                        //currentItem=item
-                       //TODO("done task")
+            Text(
+                text = "ToDo",
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+            LazyRow(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp)
+            ) {
+                itemsIndexed(list) { position, item ->
+                    if (item.status == "ToDo") {
+                        Card(
+                            modifier = Modifier
+                                .padding(7.dp)
+                                .width(150.dp),
+                            shape = RoundedCornerShape(20.dp),
+                            colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.card_bg)),
+                            onClick = {
+                                currentItem = item
+                                showAdd = true
+                            }
+                        ) {
+                            Column(Modifier.padding(10.dp)) {
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = item.team,
+                                    fontSize = 15.sp,
+                                    color = Color.Gray
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = item.title,
+                                    fontSize = 20.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+                                Text(
+                                    text = item.deadline,
+                                    fontSize = 15.sp,
+                                    color = Color.Gray
+                                )
+                                Spacer(modifier = Modifier.height(10.dp))
+
+                            }
+                        }
                     }
-
-                      SwipeToDismiss(directions = setOf(DismissDirection.StartToEnd),state = dismissState,
-                          background = {
-
-                              Row(horizontalArrangement = Arrangement.Start,
-                                  verticalAlignment = Alignment.CenterVertically,
-                                  modifier = Modifier
-                                      .fillMaxSize()
-                                      .padding(10.dp)
-                                      .clip(RoundedCornerShape(20.dp))
-                                      .background(colorResource(id = R.color.green))
-                              ) {
-                                  Text(text = "Done",
-                                      color = Color.White,
-                                      fontSize = 20.sp,
-                                      fontWeight = FontWeight.Bold,
-                                      modifier = Modifier.padding(10.dp)
-                                  )
-                              }
-                      }, dismissContent = {
-
-                              Card(
-                                  modifier = Modifier
-                                      .padding(bottom = 7.dp, top = 7.dp)
-                                      .fillMaxWidth(),
-                                  shape = RoundedCornerShape(20.dp),
-                                  colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.card_bg)),
-                                  onClick = {
-                                      showDetails=true
-                                  }
-                              ) {
-                                  Column(Modifier.padding(15.dp)) {
-                                      Spacer(modifier =Modifier.height(10.dp))
-                                      Text(
-                                          text = item.team,
-                                          fontSize = 15.sp,
-                                          color = Color.Gray
-                                      )
-                                      Spacer(modifier =Modifier.height(10.dp))
-                                      Text(
-                                          text = item.title,
-                                          fontSize = 20.sp,
-                                          color = Color.White,
-                                          fontWeight = FontWeight.Bold
-                                      )
-                                      Spacer(modifier =Modifier.height(10.dp))
-                                      Text(
-                                          text = item.deadline,
-                                          fontSize = 15.sp,
-                                          color = Color.Gray
-                                      )
-                                      Spacer(modifier =Modifier.height(10.dp))
-
-                                  }}
-                          })
-
                 }
+            }
+            Spacer(modifier = Modifier.height(20.dp))
+            Text(
+                text = "In progress",
+                fontSize = 20.sp,
+                color = Color.White,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp)
+            ) {
+
+                list.forEachIndexed { position, item ->
+
+                    if (item.status == "InProgress") {
+                        var dismissState = rememberDismissState(DismissValue.Default)
+                        if (dismissState.currentValue == DismissValue.DismissedToEnd) {
+                            //currentItem=item
+                            //TODO("done task")
+                        }
+
+                        SwipeToDismiss(modifier = Modifier
+                            .clickable {
+                                Log.d("edit",showAdd.toString())
+                                currentItem = item
+                                showAdd = true
+                            },
+                            directions = setOf(DismissDirection.StartToEnd), state = dismissState,
+                            background = {
+
+                                Row(
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .padding(10.dp)
+                                        .clip(RoundedCornerShape(20.dp))
+                                        .background(colorResource(id = R.color.green))
+                                ) {
+                                    Text(
+                                        text = "Done",
+                                        color = Color.White,
+                                        fontSize = 20.sp,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.padding(10.dp)
+                                    )
+                                }
+                            }, dismissContent = {
+
+                                Card(
+                                    modifier = Modifier
+                                        .padding(bottom = 7.dp, top = 7.dp)
+                                        .fillMaxWidth()
+                                        ,
+                                    shape = RoundedCornerShape(20.dp),
+                                    colors = CardDefaults.cardColors(
+                                        containerColor = colorResource(
+                                            id = R.color.card_bg
+                                        )
+                                    ),
+                                    onClick = {
+                                        showDetails = true
+                                    }
+                                ) {
+                                    Column(Modifier.padding(15.dp)) {
+                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Text(
+                                            text = item.team,
+                                            fontSize = 15.sp,
+                                            color = Color.Gray
+                                        )
+                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Text(
+                                            text = item.title,
+                                            fontSize = 20.sp,
+                                            color = Color.White,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Text(
+                                            text = item.deadline,
+                                            fontSize = 15.sp,
+                                            color = Color.Gray
+                                        )
+                                        Spacer(modifier = Modifier.height(10.dp))
+
+                                    }
+                                }
+                            })
+
+                    }
+                }
+
             }
 
         }
-        
-
     }
     if(showAdd){
         Dialog(onDismissRequest = {
+            currentItem=null
             showAdd=false
         }) {
 
             var title by remember {
-                mutableStateOf("")
+                mutableStateOf(currentItem?.title ?: "")
             }
             var desc by remember {
-                mutableStateOf("")
+                mutableStateOf(currentItem?.desc ?: "")
             }
             var deadline by remember {
-                mutableStateOf("")
+                mutableStateOf(currentItem?.deadline ?: "")
             }
             var team by remember {
-                mutableStateOf("")
+                mutableStateOf(currentItem?.team ?: "")
             }
             Column(
                 Modifier
@@ -258,7 +286,7 @@ val list = listOf(
                         .fillMaxWidth()
                         .padding(16.dp)
                 ){
-                    Text(text = "Add new task",
+                    Text(text = "${if(currentItem!=null) "Edit" else "Add new"} task",
                         fontSize = 20.sp,
                         color = Color.White,
 
@@ -373,7 +401,8 @@ val list = listOf(
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Button(onClick = {
-                    /*TODO("add task")*/
+                    /*TODO("add task or edit task")*/
+                    currentItem=null
                     showAdd=false
 
                 },
@@ -385,7 +414,7 @@ val list = listOf(
                     )
                 ) {
                     Text(
-                        text = "Add task",
+                        text = "${if(currentItem!=null) "Edit" else "Add"} task",
                         fontSize = 15.sp,
                         color = colorResource(id = R.color.gray),
                         modifier = Modifier.padding(5.dp)

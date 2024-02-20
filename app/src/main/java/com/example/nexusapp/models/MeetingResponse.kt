@@ -4,5 +4,6 @@ data class MeetingResponse(
     val id:Int,
     val title:String,
     val date:String,
-    val team_id : Int
+    val team_id : Int,
+    val description : String
 )

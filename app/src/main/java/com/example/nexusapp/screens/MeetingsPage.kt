@@ -58,11 +58,12 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun MeetingsPage() {
     val list= listOf(
-        MeetingResponse(1,"New meeting","4/5/2024",2),
-        MeetingResponse(1,"New meeting","4/5/2024",2),
-        MeetingResponse(1,"New meeting","4/5/2024",2),
-        MeetingResponse(1,"New meeting","4/5/2024",2),
-        MeetingResponse(1,"New meeting","4/5/2024",2),
+        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
+        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
+        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
+        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
+        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
+
     )
 Column(modifier = Modifier
     .fillMaxSize()
@@ -205,6 +206,10 @@ Column(modifier = Modifier
             var date by remember {
                 mutableStateOf(currentItem?.date ?: "")
             }
+            var desc by remember {
+                mutableStateOf(currentItem?.description ?: "")
+            }
+
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -275,6 +280,32 @@ Column(modifier = Modifier
                             color = Color.Gray,
 
                             )}
+                )
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(text = "Meeting description",
+                    fontSize = 15.sp,
+                    color = Color.White,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, bottom = 10.dp)
+
+                )
+                TextField(value = desc , onValueChange ={desc=it},
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp)
+                        .clip(RoundedCornerShape(10.dp)),
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White
+                    ),
+                    placeholder = {
+                        Text(text = "Enter meeting's description",
+                            fontSize = 15.sp,
+                            color = Color.Gray,
+
+                            )},
+                    minLines = 4
                 )
                 Button(onClick = {
                     /*TODO("add or edit meeting")*/
