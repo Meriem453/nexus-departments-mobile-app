@@ -37,7 +37,7 @@ fun ExplorePage(navigator:DestinationsNavigator) {
     var currentScreen by remember { mutableStateOf<Screen?>(null) }
 
     Scaffold(Modifier.background(Color(0xFF2A2A2A))) {
-        val exploreItemsList = listOf("Calendar", "Members List", "Meetings", "Tasks", "Projects", "Help and Problems")
+        val exploreItemsList = listOf("Calendar", "Members List", "Meetings","Projects")
         ExploreHeader()
 
         Column(
@@ -56,7 +56,7 @@ fun ExplorePage(navigator:DestinationsNavigator) {
                         "Calendar"-> navigator.navigate(CalendarDestination)
                         "Meetings"->navigator.navigate(MeetingsPageDestination)
                         "Projects" -> navigator.navigate(ProjectsPageDestination)
-                        "Help and Problems"-> navigator.navigate(IssuesPageDestination)
+                        //"Help and Problems"-> navigator.navigate(IssuesPageDestination)
 
                         // the other items here
                     }

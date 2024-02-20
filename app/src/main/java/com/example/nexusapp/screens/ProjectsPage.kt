@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -46,11 +47,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import com.example.destinations.TasksPageDestination
 import com.example.nexusapp.R
 import com.example.nexusapp.models.ProjectResponse
 import com.example.nexusapp.screens.components.DeleteDialog
 import com.example.nexusapp.screens.components.Header
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+
 val list = listOf(
     ProjectResponse(1,"Project","1","5","3"),
     ProjectResponse(1,"Project","1","5","3"),
@@ -61,10 +65,9 @@ val list = listOf(
 
     )
 @OptIn(ExperimentalMaterial3Api::class)
-@Preview
 @Destination
 @Composable
-fun ProjectsPage() {
+fun ProjectsPage(navigator: DestinationsNavigator) {
     val c = LocalContext.current
     var showAdd by remember {
         mutableStateOf(false)
@@ -111,7 +114,11 @@ fun ProjectsPage() {
                     dismissState= DismissState(DismissValue.Default)
 
 
-                SwipeToDismiss(state = dismissState,
+                SwipeToDismiss(
+                    modifier = Modifier.clickable {
+                                         navigator.navigate(TasksPageDestination(item))
+                    },
+                    state = dismissState,
                     background = {
 
                                 Row(horizontalArrangement = Arrangement.SpaceBetween,
@@ -145,8 +152,9 @@ fun ProjectsPage() {
                                         )
                                     )
                                 }
-                }, dismissContent = {
-                    Column(
+                              },
+                     dismissContent = {
+                     Column(
                         modifier= Modifier
                             .fillMaxWidth()
                             .padding(10.dp)
