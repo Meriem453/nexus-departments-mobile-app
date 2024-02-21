@@ -2,6 +2,7 @@ package com.example.nexusapp.Repo
 
 import android.util.Log
 import com.example.nexusapp.api.Api
+import com.example.nexusapp.models.EventResponse
 import com.example.nexusapp.models.HomePageResponse.HomePageResponse
 import com.example.nexusapp.models.MeetingResponse
 import com.example.nexusapp.models.MemberResponse
@@ -53,4 +54,11 @@ class Repository @Inject constructor(
         }
     }
 
+    suspend fun getEvents(): List<EventResponse> {
+        return try {
+            api.eventsList()
+        } catch (_: Exception) {
+            emptyList<EventResponse>()
+        }
+    }
 }

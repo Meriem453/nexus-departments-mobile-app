@@ -1,6 +1,9 @@
 package com.example.nexusapp.screens
 
 
+import android.content.Intent
+import android.view.View
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -20,11 +23,14 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
+
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -42,15 +49,32 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.nexusapp.MainActivity
 import com.example.nexusapp.R
+import com.example.nexusapp.Storage.SharedPrefManager
+import com.example.nexusapp.api.RetrofitClient
+import com.example.nexusapp.models.EventResponse
+import com.example.nexusapp.models.LoginResponse
 import com.example.nexusapp.screens.components.Header
 import com.example.nexusapp.ui.theme.NexusAppTheme
+import com.example.nexusapp.viewmodels.EventsVM
 import com.ramcosta.composedestinations.annotation.Destination
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import kotlin.properties.Delegates
 
 data class day(val num:Int,val letter:String)
+
 @Destination
 @Composable
 fun Calendar() {
+    val membersViewModel = hiltViewModel<EventsVM>()
+    val state by membersViewModel.state.collectAsState()
+
+    var loading by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     var showAdd by remember {
         mutableStateOf(false)
     }
@@ -183,7 +207,25 @@ Scaffold(
                             )}
                 )
                 Button(onClick = {
-                    /*TODO("add event")*/
+                    loading = true
+                    RetrofitClient.instance.addEvent(name, date)
+                        .enqueue(object: Callback<EventResponse>{
+                            override fun onFailure(call: Call<EventResponse>, t: Throwable) {
+                                Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
+                                loading = false
+                            }
+                            override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
+                                if(response.body()?.id!=null){
+                                    val event : EventResponse = response.body()!!
+                                    Toast.makeText(context, "Event added successfully:", Toast.LENGTH_SHORT).show()
+                                }else{
+                                    val errorMessage = response.errorBody()?.string()
+                                    Toast.makeText(context, response.message()+":"+ errorMessage, Toast.LENGTH_LONG).show()
+                                }
+                                loading = false
+                            }
+                        })
+
                     showAdd=false
 
                 },
@@ -194,12 +236,23 @@ Scaffold(
                         containerColor = colorResource(id = R.color.green)
                     )
                 ) {
-                    Text(
-                        text = "Add event",
-                        fontSize = 15.sp,
-                        color = colorResource(id = R.color.gray),
-                        modifier = Modifier.padding(5.dp)
-                    )
+
+                    if (loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(4.dp),
+                            color = Color.White
+                        )
+                    } else {
+                        Text(
+                            text = "Add event",
+                            fontSize = 15.sp,
+                            color = colorResource(id = R.color.gray),
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
+
                 }
             }
         }
@@ -314,3 +367,4 @@ fun Preview() {
        Calendar()
     }
 }
+

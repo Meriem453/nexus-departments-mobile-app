@@ -46,6 +46,7 @@ class loginPage : AppCompatActivity() {
                     .enqueue(object: Callback<LoginResponse>{
                         override fun onFailure(call: Call<LoginResponse>, t: Throwable) {
                             Toast.makeText(applicationContext, t.message, Toast.LENGTH_LONG).show()
+                            progressBar.visibility = View.GONE
                         }
                         override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
 
@@ -62,7 +63,7 @@ class loginPage : AppCompatActivity() {
                             }else{
                                 progressBar.visibility = View.GONE
                                 val errorMessage = response.errorBody()?.string()
-                                Toast.makeText(applicationContext, response.message()+"h:"+ errorMessage, Toast.LENGTH_LONG).show()
+                                Toast.makeText(applicationContext, response.message()+":"+ errorMessage, Toast.LENGTH_LONG).show()
                             }
                         }
                     })
