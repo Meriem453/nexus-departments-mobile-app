@@ -1,6 +1,8 @@
 package com.example.nexusapp.api
 
+import com.example.nexusapp.models.EventResponse
 import com.example.nexusapp.models.HomePageResponse.HomePageResponse
+import com.example.nexusapp.models.HomePageResponse.Project
 import com.example.nexusapp.models.LoginResponse
 import com.example.nexusapp.models.MeetingResponse
 import com.example.nexusapp.models.MemberResponse
@@ -40,4 +42,22 @@ interface Api {
     suspend fun projectsList(
         @Path("token") token:String
     ):List<ProjectResponse>
+
+    @FormUrlEncoded
+    @POST("event/addEvent")
+    fun addEvent(
+        @Field("name") name:String,
+        @Field("date") date: String
+    ): Call<EventResponse>
+
+    @GET("event/all")
+    suspend fun eventsList():List<EventResponse>
+
+    @FormUrlEncoded
+    @POST("project/addProject")
+    fun addProject(
+        @Field("title") title:String,
+        @Field("user_id") user_id: Int,
+        @Field("progress") progress:Int
+    ): Call<Project>
 }
