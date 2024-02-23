@@ -140,19 +140,44 @@ class Repository @Inject constructor(
             }
         }
     }
-    suspend fun getManagerMeetings(): List<MeetingResponse> {
-        return try {
-            api.meetingsList(token!!)
-        } catch (_: Exception) {
-            emptyList<MeetingResponse>()
+    suspend fun getManagerMeetings(): Flow<Resource<List<MeetingResponse>>>{
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val meetings=api.meetingsList(token!!)
+                emit(Resource.Success(meetings,"Success fetching meetings"))
+
+            } catch (e: Exception) {
+                emit(Resource.Failed(e.localizedMessage))
+            }
         }
     }
 //projects
-    suspend fun getManagerProjects(): List<ProjectResponse> {
-        return try {
-            api.projectsList(token!!)
-        } catch (_: Exception) {
-            emptyList<ProjectResponse>()
+    suspend fun getManagerProjects(): Flow<Resource<List<ProjectResponse>>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+            val projects = api.projectsList(token!!)
+                emit(Resource.Success(projects,"Success fetching projects"))
+        } catch (e: Exception) {
+            emit(Resource.Failed(e.localizedMessage))
+        }
+      }
+    }
+
+    suspend fun addProject(projectResponse: Project):Flow<Resource<Project>>{
+        return flow<Resource<Project>> {
+            emit(Resource.Loading())
+            try {
+                val project=api.addProject(
+                    projectResponse.title,
+                    projectResponse.progress,
+                    token!!
+                )
+                emit(Resource.Success(project,"Success adding project"))
+            }catch (e:Exception){
+                emit(Resource.Failed(e.localizedMessage))
+            }
         }
     }
 

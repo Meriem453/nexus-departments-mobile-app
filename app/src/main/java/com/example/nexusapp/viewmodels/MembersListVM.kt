@@ -26,6 +26,36 @@ class MembersListVM @Inject constructor(
     val state: StateFlow<List<MemberResponse>>
         get() = _state
 
+    fun addMember(memberResponse: MemberResponse,team_id: Int):Resource<MemberResponse>{
+        var result by  mutableStateOf<Resource<MemberResponse>>(Resource.Loading())
+        viewModelScope.launch {
+            repo.addMember(memberResponse,team_id).collect{
+                result=it
+            }
+        }
+        return result
+    }
+
+    fun updateMember(memberResponse: MemberResponse, team_id:Int):Resource<MemberResponse>{
+        var result by  mutableStateOf<Resource<MemberResponse>>(Resource.Loading())
+        viewModelScope.launch {
+            repo.editMember(memberResponse,team_id).collect{
+                result=it
+            }
+        }
+        return result
+    }
+
+    fun deleteMember(id:Int):Resource<String>{
+        var result by  mutableStateOf<Resource<String>>(Resource.Loading())
+        viewModelScope.launch {
+            repo.deleteMember(id).collect{
+                result=it
+            }
+        }
+        return result
+    }
+
 
     init {
 

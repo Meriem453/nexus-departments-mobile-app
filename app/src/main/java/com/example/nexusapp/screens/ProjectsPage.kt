@@ -56,12 +56,12 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 val list = listOf(
-    ProjectResponse(1,"Project","1","5","3"),
-    ProjectResponse(1,"Project","1","5","3"),
-    ProjectResponse(1,"Project","1","5","3"),
-    ProjectResponse(1,"Project","1","5","3"),
-    ProjectResponse(1,"Project","1","5","3"),
-    ProjectResponse(1,"Project","1","5","3"),
+    ProjectResponse(1,"Project","1","5","3",30),
+    ProjectResponse(1,"Project","1","5","3",30),
+    ProjectResponse(1,"Project","1","5","3",30),
+    ProjectResponse(1,"Project","1","5","3",30),
+    ProjectResponse(1,"Project","1","5","3",30),
+    ProjectResponse(1,"Project","1","5","3",30),
 
     )
 @OptIn(ExperimentalMaterial3Api::class)

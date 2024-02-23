@@ -45,11 +45,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nexusapp.R
+import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.MeetingResponse
 import com.example.nexusapp.models.ProjectResponse
 import com.example.nexusapp.screens.components.DeleteDialog
 import com.example.nexusapp.screens.components.Header
+import com.example.nexusapp.viewmodels.MeetingsVM
 import com.ramcosta.composedestinations.annotation.Destination
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,6 +73,7 @@ Column(modifier = Modifier
     .background(colorResource(id = R.color.gray))
 ) {
     val c = LocalContext.current
+    val viewModel= hiltViewModel<MeetingsVM>()
     var showAdd by remember {
         mutableStateOf(false)
     }
@@ -308,7 +312,15 @@ Column(modifier = Modifier
                     minLines = 4
                 )
                 Button(onClick = {
-                    /*TODO("add or edit meeting")*/
+
+                    if(currentItem==null){
+                        val result = viewModel.addMeeting(
+                            MeetingResponse(0, title, date, 1, desc)
+                        )
+                       Toast.makeText(c,result.message,Toast.LENGTH_LONG).show()
+                    }else{
+                        /*TODO("add or edit meeting")*/
+                    }
                     showAdd=false
                     currentItem=null
 

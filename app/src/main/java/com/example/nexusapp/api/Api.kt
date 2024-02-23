@@ -39,6 +39,7 @@ interface Api {
         @Path("token") token:String
     ):List<MemberResponse>
 
+    @FormUrlEncoded
     @POST("member/register")
     suspend fun addMember(
         @Field("name") name:String,
@@ -49,6 +50,7 @@ interface Api {
         @Field("department_id") department_id:Int
     ):MemberResponse
 
+    @FormUrlEncoded
     @PUT("member/{id}")
     suspend fun editMember(
         @Field("name") name:String,
@@ -70,6 +72,7 @@ interface Api {
         @Path("token") token:String
     ):List<MeetingResponse>
 
+    @FormUrlEncoded
     @POST("meeting/create")
     suspend fun createMeeting(
         @Field("title") title:String,
@@ -78,6 +81,7 @@ interface Api {
         @Field("description") description:String
     ):MeetingResponse
 
+    @FormUrlEncoded
     @PUT("meeting/update")
     suspend fun updateMeeting(
         @Field("id") id:Int,
@@ -102,7 +106,6 @@ interface Api {
     @POST("project/addProject/{token}")
     suspend fun addProject(
         @Field("title") title:String,
-        @Field("user_id") user_id: Int,
         @Field("progress") progress:Int,
         @Path("token") token: String
     ): Project
@@ -141,6 +144,7 @@ interface Api {
     @GET("tasks/all")
     suspend fun getAllTasks():List<TaskResponse>
 
+    @FormUrlEncoded
     @POST("tasks/create")
     suspend fun createTask(
         @Field("title") title:String,
@@ -150,6 +154,7 @@ interface Api {
         @Field("team_id") team_id:Int,
         @Field("project_id") project_id:Int,
     ):TaskResponse
+    @FormUrlEncoded
     @POST("tasks/update")
     suspend fun updateTask(
         @Field("id") id:Int,
@@ -169,12 +174,14 @@ interface Api {
     @GET("team/all")
     suspend fun getAllTeams():List<TeamResponse>
 
+    @FormUrlEncoded
     @POST("team/create")
     suspend fun createTeam(
         @Field("name") name: String,
         @Field("color") color:String,
     ):TeamResponse
 
+    @FormUrlEncoded
     @PUT("team/update")
     suspend fun updateTeam(
         @Field("id") id:Int,

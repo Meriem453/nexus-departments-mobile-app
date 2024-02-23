@@ -7,48 +7,48 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nexusapp.Repo.Repository
 import com.example.nexusapp.Repo.Resource
-import com.example.nexusapp.models.TaskResponse
+import com.example.nexusapp.models.TeamResponse
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class TasksVM @Inject constructor(
+class TeamsVM @Inject constructor(
     private val repo: Repository
-) : ViewModel() {
+) : ViewModel()  {
 
-    var tasks by mutableStateOf<Resource<List<TaskResponse>>>(Resource.Loading())
+    var teams by mutableStateOf<Resource<List<TeamResponse>>>(Resource.Loading())
 
-    fun getAllTasks(){
+    fun getAllTeams(){
         viewModelScope.launch {
-            repo.getAllTasks().collect{
-                tasks=it
+            repo.getAllTeams().collect{
+                teams=it
             }
         }
     }
 
-    fun addTasks(taskResponse: TaskResponse): Resource<TaskResponse> {
-        var result by  mutableStateOf<Resource<TaskResponse>>(Resource.Loading())
+    fun addTeam(teamResponse: TeamResponse): Resource<TeamResponse> {
+        var result by  mutableStateOf<Resource<TeamResponse>>(Resource.Loading())
         viewModelScope.launch {
-            repo.addTask(taskResponse).collect{
+            repo.addTeam(teamResponse).collect{
                 result=it
             }
         }
         return result
     }
 
-    fun updateTask(taskResponse: TaskResponse): Resource<TaskResponse> {
-        var result by  mutableStateOf<Resource<TaskResponse>>(Resource.Loading())
+    fun updateTeam(teamResponse: TeamResponse): Resource<TeamResponse> {
+        var result by  mutableStateOf<Resource<TeamResponse>>(Resource.Loading())
         viewModelScope.launch {
-            repo.updateTask(taskResponse).collect{
+            repo.updateTeam(teamResponse).collect{
                 result=it
             }
         }
         return result
     }
 
-    fun deleteTask(id:Int): Resource<String> {
+    fun deleteTeam(id:Int): Resource<String> {
         var result by  mutableStateOf<Resource<String>>(Resource.Loading())
         viewModelScope.launch {
-            repo.deleteTask(id).collect{
+            repo.deleteTeam(id).collect{
                 result=it
             }
         }
@@ -57,6 +57,6 @@ class TasksVM @Inject constructor(
 
 
     init {
-        getAllTasks()
+        getAllTeams()
     }
 }
