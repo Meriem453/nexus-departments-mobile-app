@@ -224,6 +224,17 @@ class Repository @Inject constructor(
             }
         }
     }
+    suspend fun addEvent(name:String,date:String,details: String): Flow<Resource<EventResponse>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val event = api.addEvent( name ,  date , details)
+                emit(Resource.Success(event,"Success fetching events"))
+            } catch (e: Exception) {
+                emit(Resource.Failed(e.localizedMessage))
+            }
+        }
+    }
     suspend fun deleteEvent(id:Int):Flow<Resource<String>>{
         return flow {
             emit(Resource.Loading())

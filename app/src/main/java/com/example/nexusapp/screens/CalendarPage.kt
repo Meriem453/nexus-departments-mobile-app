@@ -208,14 +208,16 @@ fun Calendar() {
                 )
                 Button(onClick = {
                     loading = true
-                    eventsViewModel.addEvent(name,date)
+                    eventsViewModel.addEvent(name,date,"add details here")
                     if(eventsViewModel.event is Resource.Success){
                         Toast.makeText(context, "added succussfully :"+eventsViewModel.event.data!!.id, Toast.LENGTH_SHORT).show()
+                        showAdd=false
                     }
                     if(eventsViewModel.event is Resource.Failed){
                         Toast.makeText(context, "Error:"+eventsViewModel.event.message, Toast.LENGTH_SHORT).show()
+                        showAdd=false
                     }
-                    showAdd=false
+
 
                 },
                     modifier = Modifier

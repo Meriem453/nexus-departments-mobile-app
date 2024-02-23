@@ -128,8 +128,9 @@ interface Api {
     @POST("event/addEvent")
     fun addEvent(
         @Field("name") name:String,
-        @Field("date") date: String
-    ): Call<EventResponse>
+        @Field("date") date: String,
+        @Field("details") details: String
+    ): EventResponse
 
     @GET("event/all")
     suspend fun eventsList():List<EventResponse>

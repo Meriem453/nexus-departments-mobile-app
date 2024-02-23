@@ -31,12 +31,12 @@ class EventsVM @Inject constructor(
         }
     }
 
-    fun addEvent(name: String, date: String) {
+    fun addEvent(name: String, date: String,details: String) {
         viewModelScope.launch {
-            /*repo.(name, date).collect {
+            repo.addEvent(name, date,details).collect {
                 event = it
 
-            }*/
+            }
         }
     }
 
