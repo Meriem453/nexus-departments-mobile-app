@@ -140,6 +140,10 @@ interface Api {
     @GET("event/next")
     suspend fun nextEvent():List<EventResponse>
 
+    @DELETE("event/delete/{id}")
+   suspend fun deleteEvent(
+       @Path("id") id:Int
+   )
     //Tasks/////////////////////////////////////////////////////////////////////////////////////////
     @GET("tasks/all")
     suspend fun getAllTasks():List<TaskResponse>

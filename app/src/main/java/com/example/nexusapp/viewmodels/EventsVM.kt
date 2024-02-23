@@ -1,35 +1,55 @@
 package com.example.nexusapp.viewmodels
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.nexusapp.Repo.Repository
+import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.EventResponse
-import com.example.nexusapp.models.MemberResponse
+import com.example.nexusapp.models.HomePageResponse.Event
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import retrofit2.Call
 import javax.inject.Inject
 
 @HiltViewModel
 class EventsVM @Inject constructor(
     private val repo: Repository
-) : ViewModel() {
+):ViewModel() {
 
-    private val _state = MutableStateFlow(emptyList<EventResponse>())
-    val state: StateFlow<List<EventResponse>>
-        get() = _state
-
-
-    init {
-
+    var eventsList by mutableStateOf<Resource<List<EventResponse>>>(Resource.Loading())
+    var eventDelete by mutableStateOf<Resource<String>>(Resource.Loading())
+    var event by mutableStateOf<Resource<EventResponse>>(Resource.Loading())
+    fun getEventsList() {
         viewModelScope.launch {
-            val events = repo.getEvents()
-            _state.value =events
+            repo.getEvents().collect {
+                eventsList = it
+
+            }
         }
-
-
     }
 
+    fun addEvent(name: String, date: String) {
+        viewModelScope.launch {
+            /*repo.(name, date).collect {
+                event = it
 
+            }*/
+        }
+    }
+
+    fun deleteEvent(id: Int) {
+        viewModelScope.launch {
+            repo.deleteEvent(id).collect {
+                eventDelete = it
+
+            }
+        }
+    }
+
+    init {
+        getEventsList()
+    }
 }

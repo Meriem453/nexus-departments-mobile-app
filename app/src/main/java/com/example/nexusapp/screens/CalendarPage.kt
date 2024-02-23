@@ -52,6 +52,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nexusapp.MainActivity
 import com.example.nexusapp.R
+import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.Storage.SharedPrefManager
 import com.example.nexusapp.api.RetrofitClient
 import com.example.nexusapp.models.EventResponse
@@ -70,8 +71,7 @@ data class day(val num:Int,val letter:String)
 @Destination
 @Composable
 fun Calendar() {
-    val membersViewModel = hiltViewModel<EventsVM>()
-    val state by membersViewModel.state.collectAsState()
+    val eventsViewModel = hiltViewModel<EventsVM>()
 
     var loading by remember { mutableStateOf(false) }
     val context = LocalContext.current
@@ -94,35 +94,35 @@ fun Calendar() {
 
                 ))
     }
-Scaffold(
-    Modifier
-        .fillMaxSize()
-        ) {
-    it
-    Column(
+    Scaffold(
         Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.gray)), horizontalAlignment = Alignment.CenterHorizontally) {
-       Header(
-           "Calendar",
-           painterResource(id = R.drawable.calendar),
-           {
-               //TODO("naviagte to main menu")
-           }
-       ){
-           showAdd=true
-       }
-        Text(text = "February",
-            color = Color.White,
-            fontSize = 16.sp,
-            modifier = Modifier.padding(top = 50.dp, bottom = 15.dp),
-            textAlign = TextAlign.Center
-        )
-        TimeLine(days)
-        Event()
+    ) {
+        it
+        Column(
+            Modifier
+                .fillMaxSize()
+                .background(colorResource(id = R.color.gray)), horizontalAlignment = Alignment.CenterHorizontally) {
+            Header(
+                "Calendar",
+                painterResource(id = R.drawable.calendar),
+                {
+                    //TODO("naviagte to main menu")
+                }
+            ){
+                showAdd=true
+            }
+            Text(text = "February",
+                color = Color.White,
+                fontSize = 16.sp,
+                modifier = Modifier.padding(top = 50.dp, bottom = 15.dp),
+                textAlign = TextAlign.Center
+            )
+            TimeLine(days)
+            Event()
 
+        }
     }
-}
 
     if(showAdd){
         Dialog(onDismissRequest = { showAdd=false }) {
@@ -208,24 +208,13 @@ Scaffold(
                 )
                 Button(onClick = {
                     loading = true
-                    RetrofitClient.instance.addEvent(name, date)
-                        .enqueue(object: Callback<EventResponse>{
-                            override fun onFailure(call: Call<EventResponse>, t: Throwable) {
-                                Toast.makeText(context, t.message, Toast.LENGTH_LONG).show()
-                                loading = false
-                            }
-                            override fun onResponse(call: Call<EventResponse>, response: Response<EventResponse>) {
-                                if(response.body()?.id!=null){
-                                    val event : EventResponse = response.body()!!
-                                    Toast.makeText(context, "Event added successfully:", Toast.LENGTH_SHORT).show()
-                                }else{
-                                    val errorMessage = response.errorBody()?.string()
-                                    Toast.makeText(context, response.message()+":"+ errorMessage, Toast.LENGTH_LONG).show()
-                                }
-                                loading = false
-                            }
-                        })
-
+                    eventsViewModel.addEvent(name,date)
+                    if(eventsViewModel.event is Resource.Success){
+                        Toast.makeText(context, "added succussfully :"+eventsViewModel.event.data!!.id, Toast.LENGTH_SHORT).show()
+                    }
+                    if(eventsViewModel.event is Resource.Failed){
+                        Toast.makeText(context, "Error:"+eventsViewModel.event.message, Toast.LENGTH_SHORT).show()
+                    }
                     showAdd=false
 
                 },
@@ -325,37 +314,37 @@ fun TimeLine(days:List<day>) {
             )
     ){
 
-         itemsIndexed(days){position,day->
+        itemsIndexed(days){position,day->
 
-             Column(
-                 horizontalAlignment = Alignment.CenterHorizontally,
-                 modifier = Modifier
-                     .padding(15.dp)
-                     .clip(RoundedCornerShape(13.dp))
-                     .background(
-                         if (selectedDay == position) colorResource(id = R.color.green)
-                         else colorResource(id = R.color.gray)
-                     )
-                     .clickable { selectedDay = position }
-             ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier
+                    .padding(15.dp)
+                    .clip(RoundedCornerShape(13.dp))
+                    .background(
+                        if (selectedDay == position) colorResource(id = R.color.green)
+                        else colorResource(id = R.color.gray)
+                    )
+                    .clickable { selectedDay = position }
+            ) {
                 Text(text = day.num.toString(),
                     fontSize = 16.sp,
                     color = if (position==selectedDay) colorResource(id = R.color.gray)
                     else Color.White,
                     modifier = Modifier.padding(top=15.dp, start = 15.dp, end = 15.dp)
-                    )
-                 Spacer(modifier = Modifier
-                     .fillMaxWidth()
-                     .size(10.dp))
-                 Text(text = day.letter,
-                     fontSize = 16.sp,
-                     color = if (position==selectedDay) colorResource(id = R.color.gray)
-                     else Color.White,
-                     modifier = Modifier.padding(bottom =15.dp, start = 15.dp, end = 15.dp)
-                 )
-             }
+                )
+                Spacer(modifier = Modifier
+                    .fillMaxWidth()
+                    .size(10.dp))
+                Text(text = day.letter,
+                    fontSize = 16.sp,
+                    color = if (position==selectedDay) colorResource(id = R.color.gray)
+                    else Color.White,
+                    modifier = Modifier.padding(bottom =15.dp, start = 15.dp, end = 15.dp)
+                )
+            }
 
-         }
+        }
     }
 }
 
@@ -364,7 +353,7 @@ fun TimeLine(days:List<day>) {
 @Composable
 fun Preview() {
     NexusAppTheme {
-       Calendar()
+        Calendar()
     }
 }
 

@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bumptech.glide.integration.compose.RequestState
 import com.example.nexusapp.Repo.Repository
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.HomePageResponse.HomePageResponse
@@ -22,9 +23,8 @@ class MembersListVM @Inject constructor(
     private val repo: Repository
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow(emptyList<MemberResponse>())
-    val state: StateFlow<List<MemberResponse>>
-        get() = _state
+    var membersList by mutableStateOf<Resource<List<MemberResponse>>>(Resource.Loading())
+
 
     fun addMember(memberResponse: MemberResponse,team_id: Int):Resource<MemberResponse>{
         var result by  mutableStateOf<Resource<MemberResponse>>(Resource.Loading())
@@ -60,8 +60,10 @@ class MembersListVM @Inject constructor(
     init {
 
         viewModelScope.launch {
-            val members = repo.getMembersList()
-            _state.value =members
+           repo.getMembersList().collect{
+                membersList = it
+            }
+
         }
 
 

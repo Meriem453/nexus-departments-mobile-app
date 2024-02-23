@@ -35,11 +35,15 @@ class Repository @Inject constructor(
 
     //members
 
-    suspend fun getMembersList(): List<MemberResponse> {
-        return try {
-            api.membersList(token!!)
-        } catch (_: Exception) {
-            emptyList<MemberResponse>()
+    suspend fun getMembersList(): Flow<Resource<List<MemberResponse>>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val members=api.membersList(token!!)
+                emit(Resource.Success(members,"Success fetching members"))
+            } catch (e: Exception) {
+                emit(Resource.Failed(e.localizedMessage))
+            }
         }
 
     }
@@ -209,11 +213,26 @@ class Repository @Inject constructor(
         }
     }
 //events
-    suspend fun getEvents(): List<EventResponse> {
-        return try {
-            api.eventsList()
-        } catch (_: Exception) {
-            emptyList<EventResponse>()
+    suspend fun getEvents(): Flow<Resource<List<EventResponse>>> {
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val events = api.eventsList()
+                emit(Resource.Success(events,"Success fetching events"))
+            } catch (e: Exception) {
+                emit(Resource.Failed(e.localizedMessage))
+            }
+        }
+    }
+    suspend fun deleteEvent(id:Int):Flow<Resource<String>>{
+        return flow {
+            emit(Resource.Loading())
+            try {
+                api.deleteEvent(id)
+                emit(Resource.Success("","event deleted"))
+            }catch (e:Exception){
+                emit(Resource.Failed(e.localizedMessage))
+            }
         }
     }
 

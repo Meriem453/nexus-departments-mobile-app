@@ -54,7 +54,9 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nexusapp.R
+import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.MemberResponse
+import com.example.nexusapp.viewmodels.HomePageVM
 import com.example.nexusapp.viewmodels.MembersListVM
 import com.ramcosta.composedestinations.annotation.Destination
 import kotlinx.coroutines.delay
@@ -73,22 +75,14 @@ fun MembersListPagePrev() {
 @Destination
 @Composable
 fun MembersListPage() {
-
     val membersViewModel = hiltViewModel<MembersListVM>()
-    val state by membersViewModel.state.collectAsState()
-
-    var loading by remember { mutableStateOf(true) }
 
 
-    LaunchedEffect(Unit) {
-        delay(3000L) // 3 seconds
-        loading = false // Hide the progress bar after 3 seconds
-    }
+
 
 
     val context = LocalContext.current
 
-    var members by remember { mutableStateOf(state) }
     val openAddMemberDialog = remember { mutableStateOf(false) }
 
 
@@ -270,8 +264,8 @@ fun MembersListPage() {
 
 
     Scaffold {
-    it
-}
+        it
+    }
 
     MembersListHeader({openAddMemberDialog.value = false}, {openAddMemberDialog.value = true})
     Column {
@@ -280,14 +274,15 @@ fun MembersListPage() {
         MemberDataHeader()
         Spacer(modifier = Modifier.height(10.dp))
         Spacer(modifier = Modifier.height(5.dp))
-        if (loading && state.isEmpty()) {
+        if(membersViewModel.membersList is Resource.Loading) {
             // Show CircularProgressIndicator while loading
             CircularProgressIndicator(
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentSize(align = Alignment.Center)
             )
-        } else if (state.isEmpty()) {
+        }
+        if (membersViewModel.membersList is Resource.Failed) {
             // Data is not received and loading is false, display a "No members" message
             Text(
                 text = "No members",
@@ -296,9 +291,17 @@ fun MembersListPage() {
                     .padding(16.dp),
                 textAlign = TextAlign.Center, color = Color.White
             )
-        } else{
+            Text(
+                text = "check your internet connection.",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                textAlign = TextAlign.Center, color = Color.White
+            )
+        }
+        if(membersViewModel.membersList is Resource.Success){
             LazyColumn(modifier = Modifier.padding(15.dp)) {
-                items(state) {item: MemberResponse ->
+                items(membersViewModel.membersList.data!!) {item: MemberResponse ->
                     MemberDataView(name = item.name, points = item.points , team = item.team)
                     Spacer(modifier = Modifier.height(5.dp))
                 }
@@ -309,15 +312,6 @@ fun MembersListPage() {
             }
         }
 
-        if (!loading && state.isEmpty()) {
-            Text(
-                text = "check your internet connection.",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                textAlign = TextAlign.Center, color = Color.White
-            )
-        }
 
     }
 
