@@ -228,8 +228,8 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val event = api.addEvent( name ,  date , details)
-                emit(Resource.Success(event,"Success fetching events"))
+                api.addEvent( name ,  date , details)
+                emit(Resource.Success(EventResponse(0,name, date, details),"Success fetching events"))
             } catch (e: Exception) {
                 emit(Resource.Failed(e.localizedMessage))
             }

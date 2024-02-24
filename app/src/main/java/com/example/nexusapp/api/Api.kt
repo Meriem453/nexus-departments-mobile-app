@@ -130,7 +130,7 @@ interface Api {
         @Field("name") name:String,
         @Field("date") date: String,
         @Field("details") details: String
-    ): EventResponse
+    )
 
     @GET("event/all")
     suspend fun eventsList():List<EventResponse>

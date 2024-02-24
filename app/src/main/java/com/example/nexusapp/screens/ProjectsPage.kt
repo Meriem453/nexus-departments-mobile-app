@@ -186,7 +186,7 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
                             //Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
                         }
 
-                            Text(text = "${item.completed_tasks}/${item.total_tasks} ${item.completed_tasks.toInt() * 100 / item.total_tasks.toInt()}% Tasks",
+                            Text(text = "${item.completed_tasks}/${item.total_tasks} Tasks ${item.completed_tasks.toInt() * 100 / item.total_tasks.toInt()}%",
                                 fontSize = 15.sp,
                                 color = Color.Gray,
                                 modifier = Modifier.padding(start=16.dp, bottom = 16.dp)
