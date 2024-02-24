@@ -1,8 +1,12 @@
 package com.example.survisionapp.nexustest
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.PressInteraction
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +21,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
@@ -26,21 +32,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.nexusapp.R
+import com.example.nexusapp.viewmodels.MembersListVM
 
 
 @Preview
@@ -164,7 +177,8 @@ val context = LocalContext.current
                     .size(24.dp)
                     .clickable {
 //                        Toast.makeText(context, "add clicked", Toast.LENGTH_SHORT).show()
-                        onAddClick() },
+                        onAddClick()
+                    },
                 tint = Color.White,)
 
 
@@ -176,23 +190,84 @@ val context = LocalContext.current
 }
 
 @Composable
-fun MemberDataView(name:String, points: Int, team:String){
+fun MemberDataView(name: String, points: Int, team: String, membersViewModel: MembersListVM){
+    //name context menu
+    var isNameContextMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var namePressOffset by remember {
+        mutableStateOf(DpOffset.Zero)
+    }
+    val nameInteractionSource = remember {
+        MutableInteractionSource()
+    }
+    val nameDropDownItems= listOf("Delete")
+
+    val teamInteractionSource = remember {
+        MutableInteractionSource()
+    }
+    val teamDropDownItems= listOf("UI/UX","Motion","Video Editing")
+
+    var isTeamContextMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var teamPressOffset by remember {
+        mutableStateOf(DpOffset.Zero)
+    }
+    var teamItemHeight by remember {
+        mutableStateOf(0.dp)
+    }
+    val teamDensity = LocalDensity.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(start = 30.dp, end = 30.dp),
+            .padding(start = 30.dp, end = 30.dp)
+            .onSizeChanged {
+                teamItemHeight = with(teamDensity) { it.height.toDp() }
+            },
         horizontalArrangement = Arrangement.SpaceEvenly
 
     ) {
         Text(
-            modifier = Modifier.weight(2f),
+            modifier = Modifier
+                .weight(2f)
+                .pointerInput(true) {
+                    detectTapGestures(
+                        onLongPress = {
+                            isNameContextMenuVisible = true
+                            namePressOffset = DpOffset(it.x.toDp(), it.y.toDp())
+                        },
+                        onPress = {
+                            val press = PressInteraction.Press(it)
+                            nameInteractionSource.emit(press)
+                            tryAwaitRelease()
+                            nameInteractionSource.emit(PressInteraction.Release(press))
+                        }
+                    )
+                },
             text = name,
             fontSize = 15.sp,
             textAlign = TextAlign.Start,
             color = Color.White,)
 
         Text(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .weight(1f)
+                .pointerInput(true) {
+                    detectTapGestures(
+                        onLongPress = {
+                            isTeamContextMenuVisible = true
+                            teamPressOffset = DpOffset(it.x.toDp(), it.y.toDp())
+                        },
+                        onPress = {
+                            val press = PressInteraction.Press(it)
+                            teamInteractionSource.emit(press)
+                            tryAwaitRelease()
+                            teamInteractionSource.emit(PressInteraction.Release(press))
+                        }
+                    )
+                },
             text = team,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
@@ -204,6 +279,51 @@ fun MemberDataView(name:String, points: Int, team:String){
             fontSize = 15.sp,
             textAlign = TextAlign.End,
             color = Color.White,)
+
+        DropdownMenu(
+            expanded = isNameContextMenuVisible,
+            onDismissRequest = {
+                isNameContextMenuVisible = false
+            },
+            modifier = Modifier.background(
+                colorResource(id = R.color.gray)
+            )
+            /*offset = namePressOffset.copy(
+                y = namePressOffset.y - nameItemHeight
+            )*/
+        ) {
+            nameDropDownItems.forEachIndexed{position,item->
+                DropdownMenuItem(onClick = {
+                    //TODO("delete member")
+                    isNameContextMenuVisible = false
+                }, text = { Text(text = item, color = colorResource(id = R.color.pink))})
+            }
+        }
+
+        DropdownMenu(
+            expanded = isTeamContextMenuVisible,
+            onDismissRequest = {
+                isTeamContextMenuVisible = false
+            },
+            modifier = Modifier.background(
+                colorResource(id = R.color.gray)
+            ),
+            offset = teamPressOffset.copy(
+                y = teamPressOffset.y - teamItemHeight
+            )
+        ) {
+            Row (Modifier.padding(10.dp)){
+                Text(text = "Edit team", color = Color.White, modifier = Modifier.padding(end = 40.dp))
+                Image(painter = painterResource(id = R.drawable.polygon), contentDescription = "")
+            }
+
+            teamDropDownItems.forEachIndexed{position,item->
+                DropdownMenuItem(onClick = {
+                    //TODO("edit member's team")
+                    isTeamContextMenuVisible = false
+                }, text = { Text(text = item, color = Color.White)})
+            }
+        }
 
     }
 }

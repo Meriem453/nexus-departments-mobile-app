@@ -3,7 +3,6 @@ package com.example.survisionapp.nexustest
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,19 +18,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,12 +32,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -52,14 +43,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.nexusapp.R
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.MemberResponse
-import com.example.nexusapp.viewmodels.HomePageVM
 import com.example.nexusapp.viewmodels.MembersListVM
 import com.ramcosta.composedestinations.annotation.Destination
-import kotlinx.coroutines.delay
 
 
 @Preview
@@ -76,10 +64,6 @@ fun MembersListPagePrev() {
 @Composable
 fun MembersListPage() {
     val membersViewModel = hiltViewModel<MembersListVM>()
-
-
-
-
 
     val context = LocalContext.current
 
@@ -261,8 +245,6 @@ fun MembersListPage() {
         }
     }
 
-
-
     Scaffold {
         it
     }
@@ -284,15 +266,15 @@ fun MembersListPage() {
         }
         if (membersViewModel.membersList is Resource.Failed) {
             // Data is not received and loading is false, display a "No members" message
-            Text(
+            /*Text(
                 text = "No members",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 textAlign = TextAlign.Center, color = Color.White
-            )
+            )*/
             Text(
-                text = "check your internet connection.",
+                text = "Check your internet connection.",
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
@@ -302,7 +284,7 @@ fun MembersListPage() {
         if(membersViewModel.membersList is Resource.Success){
             LazyColumn(modifier = Modifier.padding(15.dp)) {
                 items(membersViewModel.membersList.data!!) {item: MemberResponse ->
-                    MemberDataView(name = item.name, points = item.points , team = item.team)
+                    MemberDataView(name = item.name, points = item.points , team = item.team,membersViewModel)
                     Spacer(modifier = Modifier.height(5.dp))
                 }
 
