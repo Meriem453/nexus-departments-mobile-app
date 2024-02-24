@@ -12,6 +12,7 @@ import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.models.TeamResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import retrofit2.Call
 import javax.inject.Inject
 
 class Repository @Inject constructor(
@@ -224,12 +225,12 @@ class Repository @Inject constructor(
             }
         }
     }
-    suspend fun addEvent(name:String,date:String,details: String): Flow<Resource<EventResponse>> {
+    suspend fun addEvent(name: String, date: String, details: String): Flow<Resource<EventResponse>> {
         return flow {
             emit(Resource.Loading())
             try {
-                api.addEvent( name ,  date , details)
-                emit(Resource.Success(EventResponse(0,name, date, details),"Success fetching events"))
+                val event = api.addEvent(name, date, details)
+                emit(Resource.Success(event, "Success fetching events"))
             } catch (e: Exception) {
                 emit(Resource.Failed(e.localizedMessage))
             }
