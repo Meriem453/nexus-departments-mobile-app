@@ -1,6 +1,7 @@
 package com.example.nexusapp.screens
 
 import android.util.Log
+import android.widget.RadioGroup
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -8,27 +9,35 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -43,53 +52,49 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.nexusapp.R
 import com.example.nexusapp.models.ProjectResponse
+import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.screens.components.Header
+import com.google.android.material.progressindicator.LinearProgressIndicatorSpec
 import com.ramcosta.composedestinations.annotation.Destination
-data class TasksResponse(var title:String,var desc:String,var deadline:String,var team:String, var project_id:Int ,var status:String)
+
 //@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun TasksPage(project:ProjectResponse
-              //= ProjectResponse(1,"App","","","")
+    //= ProjectResponse(1,"App","","","",50)
 ){
 val list = listOf(
-    TasksResponse("task","desc","4/5/2024","Android",1,"ToDo"),
-    TasksResponse("task","desc","4/5/2024","Android",1,"ToDo"),
-    TasksResponse("task","desc","4/5/2024","Android",1,"ToDo"),
-    TasksResponse("task","desc","4/5/2024","Android",1,"InProgress"),
-    TasksResponse("task","desc","4/5/2024","Android",1,"InProgress"),
-    TasksResponse("task","desc","4/5/2024","Android",1,"InProgress"),
-    TasksResponse("task","desc","4/5/2024","Android",1,"InProgress"),
+    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "ToDo", progress = 20),
+    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "ToDo", progress = 20),
+    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "ToDo", progress = 20),
+    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "In Progress", progress = 20),
+    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "In Progress", progress = 20),
 
 )
     var showAdd by remember{
         mutableStateOf(false)
     }
-    var showDetails by remember{
-        mutableStateOf(false)
-    }
-    var showDelete by remember{
-        mutableStateOf(false)
-    }
     var currentItem by remember {
-        mutableStateOf<TasksResponse?>(null)
+        mutableStateOf<TaskResponse?>(null)
     }
     var scroll = rememberScrollState()
 
     Column(
         Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
             .background(colorResource(id = R.color.gray))
     ) {
         Header(
@@ -133,7 +138,7 @@ val list = listOf(
                             Column(Modifier.padding(10.dp)) {
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
-                                    text = item.team,
+                                    text = item.team_id.toString(),
                                     fontSize = 15.sp,
                                     color = Color.Gray
                                 )
@@ -172,7 +177,7 @@ val list = listOf(
 
                 list.forEachIndexed { position, item ->
 
-                    if (item.status == "InProgress") {
+                    if (item.status == "In Progress") {
                         var dismissState = rememberDismissState(DismissValue.Default)
                         if (dismissState.currentValue == DismissValue.DismissedToEnd) {
                             //currentItem=item
@@ -217,33 +222,53 @@ val list = listOf(
                                         containerColor = colorResource(
                                             id = R.color.card_bg
                                         )
-                                    ),
-                                    onClick = {
-                                        showDetails = true
-                                    }
+                                    )
                                 ) {
-                                    Column(Modifier.padding(15.dp)) {
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                    Row(horizontalArrangement = Arrangement.SpaceBetween,
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically) {
+
+
+                                    Column(Modifier.padding(15.dp).weight(1f)) {
+                                        Spacer(modifier = Modifier.height(5.dp))
                                         Text(
-                                            text = item.team,
+                                            text = item.team_id.toString(),
                                             fontSize = 15.sp,
                                             color = Color.Gray
                                         )
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(modifier = Modifier.height(5.dp))
                                         Text(
                                             text = item.title,
                                             fontSize = 20.sp,
                                             color = Color.White,
                                             fontWeight = FontWeight.Bold
                                         )
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(modifier = Modifier.height(5.dp))
                                         Text(
                                             text = item.deadline,
                                             fontSize = 15.sp,
                                             color = Color.Gray
                                         )
-                                        Spacer(modifier = Modifier.height(10.dp))
+                                        Spacer(modifier = Modifier.height(5.dp))
 
+                                    }
+                                        Box(modifier = Modifier
+                                            , contentAlignment = Alignment.Center){
+                                            CircularProgressIndicator(
+                                                progress = item.progress.toFloat()/100,
+                                                color = colorResource(id = R.color.green),
+                                                modifier = Modifier
+                                                .size(100.dp)
+                                                .padding(15.dp)
+                                                , strokeWidth = 5.dp, trackColor = colorResource(
+                                                id = R.color.card_bg
+                                            ))
+                                            Text(text = "${item.progress}%",
+                                                fontSize = 20.sp,
+                                                color = Color.White,
+                                                fontWeight = FontWeight.Bold,
+                                                textAlign = TextAlign.Center)
+                                        }
                                     }
                                 }
                             })
@@ -265,20 +290,27 @@ val list = listOf(
                 mutableStateOf(currentItem?.title ?: "")
             }
             var desc by remember {
-                mutableStateOf(currentItem?.desc ?: "")
+                mutableStateOf(currentItem?.description ?: "")
             }
             var deadline by remember {
                 mutableStateOf(currentItem?.deadline ?: "")
             }
             var team by remember {
-                mutableStateOf(currentItem?.team ?: "")
+                mutableStateOf(currentItem?.team_id ?: "")
+            }
+            var progress by remember {
+                mutableStateOf(currentItem?.progress ?: 0)
+            }
+            var status by remember {
+                mutableStateOf(currentItem?.status ?: "ToDo")
             }
             Column(
                 Modifier
                     .fillMaxWidth()
                     .padding(20.dp)
                     .clip(RoundedCornerShape(7.dp))
-                    .background(colorResource(id = R.color.gray)),
+                    .background(colorResource(id = R.color.gray))
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Row (horizontalArrangement = Arrangement.SpaceBetween,
@@ -355,7 +387,7 @@ val list = listOf(
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = team , onValueChange ={team=it},
+                TextField(value = "Android" , onValueChange ={team=0},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -399,31 +431,85 @@ val list = listOf(
                             )}
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-
-                Button(onClick = {
-                    /*TODO("add task or edit task")*/
-                    currentItem=null
-                    showAdd=false
-
-                },
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(10.dp))
-                        .padding(20.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colorResource(id = R.color.green)
-                    )
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "${if(currentItem!=null) "Edit" else "Add"} task",
-                        fontSize = 15.sp,
-                        color = colorResource(id = R.color.gray),
-                        modifier = Modifier.padding(5.dp)
+                    RadioButton(selected = status=="ToDo", onClick = { status="ToDo" }
+                    , colors = RadioButtonDefaults.colors(
+                        selectedColor = colorResource(id = R.color.green),
+                        unselectedColor = colorResource(id = R.color.green)
                     )
+                    )
+                    Text(text = "ToDo", fontSize = 15.sp, modifier = Modifier.padding(start = 10.dp), color = Color.White)
+                    RadioButton(selected = status=="In Progress", onClick = { status="In Progress" }
+                        , colors = RadioButtonDefaults.colors(
+                            selectedColor = colorResource(id = R.color.green),
+                            unselectedColor = colorResource(id = R.color.green)
+                        )
+                    )
+                    Text(text = "In Progress", fontSize = 15.sp, modifier = Modifier.padding(end = 10.dp), color = Color.White)
                 }
+                Spacer(modifier = Modifier.height(20.dp))
+                if(status=="In Progress"){
+                LinearProgressIndicator(progress = progress.toFloat()/100,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp, end = 20.dp),
+                )}
+                Spacer(modifier = Modifier.height(20.dp))
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 20.dp, end = 20.dp), horizontalArrangement = Arrangement.SpaceAround) {
+                    if(currentItem!=null){
+                        Button(onClick = {
+                            /*TODO("delete task")*/
+                            currentItem=null
+                            showAdd=false
+
+                        },
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .padding(5.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.pink)
+                            )
+                        ) {
+                            Text(
+                                text = "Delete",
+                                fontSize = 15.sp,
+                                color = colorResource(id = R.color.gray),
+                                modifier = Modifier.padding(5.dp)
+                            )
+                        }
+                    }
+                    Button(onClick = {
+                        /*TODO("add task or edit task")*/
+                        currentItem=null
+                        showAdd=false
+
+                    },
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(10.dp))
+                            .padding(5.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = colorResource(id = R.color.green)
+                        )
+                    ) {
+                        Text(
+                            text = if(currentItem!=null) "Edit" else "Add",
+                            fontSize = 15.sp,
+                            color = colorResource(id = R.color.gray),
+                            modifier = Modifier.padding(5.dp)
+                        )
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
             }
         }
-    }
-    if(showDetails){
-        //TODO("show tasks details")
     }
 }

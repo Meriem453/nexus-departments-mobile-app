@@ -8,5 +8,5 @@ data class TaskResponse(
     val status:String,
     val title:String,
     val progress:Int,
-    val deadline:String
+    val deadline:String,
 )

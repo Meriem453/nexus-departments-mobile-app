@@ -9,7 +9,6 @@ import com.example.nexusapp.models.MemberResponse
 import com.example.nexusapp.models.ProjectResponse
 import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.models.TeamResponse
-import com.example.nexusapp.screens.TasksResponse
 import retrofit2.Call
 import retrofit2.http.DELETE
 import retrofit2.http.Field
