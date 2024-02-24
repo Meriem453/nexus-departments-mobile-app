@@ -18,6 +18,7 @@ import com.example.destinations.IssuesPageDestination
 import com.example.destinations.MeetingsPageDestination
 import com.example.destinations.MembersListPageDestination
 import com.example.destinations.ProjectsPageDestination
+import com.example.destinations.TeamsPageDestination
 import com.example.survisionapp.nexustest.ExploreHeader
 import com.example.survisionapp.nexustest.ExploreItemCard
 import com.example.survisionapp.nexustest.MembersListPage
@@ -37,7 +38,7 @@ fun ExplorePage(navigator:DestinationsNavigator) {
     var currentScreen by remember { mutableStateOf<Screen?>(null) }
 
     Scaffold(Modifier.background(Color(0xFF2A2A2A))) {
-        val exploreItemsList = listOf("Calendar", "Members List", "Meetings","Projects")
+        val exploreItemsList = listOf("Calendar", "Members List", "Meetings","Projects","Teams")
         ExploreHeader()
 
         Column(
@@ -56,6 +57,7 @@ fun ExplorePage(navigator:DestinationsNavigator) {
                         "Calendar"-> navigator.navigate(CalendarDestination)
                         "Meetings"->navigator.navigate(MeetingsPageDestination)
                         "Projects" -> navigator.navigate(ProjectsPageDestination)
+                        "Teams" -> navigator.navigate(TeamsPageDestination)
                         //"Help and Problems"-> navigator.navigate(IssuesPageDestination)
 
                         // the other items here

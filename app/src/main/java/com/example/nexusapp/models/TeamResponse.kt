@@ -5,5 +5,5 @@ import androidx.compose.ui.graphics.Color
 data class TeamResponse(
     val id:Int,
     val name:String,
-    val color: String
+    val color: Long = 0xffffffff
 )

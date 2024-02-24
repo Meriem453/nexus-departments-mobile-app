@@ -182,7 +182,7 @@ interface Api {
     @POST("team/create")
     suspend fun createTeam(
         @Field("name") name: String,
-        @Field("color") color:String,
+        @Field("color") color:Long,
     ):TeamResponse
 
     @FormUrlEncoded
@@ -190,7 +190,7 @@ interface Api {
     suspend fun updateTeam(
         @Field("id") id:Int,
         @Field("name") name: String,
-        @Field("color") color:String,
+        @Field("color") color:Long,
     ):TeamResponse
 
     @DELETE("team/delete/{id}")
