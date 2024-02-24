@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,7 @@ import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissState
 import androidx.compose.material3.DismissValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -61,11 +63,12 @@ import com.ramcosta.composedestinations.annotation.Destination
 @Composable
 fun MeetingsPage() {
     val list= listOf(
-        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
-        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
-        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
-        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
-        MeetingResponse(1,"New meeting","4/5/2024",2,"great one"),
+        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
+        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
+        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
+        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
+        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
+
 
     )
 Column(modifier = Modifier
@@ -82,6 +85,9 @@ Column(modifier = Modifier
     }
     var currentItem by remember {
         mutableStateOf<MeetingResponse?>(null)
+    }
+    var isSheetOpen by remember {
+        mutableStateOf(false)
     }
     Header(
         title = "Meetings",
@@ -160,11 +166,15 @@ Column(modifier = Modifier
                             .padding(10.dp)
                             .clip(RoundedCornerShape(20.dp))
                             .background(colorResource(R.color.card_bg))
+                            .clickable {
+                                currentItem=item
+                                isSheetOpen=true
+                            }
                             .border(
                                 width = 2.dp,
                                 brush = Brush.horizontalGradient(
                                     listOf(
-                                        colorResource(id = R.color.green),
+                                        Color(item.color),
                                         colorResource(id = R.color.gray),
                                     ), startX = .5f
                                 ),
@@ -210,8 +220,14 @@ Column(modifier = Modifier
             var date by remember {
                 mutableStateOf(currentItem?.date ?: "")
             }
+            var time by remember {
+                mutableStateOf(currentItem?.time ?: "")
+            }
             var desc by remember {
                 mutableStateOf(currentItem?.description ?: "")
+            }
+            var team by remember {
+                mutableStateOf(currentItem?.team_id ?: 0)
             }
 
             Column(
@@ -261,7 +277,42 @@ Column(modifier = Modifier
                             )}
                 )
                 Spacer(modifier = Modifier.height(20.dp))
-                Text(text = "Meeting date",
+                Row (Modifier.fillMaxWidth()){
+                    TextField(value = date , onValueChange ={date=it},
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 20.dp, end = 5.dp)
+                            .clip(RoundedCornerShape(10.dp)),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        ),
+                        placeholder = {
+                            Text(text = "Select date",
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+
+                                )}
+                    )
+                    TextField(value = time , onValueChange ={time=it},
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 5.dp, end = 20.dp)
+                            .clip(RoundedCornerShape(10.dp)),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        ),
+                        placeholder = {
+                            Text(text = "Select time",
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+
+                                )}
+                    )
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(text = "Meeting team",
                     fontSize = 15.sp,
                     color = Color.White,
                     modifier = Modifier
@@ -269,7 +320,7 @@ Column(modifier = Modifier
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = date , onValueChange ={date=it},
+                TextField(value = "" , onValueChange ={team=0},
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -279,11 +330,12 @@ Column(modifier = Modifier
                         unfocusedContainerColor = Color.White
                     ),
                     placeholder = {
-                        Text(text = "Select date",
+                        Text(text = "Enter meeting's team",
                             fontSize = 15.sp,
                             color = Color.Gray,
 
                             )}
+
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(text = "Meeting description",
@@ -315,7 +367,7 @@ Column(modifier = Modifier
 
                     if(currentItem==null){
                         val result = viewModel.addMeeting(
-                            MeetingResponse(0, title, date, 1, desc)
+                            MeetingResponse(0, title, date, team_id = 1, description = desc)
                         )
                        Toast.makeText(c,result.message,Toast.LENGTH_LONG).show()
                     }else{
@@ -353,5 +405,28 @@ Column(modifier = Modifier
                 showDelete=false
             }
         )
+    }
+    if(isSheetOpen){
+        ModalBottomSheet(
+            onDismissRequest = {
+                currentItem=null
+                isSheetOpen=false
+                               },
+            containerColor = colorResource(id = R.color.gray),
+             ) {
+            Text(
+                text = currentItem!!.title,
+                fontSize = 20.sp,
+                color= Color.White,
+                modifier = Modifier.padding(16.dp)
+            )
+            Text(
+                text = currentItem!!.description,
+                fontSize = 15.sp,
+                color= Color.White,
+                modifier = Modifier.padding(16.dp),
+                minLines = 7
+            )
+        }
     }
 }}

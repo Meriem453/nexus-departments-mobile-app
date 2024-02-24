@@ -313,7 +313,7 @@ fun MemberDataView(name: String, points: Int, team: String, membersViewModel: Me
             )
         ) {
             Row (Modifier.padding(10.dp)){
-                Text(text = "Edit team", color = Color.White, modifier = Modifier.padding(end = 40.dp))
+                Text(text = "Edit team", color = colorResource(id = R.color.green), fontWeight = FontWeight.Bold, modifier = Modifier.padding(end = 40.dp))
                 Image(painter = painterResource(id = R.drawable.polygon), contentDescription = "")
             }
 
