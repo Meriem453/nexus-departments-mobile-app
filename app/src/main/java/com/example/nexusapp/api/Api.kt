@@ -6,10 +6,13 @@ import com.example.nexusapp.models.HomePageResponse.Project
 import com.example.nexusapp.models.LoginResponse
 import com.example.nexusapp.models.MeetingResponse
 import com.example.nexusapp.models.MemberResponse
+import com.example.nexusapp.models.ParticipantResponse
 import com.example.nexusapp.models.ProjectResponse
+import com.example.nexusapp.models.Requests.participantId
 import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.models.TeamResponse
 import retrofit2.Call
+import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -197,5 +200,12 @@ interface Api {
     suspend fun deleteTeam(
         @Path("id") id: Int
     )
+
+    //CheckIn////////////////////////////////////////
+    @PUT("participant/scan")
+    suspend fun checkIn(
+        @Body id:participantId
+    ):ParticipantResponse
+
 
 }

@@ -14,6 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.destinations.CalendarDestination
+import com.example.destinations.CheckInPageDestination
 import com.example.destinations.IssuesPageDestination
 import com.example.destinations.MeetingsPageDestination
 import com.example.destinations.MembersListPageDestination

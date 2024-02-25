@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.destinations.CheckInPageDestination
 import com.example.nexusapp.R
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.EventResponse
@@ -67,12 +68,13 @@ import com.example.nexusapp.screens.components.Header
 import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.example.nexusapp.viewmodels.EventsVM
 import com.ramcosta.composedestinations.annotation.Destination
+import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 
 data class day(val num:Int,val letter:String)
 
 @Destination
 @Composable
-fun Calendar() {
+fun Calendar(navigator: DestinationsNavigator) {
     val eventsViewModel = hiltViewModel<EventsVM>()
 
     var loading by remember { mutableStateOf(false) }
@@ -144,7 +146,7 @@ fun Calendar() {
                                 TimeLine(eventsViewModel.eventsList.data!!){
                                   currentEvent=eventsViewModel.eventsList.data!![it]
                                 }
-                                Event(currentEvent)
+                                Event(currentEvent,navigator)
                             }
 
 
@@ -313,7 +315,7 @@ fun Calendar() {
 }
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Event(currentEvent: EventResponse) {
+fun Event(currentEvent: EventResponse,navigator: DestinationsNavigator) {
     var tab by remember {
         mutableStateOf(0)
     }
@@ -365,7 +367,7 @@ fun Event(currentEvent: EventResponse) {
                             )
                         )
                 ) {
-                    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+                    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
                         Text(
                             text = "event",
                             color = Color.White,
@@ -388,6 +390,24 @@ fun Event(currentEvent: EventResponse) {
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
+                        Button(onClick = {
+                               navigator.navigate(CheckInPageDestination)
+
+                        },
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .padding(top = 20.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = colorResource(id = R.color.green)
+                            )
+                        ) {
+                            Text(
+                                text = "Check In",
+                                fontSize = 20.sp,
+                                color = colorResource(id = R.color.gray),
+                                modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+                            )
+                        }
                     }
                 }
             } else {
@@ -493,7 +513,7 @@ fun TimeLine(days:List<EventResponse>,selected:(selectedDay:Int)->Unit) {
 @Composable
 fun Preview() {
     NexusAppTheme {
-        Calendar()
+
     }
 }
 

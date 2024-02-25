@@ -1,13 +1,16 @@
 package com.example.nexusapp.Repo
 
 import android.util.Log
+import com.bumptech.glide.integration.compose.RequestState
 import com.example.nexusapp.api.Api
 import com.example.nexusapp.models.EventResponse
 import com.example.nexusapp.models.HomePageResponse.HomePageResponse
 import com.example.nexusapp.models.HomePageResponse.Project
 import com.example.nexusapp.models.MeetingResponse
 import com.example.nexusapp.models.MemberResponse
+import com.example.nexusapp.models.ParticipantResponse
 import com.example.nexusapp.models.ProjectResponse
+import com.example.nexusapp.models.Requests.participantId
 import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.models.TeamResponse
 import kotlinx.coroutines.flow.Flow
@@ -360,6 +363,18 @@ class Repository @Inject constructor(
             try {
                 api.deleteTeam(id)
                 emit(Resource.Success("","Success deleting team"))
+            }catch (e:Exception){
+                emit(Resource.Failed(e.localizedMessage))
+            }
+        }
+    }
+    //Check In
+    suspend fun checkIn(id:Int):Flow<Resource<ParticipantResponse>>{
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val participant=api.checkIn(participantId(id))
+                emit(Resource.Success(participant,"Success validating participant"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }

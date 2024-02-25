@@ -110,6 +110,12 @@ dependencies {
 
 // Logging interceptor for debugging (optional)
     implementation ("com.squareup.okhttp3:logging-interceptor:4.9.1")
+    // CameraX
+    implementation ("androidx.camera:camera-camera2:1.3.0")
+    implementation ("androidx.camera:camera-lifecycle:1.3.0")
+    implementation ("androidx.camera:camera-view:1.4.0-alpha02")
+    //ML kit barecode scanner
+    implementation ("com.google.mlkit:barcode-scanning:17.2.0")
 
 
 
