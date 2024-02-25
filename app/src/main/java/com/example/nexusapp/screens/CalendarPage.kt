@@ -1,6 +1,7 @@
 package com.example.nexusapp.screens
 
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.RepeatMode
@@ -269,18 +270,26 @@ fun Calendar(navigator: DestinationsNavigator) {
                     minLines = 4
                 )
                 Button(onClick = {
-                    loading = true
-                    eventsViewModel.addEvent(name,date,details)
-                    if(eventsViewModel.event is Resource.Success){
-                        Toast.makeText(context, "added succussfully :", Toast.LENGTH_SHORT).show()
-                        loading = false
+
+                    val result = eventsViewModel.addEvent(EventResponse(0,name,date,details))
+                    if(result is Resource.Loading){
+                        loading = true
                     }
-                    if(eventsViewModel.event is Resource.Failed){
-                        Toast.makeText(context, "Error:"+eventsViewModel.event.message, Toast.LENGTH_SHORT).show()
-                        print(eventsViewModel.event.message)
-                        loading = false
-                    }
-                    showAdd=false
+                    
+                        if (result is Resource.Failed) {
+                            Toast.makeText(
+                                context,
+                                result.message,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            loading = false
+                            showAdd = false
+                        }else {
+                            Toast.makeText(context, "added succussfully :", Toast.LENGTH_SHORT)
+                                .show()
+                            loading = false
+                            showAdd = false
+                        }
 
                 },
                     modifier = Modifier

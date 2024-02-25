@@ -1,5 +1,6 @@
 package com.example.nexusapp.screens
 
+import android.annotation.SuppressLint
 import androidx.compose.animation.core.InfiniteRepeatableSpec
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -59,6 +60,7 @@ import com.example.nexusapp.viewmodels.HomePageVM
 
 
 
+@SuppressLint("SuspiciousIndentation")
 @Composable
 fun HomePage(bottomPadding: Dp) {
     val viewModel= hiltViewModel<HomePageVM>()

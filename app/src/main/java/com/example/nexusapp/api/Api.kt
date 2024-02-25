@@ -128,7 +128,7 @@ interface Api {
     //Events/////////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("event/addEvent")
-    fun addEvent(
+    suspend fun addEvent(
         @Field("name") name:String,
         @Field("date") date: String,
         @Field("details") details: String
