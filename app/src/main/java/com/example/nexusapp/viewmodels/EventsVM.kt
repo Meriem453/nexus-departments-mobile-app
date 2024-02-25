@@ -9,6 +9,7 @@ import com.example.nexusapp.Repo.Repository
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.EventResponse
 import com.example.nexusapp.models.HomePageResponse.Event
+import com.example.nexusapp.models.MeetingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -31,13 +32,14 @@ class EventsVM @Inject constructor(
         }
     }
 
-    fun addEvent(name: String, date: String,details: String) {
+    fun addEvent(eventResponse: EventResponse):Resource<EventResponse>{
+        var result by  mutableStateOf<Resource<EventResponse>>(Resource.Loading())
         viewModelScope.launch {
-            repo.addEvent(name, date,details).collect {
-                event = it
-
+            repo.addEvent(eventResponse).collect{
+                result=it
             }
         }
+        return result
     }
 
     fun deleteEvent(id: Int) {

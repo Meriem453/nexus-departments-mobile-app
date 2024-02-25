@@ -1,5 +1,6 @@
 package com.example.nexusapp.Repo
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.bumptech.glide.integration.compose.RequestState
 import com.example.nexusapp.api.Api
@@ -161,6 +162,7 @@ class Repository @Inject constructor(
         }
     }
 //projects
+    @SuppressLint("SuspiciousIndentation")
     suspend fun getManagerProjects(): Flow<Resource<List<ProjectResponse>>> {
         return flow {
             emit(Resource.Loading())
@@ -228,13 +230,17 @@ class Repository @Inject constructor(
             }
         }
     }
-    suspend fun addEvent(name: String, date: String, details: String): Flow<Resource<EventResponse>> {
-        return flow {
+    suspend fun addEvent(eventResponse: EventResponse):Flow<Resource<EventResponse>>{
+        return flow<Resource<EventResponse>> {
             emit(Resource.Loading())
             try {
-                val event = api.addEvent(name, date, details)
-                emit(Resource.Success(event, "Success fetching events"))
-            } catch (e: Exception) {
+                val event=api.addEvent(
+                    eventResponse.name,
+                    eventResponse.date,
+                    eventResponse.details
+                )
+                emit(Resource.Success(event,"Success adding event"))
+            }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
         }
