@@ -44,6 +44,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,6 +71,9 @@ import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.example.nexusapp.viewmodels.EventsVM
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 data class day(val num:Int,val letter:String)
 
@@ -83,6 +87,7 @@ fun Calendar(navigator: DestinationsNavigator) {
     var showAdd by remember {
         mutableStateOf(false)
     }
+    val coroutine = rememberCoroutineScope()
 
     Scaffold(
         Modifier
@@ -147,6 +152,8 @@ fun Calendar(navigator: DestinationsNavigator) {
                                 TimeLine(eventsViewModel.eventsList.data!!){
                                   currentEvent=eventsViewModel.eventsList.data!![it]
                                 }
+
+
                                 Event(currentEvent,navigator)
                             }
 
@@ -186,6 +193,13 @@ fun Calendar(navigator: DestinationsNavigator) {
                         color = Color.White,
 
                         )
+                    if (loading) {
+                        CircularProgressIndicator(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(4.dp),
+                            color = Color.White
+                        )}
                     Image(painter = painterResource(id = R.drawable.polygon), contentDescription = "")
 
                 }
@@ -270,26 +284,31 @@ fun Calendar(navigator: DestinationsNavigator) {
                     minLines = 4
                 )
                 Button(onClick = {
+                    coroutine.launch {
+                        eventsViewModel.addEvent(EventResponse(0,name, date, details)).collect{ result ->
+                            if(result is Resource.Loading){
+                                loading = true
+                            }
 
-                    val result = eventsViewModel.addEvent(EventResponse(0,name,date,details))
-                    if(result is Resource.Loading){
-                        loading = true
-                    }
-                    
-                        if (result is Resource.Failed) {
-                            Toast.makeText(
-                                context,
-                                result.message,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            loading = false
-                            showAdd = false
-                        }else {
-                            Toast.makeText(context, "added succussfully :", Toast.LENGTH_SHORT)
-                                .show()
-                            loading = false
-                            showAdd = false
+                            if (result is Resource.Failed) {
+                                Toast.makeText(
+                                    context,
+                                    result.message,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                loading = false
+                                showAdd = false
+                            }
+                            if(result is Resource.Success){
+                                Toast.makeText(context, "added succussfully :", Toast.LENGTH_SHORT)
+                                    .show()
+                                loading = false
+                                showAdd = false
+                            }
                         }
+
+                    }
+
 
                 },
                     modifier = Modifier
@@ -300,21 +319,14 @@ fun Calendar(navigator: DestinationsNavigator) {
                     )
                 ) {
 
-                    if (loading) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .padding(4.dp),
-                            color = Color.White
-                        )
-                    } else {
+
                         Text(
                             text = "Add event",
                             fontSize = 15.sp,
                             color = colorResource(id = R.color.gray),
                             modifier = Modifier.padding(5.dp)
                         )
-                    }
+
 
                 }
             }
@@ -345,7 +357,7 @@ fun Event(currentEvent: EventResponse,navigator: DestinationsNavigator) {
                     colorResource(id = R.color.green)
                 } else colorResource(id = R.color.card_bg),
                 modifier = Modifier
-                    .size(10.dp)
+                    .size(20.dp)
                     .padding(5.dp)
             )
             Icon(
@@ -354,7 +366,7 @@ fun Event(currentEvent: EventResponse,navigator: DestinationsNavigator) {
                     colorResource(id = R.color.green)
                 } else colorResource(id = R.color.card_bg),
                 modifier = Modifier
-                    .size(10.dp)
+                    .size(20.dp)
                     .padding(5.dp)
             )
         }

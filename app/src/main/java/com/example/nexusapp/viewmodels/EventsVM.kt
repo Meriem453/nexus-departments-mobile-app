@@ -11,6 +11,8 @@ import com.example.nexusapp.models.EventResponse
 import com.example.nexusapp.models.HomePageResponse.Event
 import com.example.nexusapp.models.MeetingResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import javax.inject.Inject
@@ -32,14 +34,8 @@ class EventsVM @Inject constructor(
         }
     }
 
-    fun addEvent(eventResponse: EventResponse):Resource<EventResponse>{
-        var result by  mutableStateOf<Resource<EventResponse>>(Resource.Loading())
-        viewModelScope.launch {
-            repo.addEvent(eventResponse).collect{
-                result=it
-            }
-        }
-        return result
+    suspend fun addEvent(eventResponse: EventResponse): Flow<Resource<EventResponse>> {
+        return repo.addEvent(eventResponse)
     }
 
     fun deleteEvent(id: Int) {

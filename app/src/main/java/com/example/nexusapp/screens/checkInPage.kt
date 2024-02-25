@@ -37,6 +37,7 @@ import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -51,6 +52,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.style.TextAlign
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nexusapp.QRCodeManager.BarcodeScanner
@@ -164,6 +166,12 @@ fun CheckInPage() {
                 .background(
                     colorResource(id = R.color.card_bg)
                 )
+                .border(
+                    2.dp,
+                    Brush.verticalGradient(listOf(Color(0xFF76E494), Color(0xFF2A2A2A))),
+                    RoundedCornerShape(20.dp)
+
+                )
                 , verticalArrangement = Arrangement.Center
             ) {
                 if(viewmodel.participant is Resource.Loading){
@@ -197,14 +205,14 @@ fun CheckInPage() {
                 if(viewmodel.participant is Resource.Success){
                     Text(
                         text = "Participant name: ${viewmodel.participant.data!!.name}",
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
                         modifier =Modifier.padding(10.dp)
                     )
                     Text(
                         text = "Team: ${viewmodel.participant.data!!.team}",
-                        fontSize = 20.sp,
+                        fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
                         modifier =Modifier.padding(10.dp)
