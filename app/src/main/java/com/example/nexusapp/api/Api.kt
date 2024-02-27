@@ -207,5 +207,10 @@ interface Api {
         @Body id:participantId
     ):ParticipantResponse
 
+    @GET("participant/event/{event_id}")
+    suspend fun getAllParticipants(
+        @Path("event_id") event_id:Int
+    ):List<ParticipantResponse>
+
 
 }

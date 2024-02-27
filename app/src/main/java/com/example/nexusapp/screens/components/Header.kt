@@ -31,13 +31,13 @@ fun Header(
         Modifier
             .fillMaxWidth()
             .background(colorResource(id = R.color.gray)), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically){
-        Icon(painter = painterResource(id = R.drawable.arrow_back),
+        /*Icon(painter = painterResource(id = R.drawable.arrow_back),
             contentDescription ="" ,
             tint = Color.White,
             modifier = Modifier
                 .padding(16.dp)
                 .clickable { onBackPressed() }
-        )
+        )*/
         Text(text = title,
             color = Color.White,
             fontSize = 25.sp,

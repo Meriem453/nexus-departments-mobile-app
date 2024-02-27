@@ -386,4 +386,16 @@ class Repository @Inject constructor(
             }
         }
     }
+
+    suspend fun getAllParticipants(event_id:Int):Flow<Resource<List<ParticipantResponse>>>{
+        return flow {
+            emit(Resource.Loading())
+            try {
+                val participants = api.getAllParticipants(event_id)
+                emit(Resource.Success(participants,"Success fetching participants"))
+            }catch (e:Exception){
+                emit(Resource.Failed(e.localizedMessage))
+            }
+        }
+    }
 }

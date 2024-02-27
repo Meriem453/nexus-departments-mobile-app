@@ -63,6 +63,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.destinations.CheckInPageDestination
+import com.example.destinations.AllParticipantsPageDestination
 import com.example.nexusapp.R
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.EventResponse
@@ -412,7 +413,7 @@ fun Event(currentEvent: EventResponse,navigator: DestinationsNavigator) {
                             textAlign = TextAlign.Center
                         )
                         Button(onClick = {
-                               navigator.navigate(CheckInPageDestination)
+                               navigator.navigate(AllParticipantsPageDestination(currentEvent.id))
 
                         },
                             modifier = Modifier
