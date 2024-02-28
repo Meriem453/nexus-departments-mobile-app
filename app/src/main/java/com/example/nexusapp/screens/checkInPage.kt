@@ -50,6 +50,7 @@ import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
@@ -60,6 +61,9 @@ import com.example.nexusapp.R
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.viewmodels.CheckInVM
 import com.ramcosta.composedestinations.result.ResultBackNavigator
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @Destination
 @Composable
@@ -68,11 +72,15 @@ fun CheckInPage() {
     var code by remember {
         mutableStateOf("Code")
     }
+    var coroutine = rememberCoroutineScope()
 
     val mediaPlayer = MediaPlayer.create(
         LocalContext.current,
         R.raw.scanned
     )
+    var delay by remember {
+        mutableStateOf(false)
+    }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture = remember {
@@ -133,15 +141,21 @@ fun CheckInPage() {
                     imageAnalysis.setAnalyzer(
                         ContextCompat.getMainExecutor(context),
                         BarcodeScanner { result ->
-                            code = result
-                            mediaPlayer.start()
-                            try {
-                                val id=code.toInt()
-                                viewmodel.checkIn(id)
-                            } catch (e:Exception){
-                                Toast.makeText(context,"Enter a valid QR Code",Toast.LENGTH_LONG).show()
+                            if(!delay){
+                                delay=true
+                                coroutine.launch {
+                                    delay(2000L)
+                                    code = result
+                                    mediaPlayer.start()
+                                    try {
+                                        val id=code.toInt()
+                                        viewmodel.checkIn(id)
+                                    } catch (e:Exception){
+                                        Toast.makeText(context,"Enter a valid QR Code",Toast.LENGTH_LONG).show()
+                                    }
+                                    delay=false
+                                }
                             }
-
 
                         }
                     )
@@ -161,7 +175,7 @@ fun CheckInPage() {
                 )
             Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier
                 .fillMaxSize()
-                .padding(start = 20.dp, end =20.dp)
+                .padding(start = 20.dp, end = 20.dp)
                 .clip(RoundedCornerShape(20.dp))
                 .background(
                     colorResource(id = R.color.card_bg)

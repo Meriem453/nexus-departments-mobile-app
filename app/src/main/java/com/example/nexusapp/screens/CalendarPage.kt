@@ -76,7 +76,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-data class day(val num:Int,val letter:String)
 
 @Destination
 @Composable
@@ -110,7 +109,7 @@ fun Calendar(navigator: DestinationsNavigator) {
                 showAdd=true
             }
 
-                    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
+                    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
 
                         if(eventsViewModel.eventsList is Resource.Loading){
 

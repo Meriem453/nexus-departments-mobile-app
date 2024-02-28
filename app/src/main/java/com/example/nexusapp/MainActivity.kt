@@ -54,7 +54,12 @@ class MainActivity : ComponentActivity() {
         setContent {
             rememberSystemUiController().setStatusBarColor(Color(0xFF2A2A2A))
             NexusAppTheme {
+                Box (
+                    Modifier
+                        .fillMaxSize()
+                        .background(colorResource(id = R.color.gray)))
                 DestinationsNavHost(navGraph = NavGraphs.root)
+
             }
         }
     }

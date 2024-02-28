@@ -22,7 +22,9 @@
         tools:targetApi="31">
         <activity
             android:name=".screens.SplashScreen"
-            android:exported="true" >
+            android:exported="true"
+            android:screenOrientation="portrait"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -30,14 +32,18 @@
         </activity>
         <activity
             android:name=".screens.loginPage"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait"
+            >
 
         </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.NexusApp">
+            android:theme="@style/Theme.NexusApp"
+            android:screenOrientation="portrait"
+            >
 
         </activity>
     </application>

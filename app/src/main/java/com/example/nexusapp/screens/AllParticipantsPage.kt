@@ -93,7 +93,8 @@ fun AllParticipantsPage(event_id:Int,navigator: DestinationsNavigator){
                 modifier = Modifier
                     .size(50.dp)
                     .wrapContentSize(align = Alignment.Center),
-                trackColor = colorResource(id = R.color.green)
+                trackColor = colorResource(id = R.color.green),
+                color = colorResource(id = R.color.gray)
             )
         }
         if (viewModel.participants is Resource.Failed) {
@@ -107,37 +108,44 @@ fun AllParticipantsPage(event_id:Int,navigator: DestinationsNavigator){
             )
         }
         if(viewModel.participants is Resource.Success){
-            LazyColumn(modifier = Modifier.padding(15.dp).fillMaxWidth()) {
-                itemsIndexed(viewModel.participants.data!!) { position, item->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
-                        horizontalArrangement = Arrangement.SpaceEvenly
-
-                    ) {
-                        Text(
+            LazyColumn(modifier = Modifier
+                .padding(15.dp)
+                .fillMaxWidth()) {
+                viewModel.participants.data?.let {
+                    itemsIndexed(viewModel.participants.data!!) { position, item ->
+                        Row(
                             modifier = Modifier
-                                .weight(1f),
-                            text = item.name,
-                            fontSize = 15.sp,
-                            textAlign = TextAlign.Center,
-                            color = Color.White,)
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
 
-                        Text(
-                            modifier = Modifier
-                                .weight(1f),
-                            text = item.team,
-                            fontSize = 15.sp,
-                            textAlign = TextAlign.Center,
-                            color = Color.White,)
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .weight(1f),
+                                text = item.name,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center,
+                                color = Color.White,
+                            )
 
-                        Text(
-                            modifier = Modifier.weight(1f),
-                            text = item.came,
-                            fontSize = 15.sp,
-                            textAlign = TextAlign.Center,
-                            color = Color.White,)
+                            Text(
+                                modifier = Modifier
+                                    .weight(1f),
+                                text = item.team,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center,
+                                color = Color.White,
+                            )
+
+                            Text(
+                                modifier = Modifier.weight(1f),
+                                text = item.came,
+                                fontSize = 15.sp,
+                                textAlign = TextAlign.Center,
+                                color = Color.White,
+                            )
+                        }
                     }
                 }
             }
