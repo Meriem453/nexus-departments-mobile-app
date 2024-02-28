@@ -213,7 +213,7 @@ fun CheckInPage() {
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        modifier =Modifier.padding(10.dp)
+                        modifier =Modifier.padding(10.dp),
                     )
                 }
                 if(viewmodel.participant is Resource.Success){
@@ -222,14 +222,16 @@ fun CheckInPage() {
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        modifier =Modifier.padding(10.dp)
+                        modifier =Modifier.fillMaxWidth().padding(10.dp),
+                        textAlign = TextAlign.Center
                     )
                     Text(
                         text = "Team: ${viewmodel.participant.data!!.team}",
                         fontSize = 16.sp,
                         fontWeight = FontWeight.Bold,
                         color = Color.White,
-                        modifier =Modifier.padding(10.dp)
+                        modifier =Modifier.fillMaxWidth().padding(10.dp),
+                        textAlign = TextAlign.Center
                     )
                 }
 
