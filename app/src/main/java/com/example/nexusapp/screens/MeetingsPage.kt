@@ -21,7 +21,11 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissState
 import androidx.compose.material3.DismissValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
@@ -167,8 +171,8 @@ Column(modifier = Modifier
                             .clip(RoundedCornerShape(20.dp))
                             .background(colorResource(R.color.card_bg))
                             .clickable {
-                                currentItem=item
-                                isSheetOpen=true
+                                currentItem = item
+                                isSheetOpen = true
                             }
                             .border(
                                 width = 2.dp,
@@ -228,6 +232,9 @@ Column(modifier = Modifier
             }
             var team by remember {
                 mutableStateOf(currentItem?.team_id ?: 0)
+            }
+            var expanded by remember {
+                mutableStateOf(false)
             }
 
             Column(
@@ -320,23 +327,58 @@ Column(modifier = Modifier
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = "" , onValueChange ={team=0},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp)
-                        .clip(RoundedCornerShape(10.dp)),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White
-                    ),
-                    placeholder = {
-                        Text(text = "Enter meeting's team",
-                            fontSize = 15.sp,
-                            color = Color.Gray,
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
+                ) {
 
-                            )}
 
-                )
+                    TextField(value = "", onValueChange = { team = 0 },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .menuAnchor()
+                            .padding(start = 20.dp, end = 20.dp)
+                            .clip(RoundedCornerShape(10.dp)),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        ),
+                        placeholder = {
+                            Text(
+                                text = "Enter meeting's team",
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+
+                                )
+                        },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expanded
+                            )
+                        }, readOnly = true
+
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = {
+                            expanded = false
+                        },
+                        modifier = Modifier.background(colorResource(id = R.color.gray))
+                    ) {
+                        val options = listOf("UI/UX", "Motion", "Graphic")
+                        options.forEachIndexed() { position, selectionOption ->
+                            DropdownMenuItem(
+                                text = { Text(text = selectionOption, color = Color.White, fontSize = 16.sp) },
+                                onClick = {
+                                    team = position
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(20.dp))
                 Text(text = "Meeting description",
                     fontSize = 15.sp,

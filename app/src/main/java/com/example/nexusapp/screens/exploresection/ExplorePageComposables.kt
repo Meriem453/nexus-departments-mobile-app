@@ -17,7 +17,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -28,6 +30,8 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +50,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpOffset
@@ -53,6 +58,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.nexusapp.R
+import com.example.nexusapp.models.MemberResponse
 import com.example.nexusapp.viewmodels.MembersListVM
 
 
@@ -190,7 +196,7 @@ val context = LocalContext.current
 }
 
 @Composable
-fun MemberDataView(name: String, points: Int, team: String, membersViewModel: MembersListVM){
+fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
     //name context menu
     var isNameContextMenuVisible by rememberSaveable {
         mutableStateOf(false)
@@ -219,12 +225,28 @@ fun MemberDataView(name: String, points: Int, team: String, membersViewModel: Me
     }
     val teamDensity = LocalDensity.current
 
+    val pointsInteractionSource = remember {
+        MutableInteractionSource()
+    }
+
+    var isPointsContextMenuVisible by rememberSaveable {
+        mutableStateOf(false)
+    }
+    var pointsPressOffset by remember {
+        mutableStateOf(DpOffset.Zero)
+    }
+    var pointsItemHeight by remember {
+        mutableStateOf(0.dp)
+    }
+    val pointsDensity = LocalDensity.current
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(start = 30.dp, end = 30.dp)
             .onSizeChanged {
                 teamItemHeight = with(teamDensity) { it.height.toDp() }
+                pointsItemHeight = with(pointsDensity) { it.height.toDp() }
             },
         horizontalArrangement = Arrangement.SpaceEvenly
 
@@ -246,7 +268,7 @@ fun MemberDataView(name: String, points: Int, team: String, membersViewModel: Me
                         }
                     )
                 },
-            text = name,
+            text = member.name,
             fontSize = 15.sp,
             textAlign = TextAlign.Start,
             color = Color.White,)
@@ -268,14 +290,30 @@ fun MemberDataView(name: String, points: Int, team: String, membersViewModel: Me
                         }
                     )
                 },
-            text = team,
+            text = member.team,
             fontSize = 15.sp,
             textAlign = TextAlign.Center,
             color = Color.White,)
 
         Text(
-            modifier = Modifier.weight(1f),
-            text = points.toString(),
+            modifier = Modifier
+                .weight(1f)
+                .pointerInput(true) {
+                    detectTapGestures(
+                        onLongPress = {
+                            isPointsContextMenuVisible = true
+                            pointsPressOffset = DpOffset(it.x.toDp(), it.y.toDp())
+                        },
+                        onPress = {
+                            val press = PressInteraction.Press(it)
+                            pointsInteractionSource.emit(press)
+                            tryAwaitRelease()
+                            pointsInteractionSource.emit(PressInteraction.Release(press))
+                        }
+                    )
+                }
+            ,
+            text = member.points.toString(),
             fontSize = 15.sp,
             textAlign = TextAlign.End,
             color = Color.White,)
@@ -324,6 +362,60 @@ fun MemberDataView(name: String, points: Int, team: String, membersViewModel: Me
                 }, text = { Text(text = item, color = Color.White)})
             }
         }
+
+        DropdownMenu(
+            expanded = isPointsContextMenuVisible,
+            onDismissRequest = {
+                isPointsContextMenuVisible = false
+            },
+            modifier = Modifier.background(
+                colorResource(id = R.color.gray)
+            ),
+            offset = pointsPressOffset.copy(
+                y = pointsPressOffset.y - pointsItemHeight
+            )
+        ) {
+            var points by remember {
+                mutableStateOf(member.points)
+            }
+            Row (Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween){
+                Text(text = "Edit points", color = colorResource(id = R.color.green), fontWeight = FontWeight.Bold)
+                Image(painter = painterResource(id = R.drawable.polygon), contentDescription = "")
+            }
+             TextField(
+                 value = points.toString(),
+                 onValueChange = {points=it.toInt()},
+                 modifier = Modifier.width(150.dp).padding(10.dp),
+                 colors = TextFieldDefaults.colors(
+                     unfocusedContainerColor = Color.White,
+                     focusedContainerColor = Color.White,
+                     focusedIndicatorColor = colorResource(id = R.color.gray),
+                     unfocusedIndicatorColor = Color.White,
+                 ),
+                 placeholder = {
+                     Text(text = "Edit points", color = Color.Gray)
+                 },
+                 keyboardOptions = KeyboardOptions(
+                     keyboardType = KeyboardType.Number
+                 )
+                 )
+            Text(
+                text = "Edit",
+                fontSize = 15.sp,
+                color = colorResource(id = R.color.green),
+                textAlign = TextAlign.End,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp)
+                    .clickable {
+                            //TODO("edit member's points")
+                            isPointsContextMenuVisible = false
+                        }
+                )
+
+
+        }
+
 
     }
 }

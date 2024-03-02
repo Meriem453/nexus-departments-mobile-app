@@ -1,6 +1,7 @@
 package com.example.nexusapp.screens
 
 
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.InfiniteRepeatableSpec
@@ -75,6 +76,7 @@ import com.ramcosta.composedestinations.navigation.DestinationsNavigator
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.util.Date
 
 
 @Destination
@@ -109,7 +111,11 @@ fun Calendar(navigator: DestinationsNavigator) {
                 showAdd=true
             }
 
-                    Column(Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(
+                        Modifier.fillMaxSize(),
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
 
                         if(eventsViewModel.eventsList is Resource.Loading){
 
@@ -143,12 +149,13 @@ fun Calendar(navigator: DestinationsNavigator) {
                                 var currentEvent by remember {
                                     mutableStateOf(eventsViewModel.eventsList.data!![0])
                                 }
-                                /*Text(text = "February",
-                                    color = Color.White,
-                                    fontSize = 16.sp,
-                                    modifier = Modifier.padding(top = 50.dp, bottom = 15.dp),
-                                    textAlign = TextAlign.Center
-                                )*/
+                            //TODO("choose the year of the events")
+                            /*Text(text = day.date.split("/")[1],
+                                   color = Color.White,
+                                   fontSize = 16.sp,
+                                   modifier = Modifier.padding(top = 50.dp, bottom = 15.dp),
+                                   textAlign = TextAlign.Center
+                               )*/
                                 TimeLine(eventsViewModel.eventsList.data!!){
                                   currentEvent=eventsViewModel.eventsList.data!![it]
                                 }
@@ -411,23 +418,26 @@ fun Event(currentEvent: EventResponse,navigator: DestinationsNavigator) {
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center
                         )
-                        Button(onClick = {
-                               navigator.navigate(AllParticipantsPageDestination(currentEvent.id))
+                        if(!isDatePassed(currentEvent.date)) {
+                            Button(
+                                onClick = {
+                                    navigator.navigate(AllParticipantsPageDestination(currentEvent.id))
 
-                        },
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(10.dp))
-                                .padding(top = 20.dp),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = colorResource(id = R.color.green)
-                            )
-                        ) {
-                            Text(
-                                text = "Check In",
-                                fontSize = 20.sp,
-                                color = colorResource(id = R.color.gray),
-                                modifier = Modifier.padding(start = 10.dp, end = 10.dp)
-                            )
+                                },
+                                modifier = Modifier
+                                    .clip(RoundedCornerShape(10.dp))
+                                    .padding(top = 20.dp),
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = colorResource(id = R.color.green)
+                                )
+                            ) {
+                                Text(
+                                    text = "Check In",
+                                    fontSize = 20.sp,
+                                    color = colorResource(id = R.color.gray),
+                                    modifier = Modifier.padding(start = 10.dp, end = 10.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -517,7 +527,23 @@ fun TimeLine(days:List<EventResponse>,selected:(selectedDay:Int)->Unit) {
                 Spacer(modifier = Modifier
                     .fillMaxWidth()
                     .size(10.dp))
-                Text(text = "L",
+                Text(text =
+                    when(day.date.split("/")[1]){
+                                                "01" -> "Jan"
+                                                "02" -> "Feb"
+                                                "03" -> "Mar"
+                                                "04" -> "Apr"
+                                                "05" -> "May"
+                                                "06" -> "Jun"
+                                                "07" -> "Jul"
+                                                "08" -> "Aug"
+                                                "09" -> "Sep"
+                                                "10" -> "Oct"
+                                                "11" -> "Nov"
+                                                "12" -> "Dec"
+                                                else -> ""
+                                                }
+                    ,
                     fontSize = 16.sp,
                     color = if (position==selectedDay) colorResource(id = R.color.gray)
                     else Color.White,
@@ -528,7 +554,14 @@ fun TimeLine(days:List<EventResponse>,selected:(selectedDay:Int)->Unit) {
         }
     }
 }
+fun isDatePassed(dateString: String): Boolean {
+    val dateFormat = SimpleDateFormat("dd/MM/yyyy")
+    val date = dateFormat.parse(dateString)
 
+    val currentDate = Date()
+
+    return date?.before(currentDate) == true
+}
 
 @Preview(showBackground = true)
 @Composable

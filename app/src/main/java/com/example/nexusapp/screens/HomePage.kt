@@ -23,6 +23,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -143,17 +144,25 @@ fun Overview(viewModel: HomePageVM, bottomPadding: Dp) {
                        fontWeight = FontWeight.Bold,
                        modifier = Modifier.padding(10.dp)
                        )
-            Text(text = viewModel.userInfo.data!!.event.date,
-                color = Color.White,
-                fontSize = 15.sp,
-                //fontFamily = FontFamily.Cursive,
-                modifier = Modifier
-                    .padding(10.dp)
-                    .fillMaxWidth()
-                    ,
-                textAlign = TextAlign.End,
+            Row (verticalAlignment = Alignment.CenterVertically) {
+                Icon(
+                    painter = painterResource(id = R.drawable.point),
+                    contentDescription = "",
+                    tint = colorResource(id = R.color.green),
+                    modifier = Modifier.size(10.dp).padding(2.dp)
+                )
+                Text(
+                    text = viewModel.userInfo.data!!.event.date,
+                    color = Color.White,
+                    fontSize = 15.sp,
+                    //fontFamily = FontFamily.Cursive,
+                    modifier = Modifier
+                        .padding(10.dp)
+                        .fillMaxWidth(),
+                    textAlign = TextAlign.End,
 
-            )
+                    )
+            }
         }
         Text(text = "Department Overview",
             color = Color.White,

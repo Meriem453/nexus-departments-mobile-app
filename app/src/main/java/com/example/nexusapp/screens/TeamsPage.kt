@@ -86,6 +86,7 @@ fun TeamsPage() {
                     modifier = Modifier
                         .size(50.dp)
                         .rotate(rotationValue)
+                        .align(Alignment.CenterVertically)
 
                     ,
                     color = colorResource(id = R.color.green)
@@ -93,27 +94,20 @@ fun TeamsPage() {
             }
             if(teamVM.teams is Resource.Failed) {
                 Text(
-                    text = "Check your connection",
+                    text = teamVM.teams.message!!,
                     fontSize = 16.sp,
                     color = Color.Gray
                 )
             }
             if(teamVM.teams is Resource.Success){
                 LazyColumn(modifier = Modifier.fillMaxSize()){
-                    itemsIndexed(
-                        listOf(
-                            TeamResponse(0,"Android",0xffaaaaaa),
-                            TeamResponse(0,"Android",0xffaaaaaa),
-                            TeamResponse(0,"Android",0xffaaaaaa),
-                            TeamResponse(0,"Android",0xffaaaaaa),
-                        )
-                    ){position,item->
+                    itemsIndexed(teamVM.teams.data!!){position,item->
                         Box (
                             Modifier
                                 .fillMaxWidth()
                                 .padding(50.dp)
                                 .clip(RoundedCornerShape(20.dp))
-                                .background(Color(item.color))
+                                .background(Color(item.color.toLong(16)))
                                 .clickable {
                                     currentItem = item
                                     showAdd = true
@@ -124,7 +118,8 @@ fun TeamsPage() {
                           Text(
                               text = item.name,
                               color = Color.White,
-                              fontSize = 16.sp
+                              fontSize = 16.sp,
+                              modifier = Modifier.padding(10.dp)
                               )
                         }
                     }

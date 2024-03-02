@@ -34,10 +34,17 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissValue
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -90,7 +97,7 @@ val list = listOf(
     var currentItem by remember {
         mutableStateOf<TaskResponse?>(null)
     }
-    var scroll = rememberScrollState()
+    val scroll = rememberScrollState()
 
     Column(
         Modifier
@@ -137,24 +144,33 @@ val list = listOf(
                         ) {
                             Column(Modifier.padding(10.dp)) {
                                 Spacer(modifier = Modifier.height(10.dp))
-                                Text(
-                                    text = item.team_id.toString(),
-                                    fontSize = 15.sp,
-                                    color = Color.Gray
-                                )
+                                Row (verticalAlignment = Alignment.CenterVertically){
+                                    Icon(painter = painterResource(id = R.drawable.point), contentDescription ="", tint = colorResource(id = R.color.green), modifier = Modifier
+                                        .size(10.dp)
+                                        .padding(2.dp) )
+                                    Text(
+                                        text = item.team_id.toString(),
+                                        fontSize = 10.sp,
+                                        color = Color.Gray
+                                    )
+                                }
+
                                 Spacer(modifier = Modifier.height(10.dp))
                                 Text(
                                     text = item.title,
                                     fontSize = 20.sp,
                                     color = Color.White,
-                                    fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.height(10.dp))
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Icon(painter = painterResource(id = R.drawable.point), contentDescription ="", tint = colorResource(id = R.color.green), modifier = Modifier
+                                        .size(10.dp)
+                                        .padding(2.dp) )
                                 Text(
-                                    text = item.deadline,
-                                    fontSize = 15.sp,
+                                    text = "Till ${item.deadline}",
+                                    fontSize = 10.sp,
                                     color = Color.Gray
-                                )
+                                )}
                                 Spacer(modifier = Modifier.height(10.dp))
 
                             }
@@ -229,26 +245,36 @@ val list = listOf(
                                         verticalAlignment = Alignment.CenterVertically) {
 
 
-                                    Column(Modifier.padding(15.dp).weight(1f)) {
+                                    Column(
+                                        Modifier
+                                            .padding(15.dp)
+                                            .weight(1f)) {
                                         Spacer(modifier = Modifier.height(5.dp))
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(painter = painterResource(id = R.drawable.point), contentDescription ="", tint = colorResource(id = R.color.green) , modifier = Modifier
+                                                .size(10.dp)
+                                                .padding(2.dp))
                                         Text(
                                             text = item.team_id.toString(),
-                                            fontSize = 15.sp,
+                                            fontSize = 10.sp,
                                             color = Color.Gray
-                                        )
+                                        )}
                                         Spacer(modifier = Modifier.height(5.dp))
                                         Text(
                                             text = item.title,
                                             fontSize = 20.sp,
                                             color = Color.White,
-                                            fontWeight = FontWeight.Bold
                                         )
                                         Spacer(modifier = Modifier.height(5.dp))
+                                        Row (verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(painter = painterResource(id = R.drawable.point), contentDescription ="", tint = colorResource(id = R.color.green), modifier = Modifier
+                                                .size(10.dp)
+                                                .padding(2.dp) )
                                         Text(
-                                            text = item.deadline,
-                                            fontSize = 15.sp,
+                                            text = "Till ${item.deadline}",
+                                            fontSize = 10.sp,
                                             color = Color.Gray
-                                        )
+                                        )}
                                         Spacer(modifier = Modifier.height(5.dp))
 
                                     }
@@ -258,10 +284,10 @@ val list = listOf(
                                                 progress = item.progress.toFloat()/100,
                                                 color = colorResource(id = R.color.green),
                                                 modifier = Modifier
-                                                .size(100.dp)
-                                                .padding(15.dp)
+                                                    .size(100.dp)
+                                                    .padding(15.dp)
                                                 , strokeWidth = 5.dp, trackColor = colorResource(
-                                                id = R.color.card_bg
+                                                id = R.color.gray
                                             ))
                                             Text(text = "${item.progress}%",
                                                 fontSize = 20.sp,
@@ -303,6 +329,9 @@ val list = listOf(
             }
             var status by remember {
                 mutableStateOf(currentItem?.status ?: "ToDo")
+            }
+            var expanded by remember {
+                mutableStateOf(false)
             }
             Column(
                 Modifier
@@ -387,22 +416,61 @@ val list = listOf(
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = "Android" , onValueChange ={team=0},
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 20.dp, end = 20.dp)
-                        .clip(RoundedCornerShape(10.dp)),
-                    colors = TextFieldDefaults.colors(
-                        focusedContainerColor = Color.White,
-                        unfocusedContainerColor = Color.White
-                    ),
-                    placeholder = {
-                        Text(text = "Select team",
-                            fontSize = 15.sp,
-                            color = Color.Gray,
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = {
+                        expanded = !expanded
+                    }
+                ) {
+                    TextField(value = "Android", onValueChange = { team = 0 },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 20.dp, end = 20.dp)
+                            .menuAnchor()
+                            .clip(RoundedCornerShape(10.dp)),
+                        colors = TextFieldDefaults.colors(
+                            focusedContainerColor = Color.White,
+                            unfocusedContainerColor = Color.White
+                        ),
+                        placeholder = {
+                            Text(
+                                text = "Select team",
+                                fontSize = 15.sp,
+                                color = Color.Gray,
 
-                            )}
-                )
+                                )
+                        }, trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(
+                                expanded = expanded
+                            )
+                        },
+                        readOnly = true
+                    )
+                    DropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = {
+                            expanded = false
+                        },
+                        modifier = Modifier.background(colorResource(id = R.color.gray))
+                    ) {
+                        val options = listOf("UI/UX", "Motion", "Graphic")
+                        options.forEachIndexed() { position, selectionOption ->
+                            DropdownMenuItem(
+                                text = {
+                                    Text(
+                                        text = selectionOption,
+                                        color = Color.White,
+                                        fontSize = 16.sp
+                                    )
+                                },
+                                onClick = {
+                                    team = position
+                                    expanded = false
+                                }
+                            )
+                        }
+                    }
+                }
                 Spacer(modifier = Modifier.height(20.dp))
 
                 Text(text = "Task description",
@@ -454,12 +522,21 @@ val list = listOf(
                     Text(text = "In Progress", fontSize = 15.sp, modifier = Modifier.padding(end = 10.dp), color = Color.White)
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                if(status=="In Progress"){
-                LinearProgressIndicator(progress = progress.toFloat()/100,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp, end = 20.dp),
-                )}
+                if(status=="In Progress") {
+                    Slider(
+                        value = progress.toFloat()/100,
+                        onValueChange = { progress = it.toInt()*100 },
+                        colors = SliderDefaults.colors(
+                            thumbColor =  colorResource(R.color.card_bg),
+                            activeTrackColor = colorResource(R.color.green),
+                            inactiveTrackColor = colorResource(R.color.green),
+
+                        ),
+                        steps = 50,
+                        valueRange = 0f..100f,
+                        modifier = Modifier.padding(start = 20.dp, end = 20.dp)
+                    )
+                }
                 Spacer(modifier = Modifier.height(20.dp))
                 Row(
                     Modifier

@@ -19,7 +19,11 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -59,6 +63,7 @@ fun MembersListPagePrev() {
 
 
 
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
@@ -78,13 +83,16 @@ fun MembersListPage() {
                     mutableStateOf("")
                 }
                 var team by remember {
-                    mutableStateOf("")
+                    mutableStateOf(0)
                 }
                 var email by remember {
                     mutableStateOf("")
                 }
                 var password by remember {
                     mutableStateOf("")
+                }
+                var expanded by remember {
+                    mutableStateOf(false)
                 }
                 Column(
                     Modifier
@@ -143,22 +151,62 @@ fun MembersListPage() {
                             .padding(start = 20.dp, bottom = 10.dp)
 
                     )
-                    TextField(value = team, onValueChange ={team=it},
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 20.dp, end = 20.dp)
-                            .clip(RoundedCornerShape(10.dp)),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color.White,
-                            unfocusedContainerColor = Color.White
-                        ),
-                        placeholder = {
-                            Text(text = "Select team",
-                                fontSize = 15.sp,
-                                color = Color.Gray,
+                    val options = listOf("UI/UX", "Motion", "Graphic")
+                    ExposedDropdownMenuBox(
+                        expanded = expanded,
+                        onExpandedChange = {
+                            expanded = !expanded
+                        }
+                    ) {
+                        TextField(value = team.toString(), onValueChange = {  },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 20.dp, end = 20.dp)
+                                .menuAnchor()
+                                .clip(RoundedCornerShape(10.dp)),
+                            colors = TextFieldDefaults.colors(
+                                focusedContainerColor = Color.White,
+                                unfocusedContainerColor = Color.White
+                            ),
+                            placeholder = {
+                                Text(
+                                    text = "Select team",
+                                    fontSize = 15.sp,
+                                    color = Color.Gray,
+                                )
+                            },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(
+                                    expanded = expanded
+                                )
+                            },
+                            readOnly = true
+                        )
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = {
+                                expanded = false
+                            },
+                            modifier = Modifier.background(colorResource(id = R.color.gray))
+                        ) {
 
-                                )}
-                    )
+                            options.forEachIndexed() { position, selectionOption ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = selectionOption,
+                                            color = Color.White,
+                                            fontSize = 16.sp
+                                        )
+                                    },
+                                    onClick = {
+                                        team = position
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
                     Spacer(modifier = Modifier.height(20.dp))
                     Text(text = "Email",
                         fontSize = 15.sp,
@@ -218,7 +266,7 @@ fun MembersListPage() {
                         //members = members + MemberResponse(name, 0, team)
                         //TODO("add member")
                         name = ""
-                        team= ""
+                        team= 0
                         email=""
                         password=""
                         Toast.makeText(context, "Member added", Toast.LENGTH_SHORT).show()
@@ -261,7 +309,8 @@ fun MembersListPage() {
             CircularProgressIndicator(
                 modifier = Modifier
                     .fillMaxSize()
-                    .wrapContentSize(align = Alignment.Center)
+                    .wrapContentSize(align = Alignment.Center),
+
             )
         }
         if (membersViewModel.membersList is Resource.Failed) {
@@ -284,7 +333,7 @@ fun MembersListPage() {
         if(membersViewModel.membersList is Resource.Success){
             LazyColumn(modifier = Modifier.padding(15.dp)) {
                 items(membersViewModel.membersList.data!!) {item: MemberResponse ->
-                    MemberDataView(name = item.name, points = item.points , team = item.team,membersViewModel)
+                    MemberDataView(item,membersViewModel)
                     Spacer(modifier = Modifier.height(5.dp))
                 }
 

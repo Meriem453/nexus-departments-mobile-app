@@ -185,18 +185,19 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
                             Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
                             //Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
                         }
-
-                            Text(text = "${item.completed_tasks}/${item.total_tasks} Tasks ${item.completed_tasks.toInt() * 100 / item.total_tasks.toInt()}%",
-                                fontSize = 15.sp,
-                                color = Color.Gray,
-                                modifier = Modifier.padding(start=16.dp, bottom = 16.dp)
-                            )
-                            /*Text(text = "Till 4/5/2024",
-                                fontSize = 15.sp,
-                                color = Color.Gray,
-                                )*/
-
-
+                         Row (
+                             Modifier
+                                 .fillMaxWidth()
+                                 .padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween){
+                             Text(text = "${item.completed_tasks}/${item.total_tasks} Tasks ${item.completed_tasks.toInt() * 100 / item.total_tasks.toInt()}%",
+                                 fontSize = 15.sp,
+                                 color = Color.Gray,
+                             )
+                             /*Text(text = item.deadline,
+                                 fontSize = 15.sp,
+                                 color = Color.Gray,
+                             )*/
+                         }
                     }
                 })
             }
