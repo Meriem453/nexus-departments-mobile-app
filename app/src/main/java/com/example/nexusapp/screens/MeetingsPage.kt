@@ -26,6 +26,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SwipeToDismiss
 import androidx.compose.material3.Text
@@ -60,6 +61,14 @@ import com.example.nexusapp.screens.components.DeleteDialog
 import com.example.nexusapp.screens.components.Header
 import com.example.nexusapp.viewmodels.MeetingsVM
 import com.ramcosta.composedestinations.annotation.Destination
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import java.time.LocalDate
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Preview
@@ -211,31 +220,33 @@ Column(modifier = Modifier
     }
 
     if(showAdd){
+
+        var title by remember {
+            mutableStateOf(
+                currentItem?.title ?: ""
+            )
+        }
+        var date by remember {
+            mutableStateOf(currentItem?.date ?: "")
+        }
+        var time by remember {
+            mutableStateOf(currentItem?.time ?: "")
+        }
+        var desc by remember {
+            mutableStateOf(currentItem?.description ?: "")
+        }
+        var team by remember {
+            mutableStateOf(currentItem?.team_id ?: 0)
+        }
+        var expanded by remember {
+            mutableStateOf(false)
+        }
+        val datePicker= rememberMaterialDialogState()
+        val timePicker= rememberMaterialDialogState()
         Dialog(onDismissRequest = {
             showAdd=false
             currentItem=null
         }) {
-
-            var title by remember {
-                mutableStateOf(
-                    currentItem?.title ?: ""
-                )
-            }
-            var date by remember {
-                mutableStateOf(currentItem?.date ?: "")
-            }
-            var time by remember {
-                mutableStateOf(currentItem?.time ?: "")
-            }
-            var desc by remember {
-                mutableStateOf(currentItem?.description ?: "")
-            }
-            var team by remember {
-                mutableStateOf(currentItem?.team_id ?: 0)
-            }
-            var expanded by remember {
-                mutableStateOf(false)
-            }
 
             Column(
                 Modifier
@@ -286,6 +297,7 @@ Column(modifier = Modifier
                 Spacer(modifier = Modifier.height(20.dp))
                 Row (Modifier.fillMaxWidth()){
                     TextField(value = date , onValueChange ={date=it},
+                        readOnly = true,
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 20.dp, end = 5.dp)
@@ -295,13 +307,21 @@ Column(modifier = Modifier
                             unfocusedContainerColor = Color.White
                         ),
                         placeholder = {
-                            Text(text = "Select date",
+                            Text(text = "Date",
                                 fontSize = 15.sp,
                                 color = Color.Gray,
+                                modifier = Modifier
+                                    .clickable { datePicker.show() }
+                                    .fillMaxWidth()
 
-                                )}
+                                )},
+                        trailingIcon = {
+                            Icon(painter = painterResource(id = R.drawable.calendar), contentDescription ="", tint = Color.Gray , modifier = Modifier.clickable { datePicker.show() })
+                        },
+                        maxLines = 1
                     )
                     TextField(value = time , onValueChange ={time=it},
+                        readOnly = true,
                         modifier = Modifier
                             .weight(1f)
                             .padding(start = 5.dp, end = 20.dp)
@@ -311,11 +331,18 @@ Column(modifier = Modifier
                             unfocusedContainerColor = Color.White
                         ),
                         placeholder = {
-                            Text(text = "Select time",
+                            Text(text = "Time",
                                 fontSize = 15.sp,
                                 color = Color.Gray,
+                                modifier = Modifier
+                                    .clickable { timePicker.show() }
+                                    .fillMaxWidth()
 
-                                )}
+                                )},
+                        trailingIcon = {
+                            Icon(painter = painterResource(id = R.drawable.access_time), contentDescription ="", tint = Color.Gray , modifier = Modifier.clickable { timePicker.show() })
+                        },
+                        maxLines = 1
                     )
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -433,6 +460,50 @@ Column(modifier = Modifier
                         modifier = Modifier.padding(5.dp)
                     )
                 }
+            }
+        }
+        MaterialDialog(
+            dialogState = datePicker,
+            buttons = {positiveButton(text = "Save")
+
+            },
+            backgroundColor = colorResource(id = R.color.gray)
+        ) {
+            datepicker(
+                initialDate = LocalDate.now(),
+                title = "Pick a date",
+                colors = DatePickerDefaults.colors(
+                    dateActiveBackgroundColor = colorResource(id = R.color.green),
+                    dateActiveTextColor = colorResource(id = R.color.gray),
+                    headerBackgroundColor = colorResource(id = R.color.gray),
+                    headerTextColor = colorResource(id = R.color.green),
+                    dateInactiveTextColor = Color.White,
+                    dateInactiveBackgroundColor = colorResource(id = R.color.gray),
+                    calendarHeaderTextColor =colorResource(id = R.color.green)
+
+                )
+            ){
+                date = "${it.dayOfMonth}/${it.monthValue}/${it.year}"
+            }
+        }
+        MaterialDialog(
+            dialogState = timePicker,
+            buttons = {positiveButton(text = "Save")
+
+            },
+            backgroundColor = colorResource(id = R.color.gray)
+        ) {
+            timepicker(
+                initialTime = LocalTime.now(),
+                title = "Pick a time",
+                colors = TimePickerDefaults.colors(
+                    activeTextColor = colorResource(id = R.color.gray),
+                    activeBackgroundColor = colorResource(id = R.color.green),
+                    inactiveTextColor = Color.White,
+                    headerTextColor = colorResource(id = R.color.green)
+                )
+            ){
+                time = "${it.hour}:${it.minute}"
             }
         }
     }

@@ -15,6 +15,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,7 +41,8 @@ fun Header(
         )*/
         Text(text = title,
             color = Color.White,
-            fontSize = 25.sp,
+            fontWeight = FontWeight(700),
+            fontSize = 20.sp,
             modifier = Modifier.padding(16.dp),
             textAlign = TextAlign.Center
         )

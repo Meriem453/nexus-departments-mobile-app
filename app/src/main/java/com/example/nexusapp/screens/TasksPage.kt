@@ -75,6 +75,11 @@ import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.screens.components.Header
 import com.google.android.material.progressindicator.LinearProgressIndicatorSpec
 import com.ramcosta.composedestinations.annotation.Destination
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import java.time.LocalDate
 
 //@Preview(showBackground = true)
 @OptIn(ExperimentalMaterial3Api::class)
@@ -307,32 +312,32 @@ val list = listOf(
         }
     }
     if(showAdd){
+        var title by remember {
+            mutableStateOf(currentItem?.title ?: "")
+        }
+        var desc by remember {
+            mutableStateOf(currentItem?.description ?: "")
+        }
+        var deadline by remember {
+            mutableStateOf(currentItem?.deadline ?: "")
+        }
+        var team by remember {
+            mutableStateOf(currentItem?.team_id ?: "")
+        }
+        var progress by remember {
+            mutableStateOf(currentItem?.progress ?: 0)
+        }
+        var status by remember {
+            mutableStateOf(currentItem?.status ?: "ToDo")
+        }
+        var expanded by remember {
+            mutableStateOf(false)
+        }
+        val datePicker= rememberMaterialDialogState()
         Dialog(onDismissRequest = {
             currentItem=null
             showAdd=false
         }) {
-
-            var title by remember {
-                mutableStateOf(currentItem?.title ?: "")
-            }
-            var desc by remember {
-                mutableStateOf(currentItem?.description ?: "")
-            }
-            var deadline by remember {
-                mutableStateOf(currentItem?.deadline ?: "")
-            }
-            var team by remember {
-                mutableStateOf(currentItem?.team_id ?: "")
-            }
-            var progress by remember {
-                mutableStateOf(currentItem?.progress ?: 0)
-            }
-            var status by remember {
-                mutableStateOf(currentItem?.status ?: "ToDo")
-            }
-            var expanded by remember {
-                mutableStateOf(false)
-            }
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -391,6 +396,7 @@ val list = listOf(
 
                 )
                 TextField(value = deadline , onValueChange ={deadline=it},
+                    readOnly = true,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -404,7 +410,10 @@ val list = listOf(
                             fontSize = 15.sp,
                             color = Color.Gray,
 
-                            )}
+                            )},
+                    trailingIcon = {
+                        Icon(painter = painterResource(id = R.drawable.calendar), contentDescription = "", tint = Color.Gray, modifier = Modifier.clickable { datePicker.show() })
+                    }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -451,7 +460,8 @@ val list = listOf(
                         onDismissRequest = {
                             expanded = false
                         },
-                        modifier = Modifier.background(colorResource(id = R.color.gray))
+                        modifier = Modifier
+                            .background(colorResource(id = R.color.gray)),
                     ) {
                         val options = listOf("UI/UX", "Motion", "Graphic")
                         options.forEachIndexed() { position, selectionOption ->
@@ -527,9 +537,9 @@ val list = listOf(
                         value = progress.toFloat()/100,
                         onValueChange = { progress = it.toInt()*100 },
                         colors = SliderDefaults.colors(
-                            thumbColor =  colorResource(R.color.card_bg),
+                            thumbColor =  colorResource(R.color.green),
                             activeTrackColor = colorResource(R.color.green),
-                            inactiveTrackColor = colorResource(R.color.green),
+                            inactiveTrackColor = colorResource(R.color.card_bg),
 
                         ),
                         steps = 50,
@@ -586,6 +596,30 @@ val list = listOf(
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
+            }
+        }
+        MaterialDialog(
+            dialogState = datePicker,
+            buttons = {positiveButton(text = "Save")
+
+            },
+            backgroundColor = colorResource(id = R.color.gray)
+        ) {
+            datepicker(
+                initialDate = LocalDate.now(),
+                title = "Pick a date",
+                colors = DatePickerDefaults.colors(
+                    dateActiveBackgroundColor = colorResource(id = R.color.green),
+                    dateActiveTextColor = colorResource(id = R.color.gray),
+                    headerBackgroundColor = colorResource(id = R.color.gray),
+                    headerTextColor = colorResource(id = R.color.green),
+                    dateInactiveTextColor = Color.White,
+                    dateInactiveBackgroundColor = colorResource(id = R.color.gray),
+                    calendarHeaderTextColor =colorResource(id = R.color.green)
+
+                )
+            ){
+                deadline = "${it.dayOfMonth}/${it.monthValue}/${it.year}"
             }
         }
     }

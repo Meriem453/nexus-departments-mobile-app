@@ -144,12 +144,12 @@ fun Overview(viewModel: HomePageVM, bottomPadding: Dp) {
                        fontWeight = FontWeight.Bold,
                        modifier = Modifier.padding(10.dp)
                        )
-            Row (verticalAlignment = Alignment.CenterVertically) {
+            Row (verticalAlignment = Alignment.CenterVertically, modifier = Modifier.align(Alignment.End)) {
                 Icon(
                     painter = painterResource(id = R.drawable.point),
                     contentDescription = "",
                     tint = colorResource(id = R.color.green),
-                    modifier = Modifier.size(10.dp).padding(2.dp)
+                    modifier = Modifier.size(10.dp)
                 )
                 Text(
                     text = viewModel.userInfo.data!!.event.date,
@@ -157,10 +157,7 @@ fun Overview(viewModel: HomePageVM, bottomPadding: Dp) {
                     fontSize = 15.sp,
                     //fontFamily = FontFamily.Cursive,
                     modifier = Modifier
-                        .padding(10.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.End,
-
+                        .padding(10.dp),
                     )
             }
         }

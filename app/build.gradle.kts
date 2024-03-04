@@ -116,6 +116,10 @@ dependencies {
     implementation ("androidx.camera:camera-view:1.4.0-alpha02")
     //ML kit barecode scanner
     implementation ("com.google.mlkit:barcode-scanning:17.2.0")
+    //Color picker
+    implementation("com.github.skydoves:colorpicker-compose:1.0.7")
+    //Time and date picker
+    implementation ("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
 
 
 

@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -49,6 +50,8 @@ import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.TeamResponse
 import com.example.nexusapp.screens.components.Header
 import com.example.nexusapp.viewmodels.TeamsVM
+import com.github.skydoves.colorpicker.compose.HsvColorPicker
+import com.github.skydoves.colorpicker.compose.rememberColorPickerController
 import com.ramcosta.composedestinations.annotation.Destination
 @Preview
 @Destination
@@ -105,7 +108,7 @@ fun TeamsPage() {
                         Box (
                             Modifier
                                 .fillMaxWidth()
-                                .padding(50.dp)
+                                .padding(bottom = 20.dp, start = 20.dp, end = 20.dp)
                                 .clip(RoundedCornerShape(20.dp))
                                 .background(Color(item.color.toLong(16)))
                                 .clickable {
@@ -119,7 +122,7 @@ fun TeamsPage() {
                               text = item.name,
                               color = Color.White,
                               fontSize = 16.sp,
-                              modifier = Modifier.padding(10.dp)
+                              modifier = Modifier.padding(15.dp)
                               )
                         }
                     }
@@ -129,6 +132,9 @@ fun TeamsPage() {
         }
     }
     if(showAdd){
+        var colorPicker by remember {
+            mutableStateOf(false)
+        }
         Dialog(onDismissRequest = {
             currentItem=null
             showAdd=false
@@ -141,7 +147,7 @@ fun TeamsPage() {
                 )
             }
             var color by remember {
-                mutableStateOf(currentItem?.color.toString() ?: "")
+                mutableStateOf(currentItem?.color?: "ff76E494")
             }
             Column(
                 Modifier
@@ -211,8 +217,14 @@ fun TeamsPage() {
                         Text(text = "Enter the team's color",
                             fontSize = 15.sp,
                             color = Color.Gray,
+                            modifier = Modifier.clickable { colorPicker=true }
 
-                            )}
+                            )},
+                    trailingIcon = {
+                        Icon(painter = painterResource(id = R.drawable.color_lens), contentDescription = "", tint = Color.Gray,
+                            modifier = Modifier.clickable { colorPicker=true }
+                        )
+                    }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Row(
@@ -264,7 +276,46 @@ fun TeamsPage() {
                 }
                 Spacer(modifier = Modifier.height(20.dp))
             }
+            if (colorPicker){
+                val controller = rememberColorPickerController()
+                var picked by remember {
+                    mutableStateOf(color)
+                }
+                Dialog(onDismissRequest = { colorPicker=false }) {
+                    Column(Modifier.background(colorResource(id = R.color.gray))) {
+                        Text(text = "Pick a color",
+                            fontSize = 14.sp,
+                            color = colorResource(id = R.color.green),
+                            modifier = Modifier
+                                .padding(20.dp)
+                        )
+                        HsvColorPicker(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(20.dp)
+                                .height(300.dp),
+                            controller = controller,
+                            onColorChanged = {
+                                picked=it.hexCode
+                            }
+                        )
+                        Text(text = "Save",
+                            fontSize = 16.sp,
+                            color = colorResource(id = R.color.green),
+                            modifier = Modifier
+                                .clickable {
+                                    color = picked
+                                    colorPicker = false
+                                }
+                                .align(Alignment.End)
+                                .padding(20.dp)
+                        )
+                    }
+
+                }
+            }
         }
+
     }
 
 }

@@ -343,9 +343,10 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
             onDismissRequest = {
                 isTeamContextMenuVisible = false
             },
-            modifier = Modifier.background(
-                colorResource(id = R.color.gray)
-            ),
+            modifier = Modifier
+                .background(
+                    colorResource(id = R.color.gray)
+                )   ,
             offset = teamPressOffset.copy(
                 y = teamPressOffset.y - teamItemHeight
             )
@@ -370,7 +371,7 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
             },
             modifier = Modifier.background(
                 colorResource(id = R.color.gray)
-            ),
+            ).fillMaxWidth().padding(start = 20.dp, end = 20.dp),
             offset = pointsPressOffset.copy(
                 y = pointsPressOffset.y - pointsItemHeight
             )

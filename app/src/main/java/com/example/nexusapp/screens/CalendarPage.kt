@@ -34,6 +34,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 
 import androidx.compose.material3.Scaffold
@@ -56,6 +57,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -73,12 +75,21 @@ import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.example.nexusapp.viewmodels.EventsVM
 import com.ramcosta.composedestinations.annotation.Destination
 import com.ramcosta.composedestinations.navigation.DestinationsNavigator
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.format.DateTimeFormatter
 import java.util.Date
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
 fun Calendar(navigator: DestinationsNavigator) {
@@ -90,6 +101,8 @@ fun Calendar(navigator: DestinationsNavigator) {
         mutableStateOf(false)
     }
     val coroutine = rememberCoroutineScope()
+
+
 
     Scaffold(
         Modifier
@@ -171,17 +184,18 @@ fun Calendar(navigator: DestinationsNavigator) {
     }
 
     if(showAdd){
+        val datePicker = rememberMaterialDialogState()
+        var name by remember {
+            mutableStateOf("")
+        }
+        var date by remember {
+            mutableStateOf("")
+        }
+        var details by remember {
+            mutableStateOf("")
+        }
         Dialog(onDismissRequest = { showAdd=false }) {
 
-            var name by remember {
-                mutableStateOf("")
-            }
-            var date by remember {
-                mutableStateOf("")
-            }
-            var details by remember {
-                mutableStateOf("")
-            }
             Column(
                 Modifier
                     .fillMaxWidth()
@@ -247,7 +261,9 @@ fun Calendar(navigator: DestinationsNavigator) {
 
                 )
                 TextField(value = date, onValueChange ={date=it},
+                    readOnly = true,
                     modifier = Modifier
+                        .clickable{ datePicker.show() }
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
                         .clip(RoundedCornerShape(10.dp)),
@@ -259,8 +275,11 @@ fun Calendar(navigator: DestinationsNavigator) {
                         Text(text = "Select date",
                             fontSize = 15.sp,
                             color = Color.Gray,
-
-                            )}
+                            modifier = Modifier.clickable { datePicker.show() }
+                            )},
+                    trailingIcon = {
+                        Icon(painter = painterResource(id = R.drawable.calendar), contentDescription ="", tint = Color.Gray , modifier = Modifier.clickable { datePicker.show() })
+                    }
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -286,6 +305,7 @@ fun Calendar(navigator: DestinationsNavigator) {
                         Text(text = "Event details",
                             fontSize = 15.sp,
                             color = Color.Gray,
+                            modifier = Modifier.fillMaxWidth()
 
                             )},
                     minLines = 4
@@ -315,8 +335,6 @@ fun Calendar(navigator: DestinationsNavigator) {
                         }
 
                     }
-
-
                 },
                     modifier = Modifier
                         .clip(RoundedCornerShape(10.dp))
@@ -333,9 +351,32 @@ fun Calendar(navigator: DestinationsNavigator) {
                             color = colorResource(id = R.color.gray),
                             modifier = Modifier.padding(5.dp)
                         )
-
-
                 }
+            }
+
+        }
+        MaterialDialog(
+            dialogState = datePicker,
+            buttons = {positiveButton(text = "Save")
+
+            },
+            backgroundColor = colorResource(id = R.color.gray)
+        ) {
+            datepicker(
+                initialDate = LocalDate.now(),
+                title = "Pick a date",
+                colors = DatePickerDefaults.colors(
+                    dateActiveBackgroundColor = colorResource(id = R.color.green),
+                    dateActiveTextColor = colorResource(id = R.color.gray),
+                    headerBackgroundColor = colorResource(id = R.color.gray),
+                    headerTextColor = colorResource(id = R.color.green),
+                    dateInactiveTextColor = Color.White,
+                    dateInactiveBackgroundColor = colorResource(id = R.color.gray),
+                    calendarHeaderTextColor =colorResource(id = R.color.green)
+
+                    )
+            ){
+                date = "${it.dayOfMonth}/${it.monthValue}/${it.year}"
             }
         }
     }
