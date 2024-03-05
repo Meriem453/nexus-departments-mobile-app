@@ -1,5 +1,7 @@
 package com.example.nexusapp.viewmodels
 
+import android.app.Application
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -16,7 +18,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProjectsVM @Inject constructor(
-    private val repo: Repository
+    private val repo: Repository,
+    private val context:Application
 ) : ViewModel() {
 
     var projects by mutableStateOf<Resource<List<ProjectResponse>>>(Resource.Loading())
@@ -29,34 +32,35 @@ class ProjectsVM @Inject constructor(
         }
     }
 
-    fun addProject(project: Project): Resource<Project> {
-        var result by  mutableStateOf<Resource<Project>>(Resource.Loading())
+    fun addProject(project: Project){
+
         viewModelScope.launch {
             repo.addProject(project).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
-        return result
     }
 
-    fun updateProject(project: Project): Resource<Project> {
-        var result by  mutableStateOf<Resource<Project>>(Resource.Loading())
+    fun updateProject(project: Project) {
+
         viewModelScope.launch {
             repo.updateProject(project).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
-        return result
+
     }
 
-    fun deleteProject(id:Int): Resource<String> {
-        var result by  mutableStateOf<Resource<String>>(Resource.Loading())
+    fun deleteProject(id:Int) {
+
         viewModelScope.launch {
             repo.deleteProject(id).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
-        return result
     }
 
 

@@ -1,5 +1,6 @@
 package com.example.survisionapp.nexustest
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -58,7 +59,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import com.example.nexusapp.R
+import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.MemberResponse
+import com.example.nexusapp.screens.components.DeleteDialog
 import com.example.nexusapp.viewmodels.MembersListVM
 
 
@@ -197,7 +200,7 @@ val context = LocalContext.current
 
 @Composable
 fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
-    //name context menu
+    val c = LocalContext.current
     var isNameContextMenuVisible by rememberSaveable {
         mutableStateOf(false)
     }
@@ -239,7 +242,9 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
         mutableStateOf(0.dp)
     }
     val pointsDensity = LocalDensity.current
-
+ var showDelete by remember {
+     mutableStateOf(false)
+ }
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -332,7 +337,7 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
         ) {
             nameDropDownItems.forEachIndexed{position,item->
                 DropdownMenuItem(onClick = {
-                    //TODO("delete member")
+                    showDelete=true
                     isNameContextMenuVisible = false
                 }, text = { Text(text = item, color = colorResource(id = R.color.pink))})
             }
@@ -359,6 +364,8 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
             teamDropDownItems.forEachIndexed{position,item->
                 DropdownMenuItem(onClick = {
                     //TODO("edit member's team")
+                    member.team=item
+                    membersViewModel.updateMember(member,membersViewModel.teams.data!!.filter { it.name==member.team }[0].id)
                     isTeamContextMenuVisible = false
                 }, text = { Text(text = item, color = Color.White)})
             }
@@ -371,7 +378,7 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
             },
             modifier = Modifier.background(
                 colorResource(id = R.color.gray)
-            ).fillMaxWidth().padding(start = 20.dp, end = 20.dp),
+            ),
             offset = pointsPressOffset.copy(
                 y = pointsPressOffset.y - pointsItemHeight
             )
@@ -379,14 +386,19 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
             var points by remember {
                 mutableStateOf(member.points)
             }
-            Row (Modifier.fillMaxWidth().padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween){
+            Row (
+                Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp), horizontalArrangement = Arrangement.SpaceBetween){
                 Text(text = "Edit points", color = colorResource(id = R.color.green), fontWeight = FontWeight.Bold)
                 Image(painter = painterResource(id = R.drawable.polygon), contentDescription = "")
             }
              TextField(
                  value = points.toString(),
                  onValueChange = {points=it.toInt()},
-                 modifier = Modifier.width(150.dp).padding(10.dp),
+                 modifier = Modifier
+                     .width(150.dp)
+                     .padding(10.dp),
                  colors = TextFieldDefaults.colors(
                      unfocusedContainerColor = Color.White,
                      focusedContainerColor = Color.White,
@@ -409,15 +421,22 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
                     .fillMaxWidth()
                     .padding(10.dp)
                     .clickable {
-                            //TODO("edit member's points")
-                            isPointsContextMenuVisible = false
-                        }
+                        member.points=points
+                        //TODO("edit member's points")
+                        membersViewModel.updateMember(member,membersViewModel.teams.data!!.filter { it.name==member.team }[0].id)
+                        isPointsContextMenuVisible = false
+                    }
                 )
 
 
         }
-
-
+    }
+    if(showDelete){
+        DeleteDialog(title = "Delete Member", desc = "member", cancel = { showDelete=false }) {
+            //TODO("delete member")
+            membersViewModel.deleteMember(member.id)
+            showDelete=false
+        }
     }
 }
 

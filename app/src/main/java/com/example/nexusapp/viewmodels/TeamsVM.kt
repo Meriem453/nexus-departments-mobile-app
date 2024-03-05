@@ -1,5 +1,7 @@
 package com.example.nexusapp.viewmodels
 
+import android.app.Application
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,7 +16,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TeamsVM @Inject constructor(
-    private val repo: Repository
+    private val repo: Repository,
+    private val context:Application
 ) : ViewModel() {
 
     var teams by mutableStateOf<Resource<List<TeamResponse>>>(Resource.Loading())
@@ -27,34 +30,34 @@ class TeamsVM @Inject constructor(
         }
     }
 
-    fun addTeam(teamResponse: TeamResponse): Resource<TeamResponse> {
-        var result by  mutableStateOf<Resource<TeamResponse>>(Resource.Loading())
+    fun addTeam(teamResponse: TeamResponse) {
+
         viewModelScope.launch {
             repo.addTeam(teamResponse).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
-        return result
     }
 
-    fun updateTeam(teamResponse: TeamResponse): Resource<TeamResponse> {
-        var result by  mutableStateOf<Resource<TeamResponse>>(Resource.Loading())
+    fun updateTeam(teamResponse: TeamResponse){
+
         viewModelScope.launch {
             repo.updateTeam(teamResponse).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
-        return result
     }
 
-    fun deleteTeam(id:Int): Resource<String> {
-        var result by  mutableStateOf<Resource<String>>(Resource.Loading())
+    fun deleteTeam(id:Int){
+
         viewModelScope.launch {
             repo.deleteTeam(id).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
-        return result
     }
 
 

@@ -95,7 +95,7 @@ fun HomePage(bottomPadding: Dp) {
            }
            if(viewModel.userInfo is Resource.Failed) {
                Text(
-                   text = "Check your connection",
+                   text = viewModel.userInfo.message!!,
                    fontSize = 16.sp,
                    color = Color.Gray
                )

@@ -1,6 +1,11 @@
 package com.example.nexusapp.screens
 
 import android.widget.Toast
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,11 +18,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DismissDirection
 import androidx.compose.material3.DismissState
 import androidx.compose.material3.DismissValue
@@ -41,6 +48,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -75,18 +83,11 @@ import java.time.LocalTime
 @Destination
 @Composable
 fun MeetingsPage() {
-    val list= listOf(
-        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
-        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
-        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
-        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
-        MeetingResponse(1,"New meeting","4/5/2024", team_id = 2, description = "great one"),
 
-
-    )
 Column(modifier = Modifier
     .fillMaxSize()
-    .background(colorResource(id = R.color.gray))
+    .background(colorResource(id = R.color.gray)),
+    verticalArrangement = Arrangement.Center
 ) {
     val c = LocalContext.current
     val viewModel= hiltViewModel<MeetingsVM>()
@@ -112,110 +113,146 @@ Column(modifier = Modifier
         showAdd=true
 
     }
+    if(viewModel.meetings is Resource.Loading){
 
-    LazyColumn(
-        modifier= Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-    ){
-        itemsIndexed(list){position,item->
-            var dismissState by remember {
-                mutableStateOf(DismissState(DismissValue.Default))
-            }
-            if(dismissState.currentValue== DismissValue.DismissedToEnd){
-                currentItem=item
-                showAdd=true
-            }
-            if(dismissState.currentValue== DismissValue.DismissedToStart){
-                currentItem=item
-                showDelete=true
-            }
-            if (dismissState.currentValue!= DismissValue.Default)
-                dismissState= DismissState(DismissValue.Default)
+        val infiniteTransition = rememberInfiniteTransition(label = "")
+        val rotationValue by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
+            animationSpec = InfiniteRepeatableSpec(
+                animation = tween(2000),
+                repeatMode = RepeatMode.Restart
+            ), label = ""
+        )
+        CircularProgressIndicator(
+            modifier = Modifier
+                .size(50.dp)
+                .rotate(rotationValue)
+
+            ,
+            color = colorResource(id = R.color.green)
+        )
+    }
+    if(viewModel.meetings  is Resource.Failed){
+
+        Text(
+            text = "Error" + viewModel.meetings.message,
+            fontSize = 16.sp,
+            color = Color.Gray
+        )
+    }
+    if(viewModel.meetings  is Resource.Success) {
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            itemsIndexed(viewModel.meetings.data!!) { position, item ->
+                var dismissState by remember {
+                    mutableStateOf(DismissState(DismissValue.Default))
+                }
+                if (dismissState.currentValue == DismissValue.DismissedToEnd) {
+                    currentItem = item
+                    showAdd = true
+                }
+                if (dismissState.currentValue == DismissValue.DismissedToStart) {
+                    currentItem = item
+                    showDelete = true
+                }
+                if (dismissState.currentValue != DismissValue.Default)
+                    dismissState = DismissState(DismissValue.Default)
 
 
-            SwipeToDismiss(state = dismissState,
-                background = {
+                SwipeToDismiss(state = dismissState,
+                    background = {
 
-                    Row(horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(10.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(
-                                if (dismissState.dismissDirection == DismissDirection.StartToEnd)
-                                    colorResource(id = R.color.green)
-                                else colorResource(id = R.color.pink)
-                            )
-                    ) {
-                        Text(text = "Edit",
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier
+                                .fillMaxSize()
                                 .padding(10.dp)
-                                .alpha(
-                                    if (dismissState.dismissDirection == DismissDirection.StartToEnd) 1f
-                                    else 0f
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(
+                                    if (dismissState.dismissDirection == DismissDirection.StartToEnd)
+                                        colorResource(id = R.color.green)
+                                    else colorResource(id = R.color.pink)
                                 )
-                        )
-                        Text(text = "Delete",
-                            color = Color.White,
-                            fontSize = 20.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier
-                                .padding(10.dp)
-                                .alpha(
-                                    if (dismissState.dismissDirection == DismissDirection.StartToEnd) 0f
-                                    else 1f
-                                )
-                        )
-                    }
-                }, dismissContent = {
-                    Column(
-                        modifier= Modifier
-                            .fillMaxWidth()
-                            .padding(10.dp)
-                            .clip(RoundedCornerShape(20.dp))
-                            .background(colorResource(R.color.card_bg))
-                            .clickable {
-                                currentItem = item
-                                isSheetOpen = true
-                            }
-                            .border(
-                                width = 2.dp,
-                                brush = Brush.horizontalGradient(
-                                    listOf(
-                                        Color(item.color),
-                                        colorResource(id = R.color.gray),
-                                    ), startX = .5f
-                                ),
-                                shape = RoundedCornerShape(20.dp)
-                            ),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ){
-                        Row (
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp), horizontalArrangement = Arrangement.SpaceBetween){
-                            Text(text = item.title,
-                                fontSize = 16.sp,
+                        ) {
+                            Text(
+                                text = "Edit",
                                 color = Color.White,
+                                fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold,
-                                //modifier =Modifier.padding(start = 16.dp)
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .alpha(
+                                        if (dismissState.dismissDirection == DismissDirection.StartToEnd) 1f
+                                        else 0f
+                                    )
                             )
-                            //Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
-                            //Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
+                            Text(
+                                text = "Delete",
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier
+                                    .padding(10.dp)
+                                    .alpha(
+                                        if (dismissState.dismissDirection == DismissDirection.StartToEnd) 0f
+                                        else 1f
+                                    )
+                            )
                         }
+                    }, dismissContent = {
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp)
+                                .clip(RoundedCornerShape(20.dp))
+                                .background(colorResource(R.color.card_bg))
+                                .clickable {
+                                    currentItem = item
+                                    isSheetOpen = true
+                                }
+                                .border(
+                                    width = 2.dp,
+                                    brush = Brush.horizontalGradient(
+                                        listOf(
+                                            Color(item.color),
+                                            colorResource(id = R.color.gray),
+                                        ), startX = .5f
+                                    ),
+                                    shape = RoundedCornerShape(20.dp)
+                                ),
+                            verticalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            Row(
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Text(
+                                    text = item.title,
+                                    fontSize = 16.sp,
+                                    color = Color.White,
+                                    fontWeight = FontWeight.Bold,
+                                    //modifier =Modifier.padding(start = 16.dp)
+                                )
+                                //Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
+                                //Image(painter = painterResource(id = R.drawable.power), contentDescription = "")
+                            }
 
-                        Text(text = item.date,
-                            fontSize = 15.sp,
-                            color = Color.Gray,
-                            modifier = Modifier.padding(start=16.dp, bottom = 16.dp)
-                        )
-                    }
-                })
+                            Text(
+                                text = item.date,
+                                fontSize = 15.sp,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(start = 16.dp, bottom = 16.dp)
+                            )
+                        }
+                    })
+            }
         }
     }
 
@@ -394,15 +431,22 @@ Column(modifier = Modifier
                         },
                         modifier = Modifier.background(colorResource(id = R.color.gray))
                     ) {
-                        val options = listOf("UI/UX", "Motion", "Graphic")
-                        options.forEachIndexed() { position, selectionOption ->
-                            DropdownMenuItem(
-                                text = { Text(text = selectionOption, color = Color.White, fontSize = 16.sp) },
-                                onClick = {
-                                    team = position
-                                    expanded = false
-                                }
-                            )
+                        if(viewModel.teams is Resource.Success) {
+                            viewModel.teams.data!!.forEachIndexed() { position, selectionOption ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(
+                                            text = selectionOption.name,
+                                            color = Color.White,
+                                            fontSize = 16.sp
+                                        )
+                                    },
+                                    onClick = {
+                                        team =  selectionOption.id
+                                        expanded = false
+                                    }
+                                )
+                            }
                         }
                     }
                 }
@@ -435,12 +479,19 @@ Column(modifier = Modifier
                 Button(onClick = {
 
                     if(currentItem==null){
-                        val result = viewModel.addMeeting(
-                            MeetingResponse(0, title, date, team_id = 1, description = desc)
+                        /*TODO(" add meeting")*/
+                        viewModel.addMeeting(
+                            MeetingResponse(0, title, date, time,team, description = desc)
                         )
-                       Toast.makeText(c,result.message,Toast.LENGTH_LONG).show()
+
                     }else{
-                        /*TODO("add or edit meeting")*/
+                        /*TODO(" edit meeting")*/
+                        currentItem!!.title=title
+                        currentItem!!.date=date
+                        currentItem!!.time=time
+                        currentItem!!.team_id=team
+                        currentItem!!.description=desc
+                        viewModel.updateMeeting(currentItem!!,team)
                     }
                     showAdd=false
                     currentItem=null
@@ -513,8 +564,9 @@ Column(modifier = Modifier
             "meeting",
             {showDelete=false},
             {
-                Toast.makeText(c,"Meeting deleted", Toast.LENGTH_SHORT).show()
+
                 //TODO("delete meeting")
+                viewModel.deleteMeeting(currentItem!!.id)
                 showDelete=false
             }
         )

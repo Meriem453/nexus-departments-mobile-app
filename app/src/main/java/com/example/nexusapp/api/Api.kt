@@ -29,16 +29,17 @@ interface Api {
         @Field("email") email:String,
         @Field("password") password: String
     ): Call<LoginResponse>
-
-    @GET("user/departmentOverview/{token}")
+    @FormUrlEncoded
+    @POST("user/departmentOverview")
     suspend fun homePage(
-        @Path("token") token:String
+        @Field("token") token:String
     ):HomePageResponse
 
     //Members//////////////////////////////////////////////////////////////////////////////
-    @GET("member/departmentMembers/{token}")
+    @FormUrlEncoded
+    @POST("member/departmentMembers")
     suspend fun membersList(
-        @Path("token") token:String
+        @Field("token") token:String
     ):List<MemberResponse>
 
     @FormUrlEncoded
@@ -49,11 +50,11 @@ interface Api {
         @Field("password") password:String,
         @Field("points") points:Int,
         @Field("team_id") team_id:Int,
-        @Field("department_id") department_id:Int
+        @Field("token") token:String,
     ):MemberResponse
 
     @FormUrlEncoded
-    @PUT("member/{id}")
+    @PUT("member/update")
     suspend fun editMember(
         @Field("name") name:String,
         @Field("email") email:String,
@@ -61,17 +62,21 @@ interface Api {
         @Field("points") points:Int,
         @Field("team_id") team_id:Int,
         @Field("department_id") department_id:Int,
-        @Path("id") id:Int
-    ):MemberResponse
+        @Field("id") id:Int,
+        @Field("token") token:String,
+    ):String
 
-    @DELETE("member/{id}")
+    @FormUrlEncoded
+    @DELETE("member/delete")
     suspend fun deleteMember(
-        @Path("id") id:Int
+        @Field("id") id:Int,
+        @Field("token") token:String
     )
     //Meetings///////////////////////////////////////////////////////////////////////////////////////
-    @GET("meeting/manager/{token}")
+    @FormUrlEncoded
+    @POST("meeting/manager")
     suspend fun meetingsList(
-        @Path("token") token:String
+        @Field("token") token:String
     ):List<MeetingResponse>
 
     @FormUrlEncoded
@@ -80,7 +85,8 @@ interface Api {
         @Field("title") title:String,
         @Field("date") date:String,
         @Field("team_id") team_id:Int,
-        @Field("description") description:String
+        @Field("description") description:String,
+        @Field("token") token:String
     ):MeetingResponse
 
     @FormUrlEncoded
@@ -91,25 +97,29 @@ interface Api {
         @Field("date") date:String,
         @Field("team_id") team_id:Int,
         @Field("description") description:String,
+        @Field("token") token:String
     ):MeetingResponse
 
-    @DELETE("meeting/delete/{id}")
+    @FormUrlEncoded
+    @DELETE("meeting/delete")
     suspend fun deleteMeeting(
-        @Path("id") id:Int
+        @Field("id") id:Int,
+        @Field("token") token:String
     )
 
     //Projects//////////////////////////////////////////////////////////////////
-    @GET("project/manager/{token}")
+    @FormUrlEncoded
+    @POST("project/manager")
     suspend fun projectsList(
-        @Path("token") token:String
+        @Field("token") token:String
     ):List<ProjectResponse>
 
     @FormUrlEncoded
-    @POST("project/addProject/{token}")
+    @POST("project/addProject")
     suspend fun addProject(
         @Field("title") title:String,
         @Field("progress") progress:Int,
-        @Path("token") token: String
+        @Field("token") token: String
     ): Project
 
     @FormUrlEncoded
@@ -118,11 +128,14 @@ interface Api {
         @Field("id") id: Int,
         @Field("title") title:String,
         @Field("progress") progress:Int,
+        @Field("token") token:String
     ): Project
 
-    @DELETE("project/delete/{id}")
+    @FormUrlEncoded
+    @DELETE("project/delete")
     suspend fun deleteProject(
-        @Path("id") id:Int
+        @Field("id") id:Int,
+        @Field("token") token:String
     )
 
     //Events/////////////////////////////////////////////////////////////////////
@@ -131,25 +144,40 @@ interface Api {
     suspend fun addEvent(
         @Field("name") name:String,
         @Field("date") date: String,
-        @Field("details") details: String
+        @Field("details") details: String,
+        @Field("token") token:String
     ):EventResponse
 
-    @GET("event/all")
-    suspend fun eventsList():List<EventResponse>
+    @FormUrlEncoded
+    @POST("event/all")
+    suspend fun eventsList(
+        @Field("token") token:String
+    ):List<EventResponse>
 
-    @GET("event/nextEvents")
-    suspend fun nextEvents():List<EventResponse>
+    @FormUrlEncoded
+    @POST("event/nextEvents")
+    suspend fun nextEvents(
+        @Field("token") token:String
+    ):List<EventResponse>
 
-    @GET("event/next")
-    suspend fun nextEvent():List<EventResponse>
+    @FormUrlEncoded
+    @POST("event/next")
+    suspend fun nextEvent(
+        @Field("token") token:String
+    ):List<EventResponse>
 
-    @DELETE("event/delete/{id}")
+    @FormUrlEncoded
+    @DELETE("event/delete")
    suspend fun deleteEvent(
-       @Path("id") id:Int
+       @Field("id") id:Int,
+       @Field("token") token:String
    )
     //Tasks/////////////////////////////////////////////////////////////////////////////////////////
-    @GET("tasks/all")
-    suspend fun getAllTasks():List<TaskResponse>
+    @FormUrlEncoded
+    @POST("tasks/all")
+    suspend fun getAllTasks(
+        @Field("token") token:String
+    ):List<TaskResponse>
 
     @FormUrlEncoded
     @POST("tasks/create")
@@ -160,6 +188,7 @@ interface Api {
         @Field("deadline") deadline:String,
         @Field("team_id") team_id:Int,
         @Field("project_id") project_id:Int,
+        @Field("token") token:String
     ):TaskResponse
     @FormUrlEncoded
     @POST("tasks/update")
@@ -171,21 +200,29 @@ interface Api {
         @Field("deadline") deadline:String,
         @Field("team_id") team_id:Int,
         @Field("project_id") project_id:Int,
+        @Field("token") token:String
     ):TaskResponse
-    @DELETE("tasks/delete/{id}")
+    @FormUrlEncoded
+    @DELETE("tasks/delete")
     suspend fun deleteTask(
-        @Path("id") id:Int
+        @Field("id") id:Int,
+        @Field("token") token:String
     )
 
 //Teams///////////////////////////////////////////////////////////////////////
-    @GET("team/all")
-    suspend fun getAllTeams():List<TeamResponse>
+@FormUrlEncoded
+    @POST("team/all")
+    suspend fun getAllTeams(
+    @Field("token") token:String
+    ):List<TeamResponse>
+
 
     @FormUrlEncoded
     @POST("team/create")
     suspend fun createTeam(
         @Field("name") name: String,
         @Field("color") color:String,
+        @Field("token") token:String
     ):TeamResponse
 
     @FormUrlEncoded
@@ -194,22 +231,28 @@ interface Api {
         @Field("id") id:Int,
         @Field("name") name: String,
         @Field("color") color:String,
+        @Field("token") token:String
     ):TeamResponse
 
-    @DELETE("team/delete/{id}")
+    @FormUrlEncoded
+    @DELETE("team/delete")
     suspend fun deleteTeam(
-        @Path("id") id: Int
+        @Field("id") id: Int,
+        @Field("token") token:String
     )
 
     //CheckIn////////////////////////////////////////
+    @FormUrlEncoded
     @PUT("participant/scan")
     suspend fun checkIn(
         @Body id:participantId
     ):ParticipantResponse
 
-    @GET("participant/event/{event_id}")
+    @FormUrlEncoded
+    @POST("participant/event")
     suspend fun getAllParticipants(
-        @Path("event_id") event_id:Int
+        @Field("event_id") event_id:Int,
+        @Field("token") token:String
     ):List<ParticipantResponse>
 
 

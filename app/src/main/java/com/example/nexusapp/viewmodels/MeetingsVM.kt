@@ -1,5 +1,7 @@
 package com.example.nexusapp.viewmodels
 
+import android.app.Application
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -11,6 +13,7 @@ import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.HomePageResponse.HomePageResponse
 import com.example.nexusapp.models.MeetingResponse
 import com.example.nexusapp.models.MemberResponse
+import com.example.nexusapp.models.TeamResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,10 +26,12 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MeetingsVM @Inject constructor(
-    private val repo: Repository
+    private val repo: Repository,
+    private val context:Application
 ) : ViewModel() {
 
   var meetings by mutableStateOf<Resource<List<MeetingResponse>>>(Resource.Loading())
+  var teams by mutableStateOf<Resource<List<TeamResponse>>>(Resource.Loading())
 
     fun getAllMeetings(){
         viewModelScope.launch {
@@ -36,39 +41,44 @@ class MeetingsVM @Inject constructor(
         }
     }
 
-    fun addMeeting(meetingResponse: MeetingResponse):Resource<MeetingResponse>{
-        var result by  mutableStateOf<Resource<MeetingResponse>>(Resource.Loading())
+    fun addMeeting(meetingResponse: MeetingResponse){
         viewModelScope.launch {
           repo.addMeeting(meetingResponse).collect{
-              result=it
+              if(it !is Resource.Loading)
+                  Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
           }
         }
-        return result
+
     }
 
-    fun updateMeeting(meetingResponse: MeetingResponse,team_id:Int):Resource<MeetingResponse>{
-        var result by  mutableStateOf<Resource<MeetingResponse>>(Resource.Loading())
+    fun updateMeeting(meetingResponse: MeetingResponse,team_id:Int){
         viewModelScope.launch {
             repo.updateMeeting(meetingResponse,team_id).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
-        return result
+
     }
 
-    fun deleteMeeting(id:Int):Resource<String>{
-        var result by  mutableStateOf<Resource<String>>(Resource.Loading())
+    fun deleteMeeting(id:Int){
+
         viewModelScope.launch {
             repo.deleteMeeting(id).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
-        return result
     }
 
 
     init {
         getAllMeetings()
+        viewModelScope.launch {
+            repo.getAllTeams().collect {
+                teams = it
+            }
+        }
     }
 
 }

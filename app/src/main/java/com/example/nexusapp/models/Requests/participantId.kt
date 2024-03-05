@@ -1,5 +1,6 @@
 package com.example.nexusapp.models.Requests
 
 data class participantId(
-    val id:Int
+    val id:Int,
+    val token:String
 )

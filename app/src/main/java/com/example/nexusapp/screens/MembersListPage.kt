@@ -70,20 +70,18 @@ fun MembersListPagePrev() {
 fun MembersListPage() {
     val membersViewModel = hiltViewModel<MembersListVM>()
 
-    val context = LocalContext.current
-
-    val openAddMemberDialog = remember { mutableStateOf(false) }
+    var openAddMemberDialog by remember { mutableStateOf(false) }
 
 
     when {
-        openAddMemberDialog.value -> {
-            Dialog(onDismissRequest = { openAddMemberDialog.value =false }) {
+        openAddMemberDialog -> {
+            Dialog(onDismissRequest = { openAddMemberDialog =false }) {
 
                 var name by remember {
                     mutableStateOf("")
                 }
                 var team by remember {
-                    mutableStateOf(0)
+                    mutableStateOf(membersViewModel.teams.data?.get(0)?.name ?:"")
                 }
                 var email by remember {
                     mutableStateOf("")
@@ -133,6 +131,7 @@ fun MembersListPage() {
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White
                         ),
+                        isError = name=="",
                         placeholder = {
                             Text(text = "Enter the member's name",
                                 fontSize = 15.sp,
@@ -151,7 +150,6 @@ fun MembersListPage() {
                             .padding(start = 20.dp, bottom = 10.dp)
 
                     )
-                    val options = listOf("UI/UX", "Motion", "Graphic")
                     ExposedDropdownMenuBox(
                         expanded = expanded,
                         onExpandedChange = {
@@ -168,6 +166,7 @@ fun MembersListPage() {
                                 focusedContainerColor = Color.White,
                                 unfocusedContainerColor = Color.White
                             ),
+                            isError = team=="",
                             placeholder = {
                                 Text(
                                     text = "Select team",
@@ -189,22 +188,24 @@ fun MembersListPage() {
                             },
                             modifier = Modifier.background(colorResource(id = R.color.gray))
                         ) {
-
-                            options.forEachIndexed() { position, selectionOption ->
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = selectionOption,
-                                            color = Color.White,
-                                            fontSize = 16.sp
+                                if(membersViewModel.teams is Resource.Success) {
+                                    membersViewModel.teams.data!!.forEachIndexed() { position, selectionOption ->
+                                        DropdownMenuItem(
+                                            text = {
+                                                Text(
+                                                    text = selectionOption.name,
+                                                    color = Color.White,
+                                                    fontSize = 16.sp
+                                                )
+                                            },
+                                            onClick = {
+                                                team = selectionOption.name
+                                                expanded = false
+                                            }
                                         )
-                                    },
-                                    onClick = {
-                                        team = position
-                                        expanded = false
                                     }
-                                )
-                            }
+                                    }
+
                         }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
@@ -226,6 +227,7 @@ fun MembersListPage() {
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White
                         ),
+                        isError = email=="",
                         placeholder = {
                             Text(text = "Enter email",
                                 fontSize = 15.sp,
@@ -253,6 +255,7 @@ fun MembersListPage() {
                             focusedContainerColor = Color.White,
                             unfocusedContainerColor = Color.White
                         ),
+                        isError = password=="",
                         placeholder = {
                             Text(text = "Enter password",
                                 fontSize = 15.sp,
@@ -263,23 +266,21 @@ fun MembersListPage() {
                     )
                     Spacer(modifier = Modifier.height(20.dp))
                     Button(onClick = {
-                        //members = members + MemberResponse(name, 0, team)
                         //TODO("add member")
-                        name = ""
-                        team= 0
-                        email=""
-                        password=""
-                        Toast.makeText(context, "Member added", Toast.LENGTH_SHORT).show()
-                        openAddMemberDialog.value = false
-
-
+                        membersViewModel.addMember(
+                            MemberResponse(
+                                0,name,0,"",email,password,0
+                            ),membersViewModel.teams.data!!.filter { it.name==team }[0].id
+                        )
+                        openAddMemberDialog = false
                     },
                         modifier = Modifier
                             .clip(RoundedCornerShape(10.dp))
                             .padding(20.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.green)
-                        )
+                        ),
+                        enabled = name!="" && team !="" && email!="" && password!=""
                     ) {
                         Text(
                             text = "Add member",
@@ -297,7 +298,7 @@ fun MembersListPage() {
         it
     }
 
-    MembersListHeader({openAddMemberDialog.value = false}, {openAddMemberDialog.value = true})
+    MembersListHeader({openAddMemberDialog = false}, {openAddMemberDialog = true})
     Column {
 
         Spacer(modifier = Modifier.height(90.dp))

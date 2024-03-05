@@ -233,6 +233,7 @@ fun TeamsPage() {
                         .padding(start = 20.dp, end = 20.dp), horizontalArrangement = Arrangement.SpaceAround) {
                     if(currentItem!=null){
                         Button(onClick = {
+                            teamVM.deleteTeam(currentItem!!.id)
                             /*TODO("delete team")*/
                             currentItem=null
                             showAdd=false
@@ -255,6 +256,15 @@ fun TeamsPage() {
                     }
                     Button(onClick = {
                         /*TODO("add team or edit team")*/
+                        if(currentItem==null){
+                            teamVM.addTeam(TeamResponse(
+                                0,name,color
+                            ))
+                        }else{
+                            currentItem!!.name=name
+                            currentItem!!.color=color
+                            teamVM.updateTeam(currentItem!!)
+                        }
                         currentItem=null
                         showAdd=false
 

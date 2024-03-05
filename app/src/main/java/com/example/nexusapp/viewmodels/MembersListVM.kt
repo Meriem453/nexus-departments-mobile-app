@@ -1,5 +1,7 @@
 package com.example.nexusapp.viewmodels
 
+import android.app.Application
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,6 +12,7 @@ import com.example.nexusapp.Repo.Repository
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.HomePageResponse.HomePageResponse
 import com.example.nexusapp.models.MemberResponse
+import com.example.nexusapp.models.TeamResponse
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,54 +23,56 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MembersListVM @Inject constructor(
-    private val repo: Repository
+    private val repo: Repository,
+    private val context:Application
 ) : ViewModel() {
 
     var membersList by mutableStateOf<Resource<List<MemberResponse>>>(Resource.Loading())
+    var teams by mutableStateOf<Resource<List<TeamResponse>>>(Resource.Loading())
 
 
-    fun addMember(memberResponse: MemberResponse,team_id: Int):Resource<MemberResponse>{
-        var result by  mutableStateOf<Resource<MemberResponse>>(Resource.Loading())
+
+    fun addMember(memberResponse: MemberResponse,team_id: Int){
+
         viewModelScope.launch {
+
             repo.addMember(memberResponse,team_id).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
             }
         }
-        return result
     }
 
-    fun updateMember(memberResponse: MemberResponse, team_id:Int):Resource<MemberResponse>{
-        var result by  mutableStateOf<Resource<MemberResponse>>(Resource.Loading())
+    fun updateMember(memberResponse: MemberResponse, team_id:Int){
+
         viewModelScope.launch {
             repo.editMember(memberResponse,team_id).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
             }
         }
-        return result
     }
 
-    fun deleteMember(id:Int):Resource<String>{
-        var result by  mutableStateOf<Resource<String>>(Resource.Loading())
+    fun deleteMember(id:Int){
+
         viewModelScope.launch {
             repo.deleteMember(id).collect{
-                result=it
+                if(it !is Resource.Loading)
+                    Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
             }
         }
-        return result
+
     }
 
 
     init {
-
         viewModelScope.launch {
            repo.getMembersList().collect{
                 membersList = it
             }
-
+            repo.getAllTeams().collect{
+                teams=it
+            }
         }
-
-
     }
-
-
 }

@@ -3,10 +3,10 @@ package com.example.nexusapp.models
 data class TaskResponse(
     val id : Int,
     val project_id:Int,
-    val team_id:Int,
-    val description:String,
-    val status:String,
-    val title:String,
-    val progress:Int,
-    val deadline:String,
+    var team_id:Int,
+    var description:String,
+    var status:String,
+    var title:String,
+    var progress:Int,
+    var deadline:String,
 )

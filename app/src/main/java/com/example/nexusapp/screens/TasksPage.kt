@@ -3,6 +3,11 @@ package com.example.nexusapp.screens
 import android.util.Log
 import android.widget.RadioGroup
 import androidx.compose.animation.AnimatedContentTransitionScope.SlideDirection.Companion.Start
+import androidx.compose.animation.core.InfiniteRepeatableSpec
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -59,6 +64,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
@@ -69,10 +75,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nexusapp.R
+import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.ProjectResponse
 import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.screens.components.Header
+import com.example.nexusapp.viewmodels.TasksVM
+import com.example.nexusapp.viewmodels.TeamsVM
 import com.google.android.material.progressindicator.LinearProgressIndicatorSpec
 import com.ramcosta.composedestinations.annotation.Destination
 import com.vanpra.composematerialdialogs.MaterialDialog
@@ -85,17 +95,9 @@ import java.time.LocalDate
 @OptIn(ExperimentalMaterial3Api::class)
 @Destination
 @Composable
-fun TasksPage(project:ProjectResponse
-    //= ProjectResponse(1,"App","","","",50)
-){
-val list = listOf(
-    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "ToDo", progress = 20),
-    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "ToDo", progress = 20),
-    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "ToDo", progress = 20),
-    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "In Progress", progress = 20),
-    TaskResponse(id=0,title = "task", description = "desc", deadline = "4/5/2024", team_id = 1, project_id = 1, status = "In Progress", progress = 20),
+fun TasksPage(project:ProjectResponse){
+    val viewModel = hiltViewModel<TasksVM>()
 
-)
     var showAdd by remember{
         mutableStateOf(false)
     }
@@ -116,199 +118,263 @@ val list = listOf(
             showAdd = true
         }
         Spacer(modifier = Modifier.height(20.dp))
-        Column(
-            Modifier
-                .fillMaxWidth()
-                .verticalScroll(state = scroll)
-        ) {
+        if(viewModel.tasks is Resource.Loading){
 
+            val infiniteTransition = rememberInfiniteTransition(label = "")
+            val rotationValue by infiniteTransition.animateFloat(
+                initialValue = 0f,
+                targetValue = 360f,
+                animationSpec = InfiniteRepeatableSpec(
+                    animation = tween(2000),
+                    repeatMode = RepeatMode.Restart
+                ), label = ""
+            )
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(50.dp)
+                    .rotate(rotationValue)
+
+                ,
+                color = colorResource(id = R.color.green)
+            )
+        }
+        if(viewModel.tasks is Resource.Failed){
 
             Text(
-                text = "ToDo",
-                fontSize = 20.sp,
-                color = Color.White,
-                modifier = Modifier.padding(start = 16.dp)
+                text = "Error" + viewModel.tasks.message,
+                fontSize = 16.sp,
+                color = Color.Gray
             )
-            LazyRow(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)
-            ) {
-                itemsIndexed(list) { position, item ->
-                    if (item.status == "ToDo") {
-                        Card(
-                            modifier = Modifier
-                                .padding(7.dp)
-                                .width(150.dp),
-                            shape = RoundedCornerShape(20.dp),
-                            colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.card_bg)),
-                            onClick = {
-                                currentItem = item
-                                showAdd = true
-                            }
-                        ) {
-                            Column(Modifier.padding(10.dp)) {
-                                Spacer(modifier = Modifier.height(10.dp))
-                                Row (verticalAlignment = Alignment.CenterVertically){
-                                    Icon(painter = painterResource(id = R.drawable.point), contentDescription ="", tint = colorResource(id = R.color.green), modifier = Modifier
-                                        .size(10.dp)
-                                        .padding(2.dp) )
-                                    Text(
-                                        text = item.team_id.toString(),
-                                        fontSize = 10.sp,
-                                        color = Color.Gray
-                                    )
-                                }
-
-                                Spacer(modifier = Modifier.height(10.dp))
-                                Text(
-                                    text = item.title,
-                                    fontSize = 20.sp,
-                                    color = Color.White,
-                                )
-                                Spacer(modifier = Modifier.height(10.dp))
-                                Row(verticalAlignment = Alignment.CenterVertically) {
-                                    Icon(painter = painterResource(id = R.drawable.point), contentDescription ="", tint = colorResource(id = R.color.green), modifier = Modifier
-                                        .size(10.dp)
-                                        .padding(2.dp) )
-                                Text(
-                                    text = "Till ${item.deadline}",
-                                    fontSize = 10.sp,
-                                    color = Color.Gray
-                                )}
-                                Spacer(modifier = Modifier.height(10.dp))
-
-                            }
-                        }
-                    }
-                }
-            }
-            Spacer(modifier = Modifier.height(20.dp))
-            Text(
-                text = "In progress",
-                fontSize = 20.sp,
-                color = Color.White,
-                modifier = Modifier.padding(start = 16.dp)
-            )
+        }
+        if(viewModel.tasks is Resource.Success) {
             Column(
                 Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp, end = 16.dp)
+                    .verticalScroll(state = scroll)
             ) {
 
-                list.forEachIndexed { position, item ->
-
-                    if (item.status == "In Progress") {
-                        var dismissState = rememberDismissState(DismissValue.Default)
-                        if (dismissState.currentValue == DismissValue.DismissedToEnd) {
-                            //currentItem=item
-                            //TODO("done task")
-                        }
-
-                        SwipeToDismiss(modifier = Modifier
-                            .clickable {
-                                Log.d("edit",showAdd.toString())
-                                currentItem = item
-                                showAdd = true
-                            },
-                            directions = setOf(DismissDirection.StartToEnd), state = dismissState,
-                            background = {
-
-                                Row(
-                                    horizontalArrangement = Arrangement.Start,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .padding(10.dp)
-                                        .clip(RoundedCornerShape(20.dp))
-                                        .background(colorResource(id = R.color.green))
-                                ) {
-                                    Text(
-                                        text = "Done",
-                                        color = Color.White,
-                                        fontSize = 20.sp,
-                                        fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(10.dp)
-                                    )
+                Text(
+                    text = "ToDo",
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                LazyRow(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp)
+                ) {
+                    itemsIndexed(viewModel.tasks.data!!) { position, item ->
+                        if (item.status == "ToDo") {
+                            Card(
+                                modifier = Modifier
+                                    .padding(7.dp)
+                                    .width(150.dp),
+                                shape = RoundedCornerShape(20.dp),
+                                colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.card_bg)),
+                                onClick = {
+                                    currentItem = item
+                                    showAdd = true
                                 }
-                            }, dismissContent = {
-
-                                Card(
-                                    modifier = Modifier
-                                        .padding(bottom = 7.dp, top = 7.dp)
-                                        .fillMaxWidth()
-                                        ,
-                                    shape = RoundedCornerShape(20.dp),
-                                    colors = CardDefaults.cardColors(
-                                        containerColor = colorResource(
-                                            id = R.color.card_bg
-                                        )
-                                    )
-                                ) {
-                                    Row(horizontalArrangement = Arrangement.SpaceBetween,
-                                        modifier = Modifier.fillMaxWidth(),
-                                        verticalAlignment = Alignment.CenterVertically) {
-
-
-                                    Column(
-                                        Modifier
-                                            .padding(15.dp)
-                                            .weight(1f)) {
-                                        Spacer(modifier = Modifier.height(5.dp))
-                                        Row(verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(painter = painterResource(id = R.drawable.point), contentDescription ="", tint = colorResource(id = R.color.green) , modifier = Modifier
+                            ) {
+                                Column(Modifier.padding(10.dp)) {
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.point),
+                                            contentDescription = "",
+                                            tint = colorResource(id = R.color.green),
+                                            modifier = Modifier
                                                 .size(10.dp)
-                                                .padding(2.dp))
+                                                .padding(2.dp)
+                                        )
                                         Text(
                                             text = item.team_id.toString(),
                                             fontSize = 10.sp,
                                             color = Color.Gray
-                                        )}
-                                        Spacer(modifier = Modifier.height(5.dp))
-                                        Text(
-                                            text = item.title,
-                                            fontSize = 20.sp,
-                                            color = Color.White,
                                         )
-                                        Spacer(modifier = Modifier.height(5.dp))
-                                        Row (verticalAlignment = Alignment.CenterVertically) {
-                                            Icon(painter = painterResource(id = R.drawable.point), contentDescription ="", tint = colorResource(id = R.color.green), modifier = Modifier
+                                    }
+
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Text(
+                                        text = item.title,
+                                        fontSize = 20.sp,
+                                        color = Color.White,
+                                    )
+                                    Spacer(modifier = Modifier.height(10.dp))
+                                    Row(verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(
+                                            painter = painterResource(id = R.drawable.point),
+                                            contentDescription = "",
+                                            tint = colorResource(id = R.color.green),
+                                            modifier = Modifier
                                                 .size(10.dp)
-                                                .padding(2.dp) )
+                                                .padding(2.dp)
+                                        )
                                         Text(
                                             text = "Till ${item.deadline}",
                                             fontSize = 10.sp,
                                             color = Color.Gray
-                                        )}
-                                        Spacer(modifier = Modifier.height(5.dp))
-
+                                        )
                                     }
-                                        Box(modifier = Modifier
-                                            , contentAlignment = Alignment.Center){
-                                            CircularProgressIndicator(
-                                                progress = item.progress.toFloat()/100,
-                                                color = colorResource(id = R.color.green),
-                                                modifier = Modifier
-                                                    .size(100.dp)
+                                    Spacer(modifier = Modifier.height(10.dp))
+
+                                }
+                            }
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+                Text(
+                    text = "In progress",
+                    fontSize = 20.sp,
+                    color = Color.White,
+                    modifier = Modifier.padding(start = 16.dp)
+                )
+                Column(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, end = 16.dp)
+                ) {
+
+                    viewModel.tasks.data!!.forEachIndexed { position, item ->
+
+                        if (item.status == "In Progress") {
+                            val dismissState = rememberDismissState(DismissValue.Default)
+                            if (dismissState.currentValue == DismissValue.DismissedToEnd) {
+                                //currentItem=item
+                                //TODO("done task")
+                                item.status="Done"
+                                viewModel.updateTask(item)
+                            }
+
+                            SwipeToDismiss(modifier = Modifier
+                                .clickable {
+                                    Log.d("edit", showAdd.toString())
+                                    currentItem = item
+                                    showAdd = true
+                                },
+                                directions = setOf(DismissDirection.StartToEnd),
+                                state = dismissState,
+                                background = {
+
+                                    Row(
+                                        horizontalArrangement = Arrangement.Start,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier
+                                            .fillMaxSize()
+                                            .padding(10.dp)
+                                            .clip(RoundedCornerShape(20.dp))
+                                            .background(colorResource(id = R.color.green))
+                                    ) {
+                                        Text(
+                                            text = "Done",
+                                            color = Color.White,
+                                            fontSize = 20.sp,
+                                            fontWeight = FontWeight.Bold,
+                                            modifier = Modifier.padding(10.dp)
+                                        )
+                                    }
+                                },
+                                dismissContent = {
+
+                                    Card(
+                                        modifier = Modifier
+                                            .padding(bottom = 7.dp, top = 7.dp)
+                                            .fillMaxWidth(),
+                                        shape = RoundedCornerShape(20.dp),
+                                        colors = CardDefaults.cardColors(
+                                            containerColor = colorResource(
+                                                id = R.color.card_bg
+                                            )
+                                        )
+                                    ) {
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+
+
+                                            Column(
+                                                Modifier
                                                     .padding(15.dp)
-                                                , strokeWidth = 5.dp, trackColor = colorResource(
-                                                id = R.color.gray
-                                            ))
-                                            Text(text = "${item.progress}%",
-                                                fontSize = 20.sp,
-                                                color = Color.White,
-                                                fontWeight = FontWeight.Bold,
-                                                textAlign = TextAlign.Center)
+                                                    .weight(1f)
+                                            ) {
+                                                Spacer(modifier = Modifier.height(5.dp))
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.point),
+                                                        contentDescription = "",
+                                                        tint = colorResource(id = R.color.green),
+                                                        modifier = Modifier
+                                                            .size(10.dp)
+                                                            .padding(2.dp)
+                                                    )
+                                                    Text(
+                                                        text = item.team_id.toString(),
+                                                        fontSize = 10.sp,
+                                                        color = Color.Gray
+                                                    )
+                                                }
+                                                Spacer(modifier = Modifier.height(5.dp))
+                                                Text(
+                                                    text = item.title,
+                                                    fontSize = 20.sp,
+                                                    color = Color.White,
+                                                )
+                                                Spacer(modifier = Modifier.height(5.dp))
+                                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.point),
+                                                        contentDescription = "",
+                                                        tint = colorResource(id = R.color.green),
+                                                        modifier = Modifier
+                                                            .size(10.dp)
+                                                            .padding(2.dp)
+                                                    )
+                                                    Text(
+                                                        text = "Till ${item.deadline}",
+                                                        fontSize = 10.sp,
+                                                        color = Color.Gray
+                                                    )
+                                                }
+                                                Spacer(modifier = Modifier.height(5.dp))
+
+                                            }
+                                            Box(
+                                                modifier = Modifier,
+                                                contentAlignment = Alignment.Center
+                                            ) {
+                                                CircularProgressIndicator(
+                                                    progress = item.progress.toFloat() / 100,
+                                                    color = colorResource(id = R.color.green),
+                                                    modifier = Modifier
+                                                        .size(100.dp)
+                                                        .padding(15.dp),
+                                                    strokeWidth = 5.dp,
+                                                    trackColor = colorResource(
+                                                        id = R.color.gray
+                                                    )
+                                                )
+                                                Text(
+                                                    text = "${item.progress}%",
+                                                    fontSize = 20.sp,
+                                                    color = Color.White,
+                                                    fontWeight = FontWeight.Bold,
+                                                    textAlign = TextAlign.Center
+                                                )
+                                            }
                                         }
                                     }
-                                }
-                            })
+                                })
 
+                        }
                     }
+
                 }
 
             }
-
         }
     }
     if(showAdd){
@@ -322,7 +388,7 @@ val list = listOf(
             mutableStateOf(currentItem?.deadline ?: "")
         }
         var team by remember {
-            mutableStateOf(currentItem?.team_id ?: "")
+            mutableStateOf(currentItem?.team_id ?: 0)
         }
         var progress by remember {
             mutableStateOf(currentItem?.progress ?: 0)
@@ -555,6 +621,7 @@ val list = listOf(
                     if(currentItem!=null){
                         Button(onClick = {
                             /*TODO("delete task")*/
+                            viewModel.deleteTask(currentItem!!.id)
                             currentItem=null
                             showAdd=false
 
@@ -576,6 +643,19 @@ val list = listOf(
                     }
                     Button(onClick = {
                         /*TODO("add task or edit task")*/
+                        if(currentItem==null){
+                            viewModel.addTasks(TaskResponse(
+                                0,project.id,team,desc,status,title,0,deadline
+                            ))
+                        }else{
+                            currentItem!!.team_id=team
+                            currentItem!!.description=desc
+                            currentItem!!.status=status
+                            currentItem!!.title=title
+                            currentItem!!.progress=progress
+                            currentItem!!.deadline=deadline
+                            viewModel.updateTask(currentItem!!)
+                        }
                         currentItem=null
                         showAdd=false
 

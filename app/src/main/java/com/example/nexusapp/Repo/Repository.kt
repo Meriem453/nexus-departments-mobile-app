@@ -62,8 +62,7 @@ class Repository @Inject constructor(
                     memberResponse.password,
                     memberResponse.points,
                     team_id,
-                    memberResponse.department_id
-
+                    token!!
                 )
                 emit(Resource.Success(member,"Success adding member"))
             }catch (e:Exception){
@@ -72,8 +71,8 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun editMember(memberResponse: MemberResponse,team_id:Int):Flow<Resource<MemberResponse>>{
-        return flow<Resource<MemberResponse>> {
+    suspend fun editMember(memberResponse: MemberResponse,team_id:Int):Flow<Resource<String>>{
+        return flow<Resource<String>> {
             emit(Resource.Loading())
             try {
                 val member = api.editMember(
@@ -83,8 +82,8 @@ class Repository @Inject constructor(
                     memberResponse.points,
                     team_id,
                     memberResponse.department_id,
-                    memberResponse.id
-
+                    memberResponse.id,
+                    token!!
                 )
                 emit(Resource.Success(member,"Success editing member"))
             }catch (e:Exception){
@@ -96,7 +95,7 @@ class Repository @Inject constructor(
         return flow<Resource<String>> {
             emit(Resource.Loading())
             try {
-                api.deleteMember(member_id)
+                api.deleteMember(member_id,token!!)
                 emit(Resource.Success("","Success deleting member"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -112,7 +111,8 @@ class Repository @Inject constructor(
                     meetingResponse.title,
                     meetingResponse.date,
                     meetingResponse.team_id,
-                    meetingResponse.description
+                    meetingResponse.description,
+                    token!!
                 )
                 emit(Resource.Success(meeting,"Success adding meeting"))
             }catch (e:Exception){
@@ -130,6 +130,7 @@ class Repository @Inject constructor(
                     meetingResponse.date,
                     team_id,
                     meetingResponse.description,
+                    token!!
 
                 )
                 emit(Resource.Success(meeting,"success updating meeting"))
@@ -142,7 +143,7 @@ class Repository @Inject constructor(
         return flow<Resource<String>> {
             emit(Resource.Loading())
             try {
-                api.deleteMeeting(meet_id)
+                api.deleteMeeting(meet_id,token!!)
                 emit(Resource.Success("","Success deleting meeting"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -198,7 +199,8 @@ class Repository @Inject constructor(
                 val project=api.updateProject(
                     projectResponse.id,
                     projectResponse.title,
-                    projectResponse.progress
+                    projectResponse.progress,
+                    token!!
                 )
                 emit(Resource.Success(project,"Succesc updating project"))
             }catch (e:Exception){
@@ -211,7 +213,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                api.deleteProject(id)
+                api.deleteProject(id,token!!)
                 emit(Resource.Success("","project deleted"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -223,7 +225,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val events = api.eventsList()
+                val events = api.eventsList(token!!)
                 emit(Resource.Success(events,"Success fetching events"))
             } catch (e: Exception) {
                 emit(Resource.Failed(e.localizedMessage))
@@ -237,7 +239,8 @@ class Repository @Inject constructor(
                 val event=api.addEvent(
                     eventResponse.name,
                     eventResponse.date,
-                    eventResponse.details
+                    eventResponse.details,
+                    token!!
                 )
                 emit(Resource.Success(event,"Success adding event"))
             }catch (e:Exception){
@@ -249,7 +252,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                api.deleteEvent(id)
+                api.deleteEvent(id,token!!)
                 emit(Resource.Success("","event deleted"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -262,7 +265,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val tasks=api.getAllTasks()
+                val tasks=api.getAllTasks(token!!)
                 emit(Resource.Success(tasks,"Success fetching tasks"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -281,7 +284,8 @@ class Repository @Inject constructor(
                     taskResponse.progress,
                     taskResponse.deadline,
                     taskResponse.team_id,
-                    taskResponse.project_id
+                    taskResponse.project_id,
+                    token!!
                 )
                 emit(Resource.Success(task,"Success updating tasks"))
             }catch (e:Exception){
@@ -299,7 +303,8 @@ class Repository @Inject constructor(
                     taskResponse.progress,
                     taskResponse.deadline,
                     taskResponse.team_id,
-                    taskResponse.project_id
+                    taskResponse.project_id,
+                    token!!
                 )
                 emit(Resource.Success(task,"Success creating task"))
             }catch (e:Exception){
@@ -312,7 +317,7 @@ class Repository @Inject constructor(
             emit(Resource.Loading())
 
             try {
-                api.deleteTask(id)
+                api.deleteTask(id,token!!)
                 emit(Resource.Success("","Success deleting task"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -326,7 +331,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val teams = api.getAllTeams()
+                val teams = api.getAllTeams(token!!)
                 emit(Resource.Success(teams,"Success fetching teams"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -339,7 +344,8 @@ class Repository @Inject constructor(
             try {
                 val team=api.createTeam(
                     teamResponse.name,
-                    teamResponse.color
+                    teamResponse.color,
+                    token!!
                 )
                 emit(Resource.Success(team,"Success adding team"))
             }catch (e:Exception){
@@ -354,7 +360,8 @@ class Repository @Inject constructor(
                 val team=api.updateTeam(
                     teamResponse.id,
                     teamResponse.name,
-                    teamResponse.color
+                    teamResponse.color,
+                    token!!
                 )
                 emit(Resource.Success(team,"Success updating team"))
             }catch (e:Exception){
@@ -367,7 +374,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                api.deleteTeam(id)
+                api.deleteTeam(id,token!!)
                 emit(Resource.Success("","Success deleting team"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -379,7 +386,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val participant=api.checkIn(participantId(id))
+                val participant=api.checkIn(participantId(id,token!!))
                 emit(Resource.Success(participant,"Success validating participant"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -391,7 +398,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val participants = api.getAllParticipants(event_id)
+                val participants = api.getAllParticipants(event_id,token!!)
                 emit(Resource.Success(participants,"Success fetching participants"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
