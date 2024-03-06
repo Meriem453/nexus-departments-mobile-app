@@ -4,8 +4,8 @@ data class MeetingResponse(
     val id:Int,
     var title:String,
     var date:String,
-    var time:String="",
+    var time:String,
     var team_id : Int,
-    val color:Long=0xffffffff,
+    val team_color:String="ffffffff",
     var description : String
 )

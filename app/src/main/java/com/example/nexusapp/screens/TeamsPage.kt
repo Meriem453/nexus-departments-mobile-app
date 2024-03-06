@@ -67,7 +67,8 @@ fun TeamsPage() {
     Column(
         Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.gray))) {
+            .background(colorResource(id = R.color.gray)),
+        horizontalAlignment = Alignment.CenterHorizontally) {
         Header(title = "Teams",
             icon = painterResource(id = R.drawable.add),
             onBackPressed = { /*TODO("back")*/ }) {
@@ -263,7 +264,9 @@ fun TeamsPage() {
                         }else{
                             currentItem!!.name=name
                             currentItem!!.color=color
-                            teamVM.updateTeam(currentItem!!)
+                            teamVM.updateTeam(TeamResponse(
+                                currentItem!!.id,name,color
+                            ))
                         }
                         currentItem=null
                         showAdd=false

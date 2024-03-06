@@ -87,7 +87,7 @@ fun MeetingsPage() {
 Column(modifier = Modifier
     .fillMaxSize()
     .background(colorResource(id = R.color.gray)),
-    verticalArrangement = Arrangement.Center
+    horizontalAlignment = Alignment.CenterHorizontally
 ) {
     val c = LocalContext.current
     val viewModel= hiltViewModel<MeetingsVM>()
@@ -219,7 +219,7 @@ Column(modifier = Modifier
                                     width = 2.dp,
                                     brush = Brush.horizontalGradient(
                                         listOf(
-                                            Color(item.color),
+                                            Color(item.team_color.toLong(16)),
                                             colorResource(id = R.color.gray),
                                         ), startX = .5f
                                     ),
@@ -486,12 +486,12 @@ Column(modifier = Modifier
 
                     }else{
                         /*TODO(" edit meeting")*/
-                        currentItem!!.title=title
-                        currentItem!!.date=date
-                        currentItem!!.time=time
-                        currentItem!!.team_id=team
-                        currentItem!!.description=desc
-                        viewModel.updateMeeting(currentItem!!,team)
+                        viewModel.updateMeeting(
+                            MeetingResponse(
+                                currentItem!!.id,title,date,time,team,currentItem!!.team_color,desc
+                            ),
+                            team
+                        )
                     }
                     showAdd=false
                     currentItem=null

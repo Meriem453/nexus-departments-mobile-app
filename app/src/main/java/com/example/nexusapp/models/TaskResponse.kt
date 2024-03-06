@@ -9,4 +9,7 @@ data class TaskResponse(
     var title:String,
     var progress:Int,
     var deadline:String,
+    var team_color:String,
+    var team_name:String
+
 )

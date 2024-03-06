@@ -11,9 +11,11 @@ import com.example.nexusapp.Repo.Repository
 import com.example.nexusapp.Repo.Resource
 import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.models.TeamResponse
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+@HiltViewModel
 class TasksVM @Inject constructor(
     private val repo: Repository,
     private val context:Application
@@ -22,9 +24,9 @@ class TasksVM @Inject constructor(
     var tasks by mutableStateOf<Resource<List<TaskResponse>>>(Resource.Loading())
     var teams by mutableStateOf<Resource<List<TeamResponse>>>(Resource.Loading())
 
-    fun getAllTasks(){
+    fun getAllTasks(project_id:Int){
         viewModelScope.launch {
-            repo.getAllTasks().collect{
+            repo.getAllTasks(project_id).collect{
                 tasks=it
             }
         }
@@ -63,7 +65,6 @@ class TasksVM @Inject constructor(
 
 
     init {
-        getAllTasks()
         viewModelScope.launch {
             repo.getAllTeams().collect{
                 teams=it

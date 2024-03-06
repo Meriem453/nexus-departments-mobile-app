@@ -56,9 +56,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.rememberDismissState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,6 +91,7 @@ import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 //@Preview(showBackground = true)
@@ -97,6 +100,13 @@ import java.time.LocalDate
 @Composable
 fun TasksPage(project:ProjectResponse){
     val viewModel = hiltViewModel<TasksVM>()
+    val coroutine = rememberCoroutineScope()
+
+    LaunchedEffect(true){
+        coroutine.launch {
+            viewModel.getAllTasks(project.id)
+        }
+    }
 
     var showAdd by remember{
         mutableStateOf(false)
@@ -109,7 +119,8 @@ fun TasksPage(project:ProjectResponse){
     Column(
         Modifier
             .fillMaxSize()
-            .background(colorResource(id = R.color.gray))
+            .background(colorResource(id = R.color.gray)),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Header(
             title = project.title,
@@ -183,13 +194,13 @@ fun TasksPage(project:ProjectResponse){
                                         Icon(
                                             painter = painterResource(id = R.drawable.point),
                                             contentDescription = "",
-                                            tint = colorResource(id = R.color.green),
+                                            tint = Color(item.team_color.toLong(16)),
                                             modifier = Modifier
                                                 .size(10.dp)
                                                 .padding(2.dp)
                                         )
                                         Text(
-                                            text = item.team_id.toString(),
+                                            text = item.team_name,
                                             fontSize = 10.sp,
                                             color = Color.Gray
                                         )
@@ -529,22 +540,23 @@ fun TasksPage(project:ProjectResponse){
                         modifier = Modifier
                             .background(colorResource(id = R.color.gray)),
                     ) {
-                        val options = listOf("UI/UX", "Motion", "Graphic")
-                        options.forEachIndexed() { position, selectionOption ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        text = selectionOption,
-                                        color = Color.White,
-                                        fontSize = 16.sp
-                                    )
-                                },
-                                onClick = {
-                                    team = position
-                                    expanded = false
-                                }
-                            )
-                        }
+                       if(viewModel.teams is Resource.Success) {
+                           viewModel.teams.data!!.forEachIndexed() { position, selectionOption ->
+                               DropdownMenuItem(
+                                   text = {
+                                       Text(
+                                           text = selectionOption.name,
+                                           color = Color.White,
+                                           fontSize = 16.sp
+                                       )
+                                   },
+                                   onClick = {
+                                       team = selectionOption.id
+                                       expanded = false
+                                   }
+                               )
+                           }
+                       }
                     }
                 }
                 Spacer(modifier = Modifier.height(20.dp))
@@ -601,7 +613,7 @@ fun TasksPage(project:ProjectResponse){
                 if(status=="In Progress") {
                     Slider(
                         value = progress.toFloat()/100,
-                        onValueChange = { progress = it.toInt()*100 },
+                        onValueChange = { progress = it.toInt() },
                         colors = SliderDefaults.colors(
                             thumbColor =  colorResource(R.color.green),
                             activeTrackColor = colorResource(R.color.green),
@@ -645,16 +657,12 @@ fun TasksPage(project:ProjectResponse){
                         /*TODO("add task or edit task")*/
                         if(currentItem==null){
                             viewModel.addTasks(TaskResponse(
-                                0,project.id,team,desc,status,title,0,deadline
+                                0,project.id,team,desc,status,title,0,deadline,"",""
                             ))
                         }else{
-                            currentItem!!.team_id=team
-                            currentItem!!.description=desc
-                            currentItem!!.status=status
-                            currentItem!!.title=title
-                            currentItem!!.progress=progress
-                            currentItem!!.deadline=deadline
-                            viewModel.updateTask(currentItem!!)
+                            viewModel.updateTask(
+                                TaskResponse(currentItem!!.id,currentItem!!.project_id,team,desc,status,title,progress, deadline,"","")
+                            )
                         }
                         currentItem=null
                         showAdd=false

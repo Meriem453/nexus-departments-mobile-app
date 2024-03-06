@@ -215,7 +215,6 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
     val teamInteractionSource = remember {
         MutableInteractionSource()
     }
-    val teamDropDownItems= listOf("UI/UX","Motion","Video Editing")
 
     var isTeamContextMenuVisible by rememberSaveable {
         mutableStateOf(false)
@@ -361,13 +360,15 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
                 Image(painter = painterResource(id = R.drawable.polygon), contentDescription = "")
             }
 
-            teamDropDownItems.forEachIndexed{position,item->
+            membersViewModel.teams.data!!.forEachIndexed{position,item->
                 DropdownMenuItem(onClick = {
                     //TODO("edit member's team")
-                    member.team=item
-                    membersViewModel.updateMember(member,membersViewModel.teams.data!!.filter { it.name==member.team }[0].id)
+
+                    membersViewModel.updateMember(
+                       member
+                        ,item.id)
                     isTeamContextMenuVisible = false
-                }, text = { Text(text = item, color = Color.White)})
+                }, text = { Text(text = item.name, color = Color.White)})
             }
         }
 
@@ -395,7 +396,9 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
             }
              TextField(
                  value = points.toString(),
-                 onValueChange = {points=it.toInt()},
+                 onValueChange = {try {
+                     points=it.toInt()
+                 }catch (e:Exception){0}},
                  modifier = Modifier
                      .width(150.dp)
                      .padding(10.dp),
@@ -421,9 +424,11 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
                     .fillMaxWidth()
                     .padding(10.dp)
                     .clickable {
-                        member.points=points
                         //TODO("edit member's points")
-                        membersViewModel.updateMember(member,membersViewModel.teams.data!!.filter { it.name==member.team }[0].id)
+                        member.points=points
+                        membersViewModel.updateMember(
+                            member
+                            ,membersViewModel.teams.data!!.filter { it.name==member.team }[0].id)
                         isPointsContextMenuVisible = false
                     }
                 )

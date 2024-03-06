@@ -77,11 +77,8 @@ class Repository @Inject constructor(
             try {
                 val member = api.editMember(
                     memberResponse.name,
-                    memberResponse.email,
-                    memberResponse.password,
                     memberResponse.points,
                     team_id,
-                    memberResponse.department_id,
                     memberResponse.id,
                     token!!
                 )
@@ -110,6 +107,7 @@ class Repository @Inject constructor(
                 val meeting=api.createMeeting(
                     meetingResponse.title,
                     meetingResponse.date,
+                    meetingResponse.time,
                     meetingResponse.team_id,
                     meetingResponse.description,
                     token!!
@@ -120,7 +118,7 @@ class Repository @Inject constructor(
             }
         }
     }
-    suspend fun updateMeeting(meetingResponse: MeetingResponse,team_id: Int):Flow<Resource<MeetingResponse>>{
+    suspend fun updateMeeting(meetingResponse: MeetingResponse,team_id: Int):Flow<Resource<String>>{
         return flow {
             emit(Resource.Loading())
             try {
@@ -192,8 +190,8 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun updateProject(projectResponse: Project):Flow<Resource<Project>>{
-        return flow<Resource<Project>> {
+    suspend fun updateProject(projectResponse: Project):Flow<Resource<String>>{
+        return flow<Resource<String>> {
             emit(Resource.Loading())
             try {
                 val project=api.updateProject(
@@ -202,7 +200,7 @@ class Repository @Inject constructor(
                     projectResponse.progress,
                     token!!
                 )
-                emit(Resource.Success(project,"Succesc updating project"))
+                emit(Resource.Success(project,"Success updating project"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -261,11 +259,11 @@ class Repository @Inject constructor(
     }
 
     //Tasks
-    suspend fun getAllTasks():Flow<Resource<List<TaskResponse>>>{
+    suspend fun getAllTasks(project_id:Int):Flow<Resource<List<TaskResponse>>>{
         return flow {
             emit(Resource.Loading())
             try {
-                val tasks=api.getAllTasks(token!!)
+                val tasks=api.getAllTasks(token!!,project_id)
                 emit(Resource.Success(tasks,"Success fetching tasks"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
@@ -273,7 +271,7 @@ class Repository @Inject constructor(
         }
     }
 
-    suspend fun updateTask(taskResponse: TaskResponse):Flow<Resource<TaskResponse>>{
+    suspend fun updateTask(taskResponse: TaskResponse):Flow<Resource<String>>{
         return flow {
             emit(Resource.Loading())
             try {
@@ -285,6 +283,7 @@ class Repository @Inject constructor(
                     taskResponse.deadline,
                     taskResponse.team_id,
                     taskResponse.project_id,
+                    taskResponse.status,
                     token!!
                 )
                 emit(Resource.Success(task,"Success updating tasks"))
@@ -304,6 +303,7 @@ class Repository @Inject constructor(
                     taskResponse.deadline,
                     taskResponse.team_id,
                     taskResponse.project_id,
+                    taskResponse.status,
                     token!!
                 )
                 emit(Resource.Success(task,"Success creating task"))
@@ -353,7 +353,7 @@ class Repository @Inject constructor(
             }
         }
     }
-    suspend fun updateTeam(teamResponse: TeamResponse):Flow<Resource<TeamResponse>>{
+    suspend fun updateTeam(teamResponse: TeamResponse):Flow<Resource<String>>{
         return flow {
             emit(Resource.Loading())
             try {

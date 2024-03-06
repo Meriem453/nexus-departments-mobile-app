@@ -86,7 +86,7 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
         Modifier
             .fillMaxSize()
             .background(colorResource(id = R.color.gray)),
-        verticalArrangement = Arrangement.Center
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Header(
             title = "Projects",
@@ -237,7 +237,7 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Text(
-                                        text = "${item.completed_tasks}/${item.total_tasks} Tasks ${item.completed_tasks.toInt() * 100 / item.total_tasks.toInt()}%",
+                                        text = "${item.completed_tasks}/${item.total_tasks} Tasks ${try{item.completed_tasks.toInt() * 100 / item.total_tasks.toInt()}catch (e:Exception){0}}%",
                                         fontSize = 15.sp,
                                         color = Color.Gray,
                                     )
