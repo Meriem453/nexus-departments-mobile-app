@@ -39,7 +39,7 @@ interface Api {
     //Members//////////////////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("member/departmentMembers")
-    fun membersList(
+    suspend fun membersList(
         @Field("token") token:String
     ): List<MemberResponse>
 
@@ -76,7 +76,7 @@ interface Api {
     //Meetings///////////////////////////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("meeting/manager")
-    fun meetingsList(
+    suspend fun meetingsList(
         @Field("token") token:String
     ):List<MeetingResponse>
 
@@ -112,7 +112,7 @@ interface Api {
     //Projects//////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("project/manager")
-    fun projectsList(
+    suspend fun projectsList(
         @Field("token") token:String
     ):List<ProjectResponse>
 
@@ -152,7 +152,7 @@ interface Api {
 
     @FormUrlEncoded
     @POST("event/all")
-    fun eventsList(
+    suspend fun eventsList(
         @Field("token") token:String
     ):List<EventResponse>
 
@@ -177,7 +177,7 @@ interface Api {
     //Tasks/////////////////////////////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("task/all")
-    fun getAllTasks(
+    suspend fun getAllTasks(
         @Field("token") token:String,
         @Field("project_id") project_id:Int,
 
@@ -218,7 +218,7 @@ interface Api {
 //Teams///////////////////////////////////////////////////////////////////////
 @FormUrlEncoded
     @POST("team/all")
-    fun getAllTeams(
+    suspend fun getAllTeams(
     @Field("token") token:String
     ):List<TeamResponse>
 

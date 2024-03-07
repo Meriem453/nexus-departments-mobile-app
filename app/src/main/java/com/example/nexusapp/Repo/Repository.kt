@@ -47,7 +47,7 @@ class Repository @Inject constructor(
             emit(Resource.Loading())
             try {
                 val members = api.membersList(token!!)
-                    emit(Resource.Success(members,"Success fetching members"))
+                emit(Resource.Success(members,"Success fetching members"))
 
 
             } catch (e: Exception) {
