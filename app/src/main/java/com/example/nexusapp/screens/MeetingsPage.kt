@@ -23,6 +23,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialogDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -61,6 +62,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.nexusapp.R
 import com.example.nexusapp.Repo.Resource
@@ -71,6 +73,7 @@ import com.example.nexusapp.screens.components.Header
 import com.example.nexusapp.viewmodels.MeetingsVM
 import com.ramcosta.composedestinations.annotation.Destination
 import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.MaterialDialogButtons
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
@@ -149,7 +152,7 @@ Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            itemsIndexed(viewModel.meetings.data!!) { position, item ->
+            itemsIndexed(viewModel.meetings.data?: emptyList()) { position, item ->
                 var dismissState by remember {
                     mutableStateOf(DismissState(DismissValue.Default))
                 }
@@ -277,6 +280,7 @@ Column(modifier = Modifier
         var team by remember {
             mutableStateOf(currentItem?.team_id ?: -1)
         }
+        var team_name = try{viewModel.teams.data!!.filter { it.id==team }[0].name}catch(e:Exception){""}
         var expanded by remember {
             mutableStateOf(false)
         }
@@ -401,7 +405,7 @@ Column(modifier = Modifier
                 ) {
 
 
-                    TextField(value = team.toString(), onValueChange = {  }, isError = team==-1,
+                    TextField(value = team_name?:"", onValueChange = {  }, isError = team==-1,
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor()
@@ -518,11 +522,10 @@ Column(modifier = Modifier
         }
         MaterialDialog(
             dialogState = datePicker,
-            buttons = {positiveButton(text = "Save")
+            backgroundColor = colorResource(id = R.color.gray),
 
-            },
-            backgroundColor = colorResource(id = R.color.gray)
         ) {
+            var selectedDate by remember { mutableStateOf(LocalDate.now()) }
             datepicker(
                 initialDate = LocalDate.now(),
                 title = "Pick a date",
@@ -537,16 +540,29 @@ Column(modifier = Modifier
 
                 )
             ){
-                date = "${it.dayOfMonth}/${it.monthValue}/${it.year}"
+                selectedDate = it
             }
+            Text(
+                text = "Save",
+                fontSize = 16.sp,
+                color = colorResource(id = R.color.green),
+                modifier = Modifier
+                    .clickable {
+                        date =
+                            "${selectedDate.dayOfMonth}/${selectedDate.monthValue}/${selectedDate.year}"
+                        datePicker.hide()
+
+                    }
+                    .align(Alignment.End)
+                    .padding(16.dp))
         }
         MaterialDialog(
             dialogState = timePicker,
-            buttons = {positiveButton(text = "Save")
-
-            },
             backgroundColor = colorResource(id = R.color.gray)
         ) {
+            var selectedTime by remember {
+                mutableStateOf(LocalTime.now())
+            }
             timepicker(
                 initialTime = LocalTime.now(),
                 title = "Pick a time",
@@ -554,11 +570,27 @@ Column(modifier = Modifier
                     activeTextColor = colorResource(id = R.color.gray),
                     activeBackgroundColor = colorResource(id = R.color.green),
                     inactiveTextColor = Color.White,
-                    headerTextColor = colorResource(id = R.color.green)
+                    headerTextColor = colorResource(id = R.color.green),
+                    selectorColor = colorResource(id = R.color.green),
+                    selectorTextColor = colorResource(id = R.color.green)
                 )
             ){
-                time = "${it.hour}:${it.minute}"
+                selectedTime=it
             }
+            Text(
+                text = "Save",
+                fontSize = 16.sp,
+                color = colorResource(id = R.color.green),
+                modifier = Modifier
+                    .clickable {
+                        time =
+                            "${selectedTime.hour}:${selectedTime.minute}"
+                        datePicker.hide()
+
+                    }
+                    .align(Alignment.End)
+                    .padding(16.dp))
+
         }
     }
     if(showDelete){

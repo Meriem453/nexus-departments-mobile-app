@@ -352,7 +352,7 @@ fun MembersListPage() {
         }
         if(membersViewModel.membersList is Resource.Success){
             LazyColumn(modifier = Modifier.padding(15.dp)) {
-                items(membersViewModel.membersList.data!!) {item: MemberResponse ->
+                items(membersViewModel.membersList.data?: emptyList()) { item: MemberResponse ->
                     MemberDataView(item,membersViewModel)
                     Spacer(modifier = Modifier.height(5.dp))
                 }

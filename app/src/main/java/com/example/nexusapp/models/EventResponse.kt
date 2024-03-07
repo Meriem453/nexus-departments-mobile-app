@@ -1,6 +1,8 @@
 package com.example.nexusapp.models
 
-data class EventResponse(
+import androidx.annotation.Keep
+
+@Keep data class EventResponse(
     val id:Int,
     val name:String,
     val date:String,

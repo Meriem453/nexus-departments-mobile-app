@@ -134,7 +134,7 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                itemsIndexed(viewModel.projects.data!!) { position, item ->
+                itemsIndexed(viewModel.projects.data?: emptyList()) { position, item ->
                     var dismissState by remember {
                         mutableStateOf(DismissState(DismissValue.Default))
                     }

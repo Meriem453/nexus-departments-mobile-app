@@ -1,6 +1,8 @@
 package com.example.nexusapp.models
 
-data class TaskResponse(
+import androidx.annotation.Keep
+
+@Keep data class TaskResponse(
     val id : Int,
     val project_id:Int,
     var team_id:Int,

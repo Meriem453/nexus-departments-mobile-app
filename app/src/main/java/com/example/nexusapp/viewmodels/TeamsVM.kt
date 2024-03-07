@@ -38,6 +38,7 @@ class TeamsVM @Inject constructor(
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
+        getAllTeams()
     }
 
     fun updateTeam(teamResponse: TeamResponse){
@@ -48,6 +49,7 @@ class TeamsVM @Inject constructor(
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
+        getAllTeams()
     }
 
     fun deleteTeam(id:Int){
@@ -58,6 +60,7 @@ class TeamsVM @Inject constructor(
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
+        getAllTeams()
     }
 
 

@@ -30,7 +30,13 @@ class MembersListVM @Inject constructor(
     var membersList by mutableStateOf<Resource<List<MemberResponse>>>(Resource.Loading())
     var teams by mutableStateOf<Resource<List<TeamResponse>>>(Resource.Loading())
 
-
+fun getAllMembers(){
+    viewModelScope.launch {
+        repo.getMembersList().collect{
+            membersList = it
+        }
+    }
+}
 
     fun addMember(memberResponse: MemberResponse,team_id: Int){
 
@@ -41,6 +47,7 @@ class MembersListVM @Inject constructor(
                     Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
             }
         }
+        getAllMembers()
     }
 
     fun updateMember(memberResponse: MemberResponse, team_id:Int){
@@ -51,6 +58,7 @@ class MembersListVM @Inject constructor(
                     Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
             }
         }
+        getAllMembers()
     }
 
     fun deleteMember(id:Int){
@@ -61,15 +69,15 @@ class MembersListVM @Inject constructor(
                     Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
             }
         }
+        getAllMembers()
 
     }
 
 
     init {
+        getAllMembers()
         viewModelScope.launch {
-           repo.getMembersList().collect{
-                membersList = it
-            }
+
             repo.getAllTeams().collect{
                 teams=it
             }

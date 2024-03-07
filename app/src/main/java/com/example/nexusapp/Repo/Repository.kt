@@ -36,7 +36,7 @@ class Repository @Inject constructor(
             } else emit(Resource.Failed("there is no data"))
 
         } catch (e: Exception) {
-            emit(Resource.Failed(e.localizedMessage))
+            emit(Resource.Failed("Check your connection and try again"))
         }
     }
 
@@ -51,7 +51,7 @@ class Repository @Inject constructor(
 
 
             } catch (e: Exception) {
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
 
@@ -70,7 +70,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success(member,"Success adding member"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -88,7 +88,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success("","Success editing member"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -99,7 +99,7 @@ class Repository @Inject constructor(
                 api.deleteMember(member_id,token!!)
                 emit(Resource.Success("","Success deleting member"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -118,7 +118,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success(meeting,"Success adding meeting"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -137,7 +137,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success("","success updating meeting"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -148,7 +148,7 @@ class Repository @Inject constructor(
                 api.deleteMeeting(meet_id,token!!)
                 emit(Resource.Success("","Success deleting meeting"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -162,7 +162,7 @@ class Repository @Inject constructor(
 
 
             } catch (e: Exception) {
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -177,7 +177,7 @@ class Repository @Inject constructor(
 
 
         } catch (e: Exception) {
-            emit(Resource.Failed(e.localizedMessage))
+            emit(Resource.Failed("Check your connection and try again"))
         }
       }
     }
@@ -193,7 +193,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success(project,"Success adding project"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -210,7 +210,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success("","Success updating project"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -222,7 +222,7 @@ class Repository @Inject constructor(
                 api.deleteProject(id,token!!)
                 emit(Resource.Success("","project deleted"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -236,7 +236,7 @@ class Repository @Inject constructor(
 
 
             } catch (e: Exception) {
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -252,7 +252,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success(event,"Success adding event"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -263,7 +263,7 @@ class Repository @Inject constructor(
                 api.deleteEvent(id,token!!)
                 emit(Resource.Success("","event deleted"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -278,7 +278,7 @@ class Repository @Inject constructor(
 
 
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -300,7 +300,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success("","Success updating tasks"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -320,7 +320,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success(task,"Success creating task"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -332,7 +332,7 @@ class Repository @Inject constructor(
                 api.deleteTask(id,token!!)
                 emit(Resource.Success("","Success deleting task"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -348,7 +348,7 @@ class Repository @Inject constructor(
 
 
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -363,7 +363,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success(team,"Success adding team"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -379,7 +379,7 @@ class Repository @Inject constructor(
                 )
                 emit(Resource.Success("","Success updating team"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -391,7 +391,7 @@ class Repository @Inject constructor(
                 api.deleteTeam(id,token!!)
                 emit(Resource.Success("","Success deleting team"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -403,7 +403,7 @@ class Repository @Inject constructor(
                 val participant=api.checkIn(participantId(id,token!!))
                 emit(Resource.Success(participant,"Success validating participant"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }
@@ -415,7 +415,7 @@ class Repository @Inject constructor(
                 val participants = api.getAllParticipants(event_id,token!!)
                 emit(Resource.Success(participants,"Success fetching participants"))
             }catch (e:Exception){
-                emit(Resource.Failed(e.localizedMessage))
+                emit(Resource.Failed("Check your connection and try again"))
             }
         }
     }

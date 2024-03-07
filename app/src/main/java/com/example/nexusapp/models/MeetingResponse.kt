@@ -1,6 +1,8 @@
 package com.example.nexusapp.models
 
-data class MeetingResponse(
+import androidx.annotation.Keep
+
+@Keep data class MeetingResponse(
     val id:Int,
     var title:String,
     var date:String,

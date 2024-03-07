@@ -105,7 +105,7 @@ fun TeamsPage() {
             }
             if(teamVM.teams is Resource.Success){
                 LazyColumn(modifier = Modifier.fillMaxSize()){
-                    itemsIndexed(teamVM.teams.data!!){position,item->
+                    itemsIndexed(teamVM.teams.data?: emptyList()){position,item->
                         Box (
                             Modifier
                                 .fillMaxWidth()

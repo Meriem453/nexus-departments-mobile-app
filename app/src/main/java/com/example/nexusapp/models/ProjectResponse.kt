@@ -1,10 +1,11 @@
 package com.example.nexusapp.models
 
 import android.os.Parcelable
+import androidx.annotation.Keep
 import com.example.nexusapp.models.HomePageResponse.Project
 
 @kotlinx.parcelize.Parcelize
-data class ProjectResponse(
+@Keep data class ProjectResponse(
     val id : Int,
     val title : String,
     val pending_tasks : String,

@@ -34,6 +34,7 @@ class MeetingsVM @Inject constructor(
   var teams by mutableStateOf<Resource<List<TeamResponse>>>(Resource.Loading())
 
     fun getAllMeetings(){
+
         viewModelScope.launch {
             repo.getManagerMeetings().collect{
                 meetings=it
@@ -49,6 +50,7 @@ class MeetingsVM @Inject constructor(
           }
         }
 
+        getAllMeetings()
     }
 
     fun updateMeeting(meetingResponse: MeetingResponse,team_id:Int){
@@ -58,6 +60,7 @@ class MeetingsVM @Inject constructor(
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
+        getAllMeetings()
 
     }
 
@@ -69,6 +72,7 @@ class MeetingsVM @Inject constructor(
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
+        getAllMeetings()
     }
 
 

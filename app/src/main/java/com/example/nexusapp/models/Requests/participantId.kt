@@ -1,6 +1,8 @@
 package com.example.nexusapp.models.Requests
 
-data class participantId(
+import androidx.annotation.Keep
+
+@Keep data class participantId(
     val id:Int,
     val token:String
 )

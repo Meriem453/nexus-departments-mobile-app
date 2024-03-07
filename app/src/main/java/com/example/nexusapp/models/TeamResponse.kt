@@ -1,8 +1,9 @@
 package com.example.nexusapp.models
 
+import androidx.annotation.Keep
 import androidx.compose.ui.graphics.Color
 
-data class TeamResponse(
+@Keep data class TeamResponse(
     val id:Int,
     var name:String,
     var color: String = "0xffffffff"

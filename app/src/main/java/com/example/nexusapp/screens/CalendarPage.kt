@@ -361,11 +361,9 @@ fun Calendar(navigator: DestinationsNavigator) {
         }
         MaterialDialog(
             dialogState = datePicker,
-            buttons = {positiveButton(text = "Save")
-
-            },
             backgroundColor = colorResource(id = R.color.gray)
         ) {
+            var selectedDate by remember { mutableStateOf(LocalDate.now()) }
             datepicker(
                 initialDate = LocalDate.now(),
                 title = "Pick a date",
@@ -378,10 +376,23 @@ fun Calendar(navigator: DestinationsNavigator) {
                     dateInactiveBackgroundColor = colorResource(id = R.color.gray),
                     calendarHeaderTextColor =colorResource(id = R.color.green)
 
-                    )
+                )
             ){
-                date = "${it.dayOfMonth}/${it.monthValue}/${it.year}"
+                selectedDate = it
             }
+            Text(
+                text = "Save",
+                fontSize = 16.sp,
+                color = colorResource(id = R.color.green),
+                modifier = Modifier
+                    .clickable {
+                        date =
+                            "${selectedDate.dayOfMonth}/${selectedDate.monthValue}/${selectedDate.year}"
+                        datePicker.hide()
+
+                    }
+                   // .align(Alignment.End)
+                    .padding(16.dp))
         }
     }
 

@@ -1,6 +1,8 @@
 package com.example.nexusapp.models.HomePageResponse
 
-data class HomePageResponse(
+import androidx.annotation.Keep
+
+@Keep data class HomePageResponse(
     val task_count:Int,
     val departmentName: String,
     val done_projects: Int,

@@ -176,7 +176,7 @@ fun TasksPage(project:ProjectResponse){
                         .fillMaxWidth()
                         .padding(start = 16.dp)
                 ) {
-                    itemsIndexed(viewModel.tasks.data!!) { position, item ->
+                    itemsIndexed(viewModel.tasks.data?: emptyList()) { position, item ->
                         if (item.status == "ToDo") {
                             Card(
                                 modifier = Modifier
@@ -249,7 +249,7 @@ fun TasksPage(project:ProjectResponse){
                         .padding(start = 16.dp, end = 16.dp)
                 ) {
 
-                    viewModel.tasks.data!!.forEachIndexed { position, item ->
+                    viewModel.tasks.data?: emptyList<TaskResponse>().forEachIndexed { position, item ->
 
                         if (item.status == "In Progress") {
                             val dismissState = rememberDismissState(DismissValue.Default)
@@ -258,6 +258,7 @@ fun TasksPage(project:ProjectResponse){
                                 //TODO("done task")
                                 item.status="Done"
                                 viewModel.updateTask(item)
+                                viewModel.getAllTasks(project.id)
                             }
 
                             SwipeToDismiss(modifier = Modifier
@@ -402,6 +403,7 @@ fun TasksPage(project:ProjectResponse){
         var team by remember {
             mutableStateOf(currentItem?.team_id ?: -1)
         }
+        var team_name = try{viewModel.teams.data!!.filter { it.id==team }[0].name}catch(e:Exception){""}
         var progress by remember {
             mutableStateOf(currentItem?.progress?: 0)
         }
@@ -509,7 +511,7 @@ fun TasksPage(project:ProjectResponse){
                         expanded = !expanded
                     }
                 ) {
-                    TextField(value = team.toString(), onValueChange = { team = 0 }, isError = team==-1,
+                    TextField(value = team_name, onValueChange = { team = 0 }, isError = team==-1,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 20.dp, end = 20.dp)
@@ -693,11 +695,11 @@ fun TasksPage(project:ProjectResponse){
         }
         MaterialDialog(
             dialogState = datePicker,
-            buttons = {positiveButton(text = "Save")
-
-            },
             backgroundColor = colorResource(id = R.color.gray)
         ) {
+            var selectedDate by remember {
+                mutableStateOf(LocalDate.now())
+            }
             datepicker(
                 initialDate = LocalDate.now(),
                 title = "Pick a date",
@@ -712,8 +714,21 @@ fun TasksPage(project:ProjectResponse){
 
                 )
             ){
-                deadline = "${it.dayOfMonth}/${it.monthValue}/${it.year}"
+                selectedDate=it
             }
+            Text(
+                text = "Save",
+                fontSize = 16.sp,
+                color = colorResource(id = R.color.green),
+                modifier = Modifier
+                    .clickable {
+                        deadline =
+                            "${selectedDate.dayOfMonth}/${selectedDate.monthValue}/${selectedDate.year}"
+                        datePicker.hide()
+
+                    }
+                    //.align(Alignment.End)
+                    .padding(16.dp))
         }
     }
 }

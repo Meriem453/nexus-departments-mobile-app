@@ -40,6 +40,7 @@ class ProjectsVM @Inject constructor(
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
+        getAllProjects()
     }
 
     fun updateProject(project: Project) {
@@ -50,6 +51,7 @@ class ProjectsVM @Inject constructor(
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
+        getAllProjects()
 
     }
 
@@ -61,6 +63,7 @@ class ProjectsVM @Inject constructor(
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
             }
         }
+        getAllProjects()
     }
 
 

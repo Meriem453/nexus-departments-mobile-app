@@ -1,3 +1,5 @@
 package com.example.nexusapp.models
 
-data class LoginResponse(val token:String)
+import androidx.annotation.Keep
+
+@Keep data class LoginResponse(val token:String)
