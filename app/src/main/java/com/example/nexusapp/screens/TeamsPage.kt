@@ -86,15 +86,15 @@ fun TeamsPage() {
                         repeatMode = RepeatMode.Restart
                     ), label = ""
                 )
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .rotate(rotationValue)
-                        .align(Alignment.CenterVertically)
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
 
-                    ,
-                    color = colorResource(id = R.color.green)
-                )
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .size(50.dp)
+                            .rotate(rotationValue),
+                        color = colorResource(id = R.color.green)
+                    )
+                }
             }
             if(teamVM.teams is Resource.Failed) {
                 Text(
@@ -180,7 +180,7 @@ fun TeamsPage() {
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = name , onValueChange ={name=it},
+                TextField(value = name , onValueChange ={if (it.length <= 20)name=it}, isError = name=="", maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -277,7 +277,7 @@ fun TeamsPage() {
                             .padding(5.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.green)
-                        )
+                        ), enabled = name!=""
                     ) {
                         Text(
                             text = if(currentItem!=null) "Edit" else "Add",

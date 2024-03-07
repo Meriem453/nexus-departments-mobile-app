@@ -11,6 +11,7 @@ import com.example.nexusapp.models.ProjectResponse
 import com.example.nexusapp.models.Requests.participantId
 import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.models.TeamResponse
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -38,9 +39,9 @@ interface Api {
     //Members//////////////////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("member/departmentMembers")
-    suspend fun membersList(
+    fun membersList(
         @Field("token") token:String
-    ):List<MemberResponse>
+    ): List<MemberResponse>
 
     @FormUrlEncoded
     @POST("member/register")
@@ -64,7 +65,7 @@ interface Api {
         //@Field("department_id") department_id:Int,
         @Field("id") id:Int,
         @Field("token") token:String,
-    ):String
+    )
 
     @FormUrlEncoded
     @POST("member/delete")
@@ -75,7 +76,7 @@ interface Api {
     //Meetings///////////////////////////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("meeting/manager")
-    suspend fun meetingsList(
+    fun meetingsList(
         @Field("token") token:String
     ):List<MeetingResponse>
 
@@ -99,7 +100,7 @@ interface Api {
         @Field("team_id") team_id:Int,
         @Field("description") description:String,
         @Field("token") token:String
-    ):String
+    )
 
     @FormUrlEncoded
     @POST("meeting/delete")
@@ -111,7 +112,7 @@ interface Api {
     //Projects//////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("project/manager")
-    suspend fun projectsList(
+    fun projectsList(
         @Field("token") token:String
     ):List<ProjectResponse>
 
@@ -130,7 +131,7 @@ interface Api {
         @Field("title") title:String,
         @Field("progress") progress:Int,
         @Field("token") token:String
-    ):String
+    )
 
     @FormUrlEncoded
     @POST("project/delete")
@@ -151,7 +152,7 @@ interface Api {
 
     @FormUrlEncoded
     @POST("event/all")
-    suspend fun eventsList(
+    fun eventsList(
         @Field("token") token:String
     ):List<EventResponse>
 
@@ -176,7 +177,7 @@ interface Api {
     //Tasks/////////////////////////////////////////////////////////////////////////////////////////
     @FormUrlEncoded
     @POST("task/all")
-    suspend fun getAllTasks(
+    fun getAllTasks(
         @Field("token") token:String,
         @Field("project_id") project_id:Int,
 
@@ -206,7 +207,7 @@ interface Api {
         @Field("project_id") project_id:Int,
         @Field("status") status:String,
         @Field("token") token:String
-    ):String
+    )
     @FormUrlEncoded
     @POST("task/delete")
     suspend fun deleteTask(
@@ -217,7 +218,7 @@ interface Api {
 //Teams///////////////////////////////////////////////////////////////////////
 @FormUrlEncoded
     @POST("team/all")
-    suspend fun getAllTeams(
+    fun getAllTeams(
     @Field("token") token:String
     ):List<TeamResponse>
 
@@ -237,7 +238,7 @@ interface Api {
         @Field("name") name: String,
         @Field("color") color:String,
         @Field("token") token:String
-    ):String
+    )
 
     @FormUrlEncoded
     @POST("team/delete")

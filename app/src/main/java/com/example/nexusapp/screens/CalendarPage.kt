@@ -30,6 +30,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -130,7 +131,7 @@ fun Calendar(navigator: DestinationsNavigator) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
 
-                        if(eventsViewModel.eventsList is Resource.Loading){
+                        if(eventsViewModel.eventsList is Resource.Loading) {
 
                             val infiniteTransition = rememberInfiniteTransition(label = "")
                             val rotationValue by infiniteTransition.animateFloat(
@@ -141,14 +142,16 @@ fun Calendar(navigator: DestinationsNavigator) {
                                     repeatMode = RepeatMode.Restart
                                 ), label = ""
                             )
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(50.dp)
-                                    .rotate(rotationValue)
+                            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
 
-                                ,
-                                color = colorResource(id = R.color.green)
-                            )}
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(50.dp)
+                                        .rotate(rotationValue),
+                                    color = colorResource(id = R.color.green)
+                                )
+                            }
+                        }
                         if(eventsViewModel.eventsList is Resource.Failed){
 
                                 Text(
@@ -233,7 +236,7 @@ fun Calendar(navigator: DestinationsNavigator) {
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = name , onValueChange ={name=it},
+                TextField(value = name , onValueChange ={if (it.length <= 20)name=it}, isError = name=="", maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -260,10 +263,10 @@ fun Calendar(navigator: DestinationsNavigator) {
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = date, onValueChange ={date=it},
+                TextField(value = date, onValueChange ={date=it}, isError = date=="",
                     readOnly = true,
                     modifier = Modifier
-                        .clickable{ datePicker.show() }
+                        .clickable { datePicker.show() }
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
                         .clip(RoundedCornerShape(10.dp)),
@@ -292,7 +295,7 @@ fun Calendar(navigator: DestinationsNavigator) {
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = details, onValueChange ={details=it},
+                TextField(value = details, onValueChange ={if (it.length <= 100)details=it}, isError = details=="",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -333,7 +336,7 @@ fun Calendar(navigator: DestinationsNavigator) {
                                 showAdd = false
                             }
                         }
-
+                        eventsViewModel.getEventsList()
                     }
                 },
                     modifier = Modifier
@@ -341,7 +344,8 @@ fun Calendar(navigator: DestinationsNavigator) {
                         .padding(20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.green)
-                    )
+                    ),
+                    enabled = name!="" && date != "" && details != ""
                 ) {
 
 

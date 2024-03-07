@@ -140,14 +140,15 @@ fun TasksPage(project:ProjectResponse){
                     repeatMode = RepeatMode.Restart
                 ), label = ""
             )
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(50.dp)
-                    .rotate(rotationValue)
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
 
-                ,
-                color = colorResource(id = R.color.green)
-            )
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .rotate(rotationValue),
+                    color = colorResource(id = R.color.green)
+                )
+            }
         }
         if(viewModel.tasks is Resource.Failed){
 
@@ -196,7 +197,7 @@ fun TasksPage(project:ProjectResponse){
                                             contentDescription = "",
                                             tint = Color(item.team_color.toLong(16)),
                                             modifier = Modifier
-                                                .size(10.dp)
+                                                .size(15.dp)
                                                 .padding(2.dp)
                                         )
                                         Text(
@@ -219,7 +220,7 @@ fun TasksPage(project:ProjectResponse){
                                             contentDescription = "",
                                             tint = colorResource(id = R.color.green),
                                             modifier = Modifier
-                                                .size(10.dp)
+                                                .size(15.dp)
                                                 .padding(2.dp)
                                         )
                                         Text(
@@ -317,13 +318,13 @@ fun TasksPage(project:ProjectResponse){
                                                     Icon(
                                                         painter = painterResource(id = R.drawable.point),
                                                         contentDescription = "",
-                                                        tint = colorResource(id = R.color.green),
+                                                        tint = Color(item.team_color.toLong(16)),
                                                         modifier = Modifier
-                                                            .size(10.dp)
+                                                            .size(15.dp)
                                                             .padding(2.dp)
                                                     )
                                                     Text(
-                                                        text = item.team_id.toString(),
+                                                        text = item.team_name,
                                                         fontSize = 10.sp,
                                                         color = Color.Gray
                                                     )
@@ -341,7 +342,7 @@ fun TasksPage(project:ProjectResponse){
                                                         contentDescription = "",
                                                         tint = colorResource(id = R.color.green),
                                                         modifier = Modifier
-                                                            .size(10.dp)
+                                                            .size(15.dp)
                                                             .padding(2.dp)
                                                     )
                                                     Text(
@@ -399,10 +400,10 @@ fun TasksPage(project:ProjectResponse){
             mutableStateOf(currentItem?.deadline ?: "")
         }
         var team by remember {
-            mutableStateOf(currentItem?.team_id ?: 0)
+            mutableStateOf(currentItem?.team_id ?: -1)
         }
         var progress by remember {
-            mutableStateOf(currentItem?.progress ?: 0)
+            mutableStateOf(currentItem?.progress?: 0)
         }
         var status by remember {
             mutableStateOf(currentItem?.status ?: "ToDo")
@@ -446,7 +447,7 @@ fun TasksPage(project:ProjectResponse){
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = title , onValueChange ={title=it},
+                TextField(value = title , onValueChange ={if (it.length <= 20)title=it}, isError = title=="", maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -472,7 +473,7 @@ fun TasksPage(project:ProjectResponse){
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = deadline , onValueChange ={deadline=it},
+                TextField(value = deadline , onValueChange ={deadline=it}, isError = deadline=="",
                     readOnly = true,
                     modifier = Modifier
                         .fillMaxWidth()
@@ -508,7 +509,7 @@ fun TasksPage(project:ProjectResponse){
                         expanded = !expanded
                     }
                 ) {
-                    TextField(value = "Android", onValueChange = { team = 0 },
+                    TextField(value = team.toString(), onValueChange = { team = 0 }, isError = team==-1,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(start = 20.dp, end = 20.dp)
@@ -569,7 +570,7 @@ fun TasksPage(project:ProjectResponse){
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = desc , onValueChange ={desc=it},
+                TextField(value = desc , onValueChange ={if (it.length <= 100)desc=it}, isError = desc=="",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -613,7 +614,7 @@ fun TasksPage(project:ProjectResponse){
                 if(status=="In Progress") {
                     Slider(
                         value = progress.toFloat()/100,
-                        onValueChange = { progress = it.toInt() },
+                        onValueChange = { progress = it.toInt()*100 },
                         colors = SliderDefaults.colors(
                             thumbColor =  colorResource(R.color.green),
                             activeTrackColor = colorResource(R.color.green),
@@ -634,6 +635,7 @@ fun TasksPage(project:ProjectResponse){
                         Button(onClick = {
                             /*TODO("delete task")*/
                             viewModel.deleteTask(currentItem!!.id)
+                            viewModel.getAllTasks(project.id)
                             currentItem=null
                             showAdd=false
 
@@ -643,7 +645,8 @@ fun TasksPage(project:ProjectResponse){
                                 .padding(5.dp),
                             colors = ButtonDefaults.buttonColors(
                                 containerColor = colorResource(id = R.color.pink)
-                            )
+                            ),
+                            enabled = title!="" && deadline!="" && desc!="" && team!=-1
                         ) {
                             Text(
                                 text = "Delete",
@@ -657,13 +660,14 @@ fun TasksPage(project:ProjectResponse){
                         /*TODO("add task or edit task")*/
                         if(currentItem==null){
                             viewModel.addTasks(TaskResponse(
-                                0,project.id,team,desc,status,title,0,deadline,"",""
+                                0,project.id,team,desc,status,title,progress,deadline,"",""
                             ))
                         }else{
                             viewModel.updateTask(
                                 TaskResponse(currentItem!!.id,currentItem!!.project_id,team,desc,status,title,progress, deadline,"","")
                             )
                         }
+                        viewModel.getAllTasks(project.id)
                         currentItem=null
                         showAdd=false
 
@@ -673,7 +677,8 @@ fun TasksPage(project:ProjectResponse){
                             .padding(5.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = colorResource(id = R.color.green)
-                        )
+                        ),
+                        enabled = title!="" && deadline!="" && desc!="" && team!=-1
                     ) {
                         Text(
                             text = if(currentItem!=null) "Edit" else "Add",

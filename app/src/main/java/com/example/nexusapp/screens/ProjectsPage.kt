@@ -12,6 +12,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -109,12 +110,15 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
                     repeatMode = RepeatMode.Restart
                 ), label = ""
             )
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(50.dp)
-                    .rotate(rotationValue),
-                color = colorResource(id = R.color.green)
-            )
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .rotate(rotationValue),
+                    color = colorResource(id = R.color.green)
+                )
+            }
         }
         if (viewModel.projects is Resource.Failed) {
 
@@ -299,7 +303,7 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = title, onValueChange = { title = it },
+                TextField(value = title, onValueChange = { if (it.length <= 20)title = it }, isError = title!="", maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -339,7 +343,8 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
                         .padding(20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.green)
-                    )
+                    ),
+                    enabled = title!=""
                 ) {
                     Text(
                         text = "${if (currentItem != null) "Edit" else "Add"} project",

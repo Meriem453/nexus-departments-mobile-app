@@ -11,6 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -124,14 +125,15 @@ Column(modifier = Modifier
                 repeatMode = RepeatMode.Restart
             ), label = ""
         )
-        CircularProgressIndicator(
-            modifier = Modifier
-                .size(50.dp)
-                .rotate(rotationValue)
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
 
-            ,
-            color = colorResource(id = R.color.green)
-        )
+            CircularProgressIndicator(
+                modifier = Modifier
+                    .size(50.dp)
+                    .rotate(rotationValue),
+                color = colorResource(id = R.color.green)
+            )
+        }
     }
     if(viewModel.meetings  is Resource.Failed){
 
@@ -273,7 +275,7 @@ Column(modifier = Modifier
             mutableStateOf(currentItem?.description ?: "")
         }
         var team by remember {
-            mutableStateOf(currentItem?.team_id ?: 0)
+            mutableStateOf(currentItem?.team_id ?: -1)
         }
         var expanded by remember {
             mutableStateOf(false)
@@ -315,7 +317,7 @@ Column(modifier = Modifier
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = title , onValueChange ={title=it},
+                TextField(value = title , onValueChange ={if (it.length <= 20)title=it}, isError = title=="", maxLines = 1,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -333,7 +335,7 @@ Column(modifier = Modifier
                 )
                 Spacer(modifier = Modifier.height(20.dp))
                 Row (Modifier.fillMaxWidth()){
-                    TextField(value = date , onValueChange ={date=it},
+                    TextField(value = date , onValueChange ={date=it}, isError = date=="",
                         readOnly = true,
                         modifier = Modifier
                             .weight(1f)
@@ -357,7 +359,7 @@ Column(modifier = Modifier
                         },
                         maxLines = 1
                     )
-                    TextField(value = time , onValueChange ={time=it},
+                    TextField(value = time , onValueChange ={time=it}, isError = time=="",
                         readOnly = true,
                         modifier = Modifier
                             .weight(1f)
@@ -399,7 +401,7 @@ Column(modifier = Modifier
                 ) {
 
 
-                    TextField(value = "", onValueChange = { team = 0 },
+                    TextField(value = team.toString(), onValueChange = {  }, isError = team==-1,
                         modifier = Modifier
                             .fillMaxWidth()
                             .menuAnchor()
@@ -459,7 +461,7 @@ Column(modifier = Modifier
                         .padding(start = 20.dp, bottom = 10.dp)
 
                 )
-                TextField(value = desc , onValueChange ={desc=it},
+                TextField(value = desc , onValueChange ={if (it.length <= 100)desc=it}, isError = desc=="",
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp, end = 20.dp)
@@ -502,7 +504,8 @@ Column(modifier = Modifier
                         .padding(20.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = colorResource(id = R.color.green)
-                    )
+                    ),
+                    enabled = title!="" && time!="" && date!="" && team!=-1 && desc!=""
                 ) {
                     Text(
                         text = "${if(currentItem!=null) "Edit" else "Add"} meeting",

@@ -15,6 +15,8 @@ import com.example.nexusapp.models.Requests.participantId
 import com.example.nexusapp.models.TaskResponse
 import com.example.nexusapp.models.TeamResponse
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectIndexed
 import kotlinx.coroutines.flow.flow
 import retrofit2.Call
 import javax.inject.Inject
@@ -44,8 +46,10 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val members=api.membersList(token!!)
-                emit(Resource.Success(members,"Success fetching members"))
+                val members = api.membersList(token!!)
+                    emit(Resource.Success(members,"Success fetching members"))
+
+
             } catch (e: Exception) {
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -75,14 +79,14 @@ class Repository @Inject constructor(
         return flow<Resource<String>> {
             emit(Resource.Loading())
             try {
-                val member = api.editMember(
+                api.editMember(
                     memberResponse.name,
                     memberResponse.points,
                     team_id,
                     memberResponse.id,
                     token!!
                 )
-                emit(Resource.Success(member,"Success editing member"))
+                emit(Resource.Success("","Success editing member"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -122,7 +126,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val meeting=api.updateMeeting(
+                api.updateMeeting(
                     meetingResponse.id,
                     meetingResponse.title,
                     meetingResponse.date,
@@ -131,7 +135,7 @@ class Repository @Inject constructor(
                     token!!
 
                 )
-                emit(Resource.Success(meeting,"success updating meeting"))
+                emit(Resource.Success("","success updating meeting"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -153,7 +157,9 @@ class Repository @Inject constructor(
             emit(Resource.Loading())
             try {
                 val meetings=api.meetingsList(token!!)
-                emit(Resource.Success(meetings,"Success fetching meetings"))
+                    emit(Resource.Success(meetings,"Success fetching meetings"))
+
+
 
             } catch (e: Exception) {
                 emit(Resource.Failed(e.localizedMessage))
@@ -166,8 +172,10 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-            val projects = api.projectsList(token!!)
+            val projects=api.projectsList(token!!)
                 emit(Resource.Success(projects,"Success fetching projects"))
+
+
         } catch (e: Exception) {
             emit(Resource.Failed(e.localizedMessage))
         }
@@ -194,13 +202,13 @@ class Repository @Inject constructor(
         return flow<Resource<String>> {
             emit(Resource.Loading())
             try {
-                val project=api.updateProject(
+                api.updateProject(
                     projectResponse.id,
                     projectResponse.title,
                     projectResponse.progress,
                     token!!
                 )
-                emit(Resource.Success(project,"Success updating project"))
+                emit(Resource.Success("","Success updating project"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -223,8 +231,10 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val events = api.eventsList(token!!)
-                emit(Resource.Success(events,"Success fetching events"))
+                val events=api.eventsList(token!!)
+                    emit(Resource.Success(events,"Success fetching events"))
+
+
             } catch (e: Exception) {
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -264,7 +274,9 @@ class Repository @Inject constructor(
             emit(Resource.Loading())
             try {
                 val tasks=api.getAllTasks(token!!,project_id)
-                emit(Resource.Success(tasks,"Success fetching tasks"))
+                    emit(Resource.Success(tasks,"Success fetching tasks"))
+
+
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -275,7 +287,7 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val task=api.updateTask(
+                api.updateTask(
                     taskResponse.id,
                     taskResponse.title,
                     taskResponse.description,
@@ -286,7 +298,7 @@ class Repository @Inject constructor(
                     taskResponse.status,
                     token!!
                 )
-                emit(Resource.Success(task,"Success updating tasks"))
+                emit(Resource.Success("","Success updating tasks"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -331,8 +343,10 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val teams = api.getAllTeams(token!!)
-                emit(Resource.Success(teams,"Success fetching teams"))
+                 val teams=api.getAllTeams(token!!)
+                     emit(Resource.Success(teams,"Success fetching teams"))
+
+
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
@@ -357,13 +371,13 @@ class Repository @Inject constructor(
         return flow {
             emit(Resource.Loading())
             try {
-                val team=api.updateTeam(
+                api.updateTeam(
                     teamResponse.id,
                     teamResponse.name,
                     teamResponse.color,
                     token!!
                 )
-                emit(Resource.Success(team,"Success updating team"))
+                emit(Resource.Success("","Success updating team"))
             }catch (e:Exception){
                 emit(Resource.Failed(e.localizedMessage))
             }
