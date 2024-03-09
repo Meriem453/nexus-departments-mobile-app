@@ -100,6 +100,7 @@ import java.time.LocalDate
 @Composable
 fun TasksPage(project:ProjectResponse){
     val viewModel = hiltViewModel<TasksVM>()
+    viewModel.project_id=project.id
     val coroutine = rememberCoroutineScope()
 
     LaunchedEffect(true){
@@ -258,7 +259,6 @@ fun TasksPage(project:ProjectResponse){
                                 //TODO("done task")
                                 item.status="Done"
                                 viewModel.updateTask(item)
-                                viewModel.getAllTasks(project.id)
                             }
 
                             SwipeToDismiss(modifier = Modifier
@@ -637,7 +637,6 @@ fun TasksPage(project:ProjectResponse){
                         Button(onClick = {
                             /*TODO("delete task")*/
                             viewModel.deleteTask(currentItem!!.id)
-                            viewModel.getAllTasks(project.id)
                             currentItem=null
                             showAdd=false
 
@@ -669,7 +668,7 @@ fun TasksPage(project:ProjectResponse){
                                 TaskResponse(currentItem!!.id,currentItem!!.project_id,team,desc,status,title,progress, deadline,"","")
                             )
                         }
-                        viewModel.getAllTasks(project.id)
+
                         currentItem=null
                         showAdd=false
 

@@ -34,33 +34,36 @@ class TeamsVM @Inject constructor(
 
         viewModelScope.launch {
             repo.addTeam(teamResponse).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                    getAllTeams()}
             }
         }
-        getAllTeams()
+
     }
 
     fun updateTeam(teamResponse: TeamResponse){
 
         viewModelScope.launch {
             repo.updateTeam(teamResponse).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllTeams()}
             }
         }
-        getAllTeams()
+
     }
 
     fun deleteTeam(id:Int){
 
         viewModelScope.launch {
             repo.deleteTeam(id).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllTeams()}
             }
         }
-        getAllTeams()
+
     }
 
 

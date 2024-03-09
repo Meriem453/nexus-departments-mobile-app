@@ -23,6 +23,7 @@ class TasksVM @Inject constructor(
 
     var tasks by mutableStateOf<Resource<List<TaskResponse>>>(Resource.Loading())
     var teams by mutableStateOf<Resource<List<TeamResponse>>>(Resource.Loading())
+    var project_id=0
 
     fun getAllTasks(project_id:Int){
         viewModelScope.launch {
@@ -36,8 +37,9 @@ class TasksVM @Inject constructor(
 
         viewModelScope.launch {
             repo.addTask(taskResponse).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllTasks(project_id)}
             }
         }
 
@@ -47,8 +49,9 @@ class TasksVM @Inject constructor(
 
         viewModelScope.launch {
             repo.updateTask(taskResponse).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllTasks(project_id)}
             }
         }
     }
@@ -57,8 +60,9 @@ class TasksVM @Inject constructor(
 
         viewModelScope.launch {
             repo.deleteTask(id).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllTasks(project_id)}
             }
         }
     }

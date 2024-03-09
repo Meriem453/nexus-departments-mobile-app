@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.NavGraphs
 import com.example.nexusapp.screens.HomePage
+import com.example.nexusapp.screens.SettingsPage
 import com.example.nexusapp.ui.theme.NexusAppTheme
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ramcosta.composedestinations.DestinationsNavHost
@@ -131,7 +132,7 @@ fun Content(navigator: DestinationsNavigator){
             when(page){
                 0-> HomePage( it.calculateBottomPadding())
                 1-> ExplorePage(navigator)
-                //2->SettingsPage()
+                2-> SettingsPage()
             }
         }}
 

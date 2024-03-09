@@ -395,10 +395,14 @@ fun MemberDataView(member:MemberResponse, membersViewModel: MembersListVM){
                 Image(painter = painterResource(id = R.drawable.polygon), contentDescription = "")
             }
              TextField(
-                 value = points.toString(),
-                 onValueChange = {try {
-                     points=it.toInt()
-                 }catch (e:Exception){0}},
+                 value = if(points!=0) points.toString() else "",
+                 onValueChange = {
+                     points = try {
+                         it.toInt()
+                     }catch (e:Exception){
+                         0
+                     }
+                 },
                  modifier = Modifier
                      .width(150.dp)
                      .padding(10.dp),

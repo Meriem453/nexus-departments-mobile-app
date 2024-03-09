@@ -36,22 +36,24 @@ class ProjectsVM @Inject constructor(
 
         viewModelScope.launch {
             repo.addProject(project).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllProjects()}
             }
         }
-        getAllProjects()
+
     }
 
     fun updateProject(project: Project) {
 
         viewModelScope.launch {
             repo.updateProject(project).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllProjects()}
             }
         }
-        getAllProjects()
+
 
     }
 
@@ -59,11 +61,12 @@ class ProjectsVM @Inject constructor(
 
         viewModelScope.launch {
             repo.deleteProject(id).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllProjects()}
             }
         }
-        getAllProjects()
+
     }
 
 

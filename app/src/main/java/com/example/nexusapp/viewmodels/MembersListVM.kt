@@ -43,33 +43,36 @@ fun getAllMembers(){
         viewModelScope.launch {
 
             repo.addMember(memberResponse,team_id).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
+                getAllMembers()}
             }
         }
-        getAllMembers()
+
     }
 
     fun updateMember(memberResponse: MemberResponse, team_id:Int){
 
         viewModelScope.launch {
             repo.editMember(memberResponse,team_id).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
+                getAllMembers()}
             }
         }
-        getAllMembers()
+
     }
 
     fun deleteMember(id:Int){
 
         viewModelScope.launch {
             repo.deleteMember(id).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message,Toast.LENGTH_LONG).show()
+                getAllMembers()}
             }
         }
-        getAllMembers()
+
 
     }
 

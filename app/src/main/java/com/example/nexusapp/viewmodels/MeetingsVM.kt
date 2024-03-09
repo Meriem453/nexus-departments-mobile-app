@@ -45,22 +45,24 @@ class MeetingsVM @Inject constructor(
     fun addMeeting(meetingResponse: MeetingResponse){
         viewModelScope.launch {
           repo.addMeeting(meetingResponse).collect{
-              if(it !is Resource.Loading)
+              if(it !is Resource.Loading){
                   Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+              getAllMeetings()}
           }
         }
 
-        getAllMeetings()
+
     }
 
     fun updateMeeting(meetingResponse: MeetingResponse,team_id:Int){
         viewModelScope.launch {
             repo.updateMeeting(meetingResponse,team_id).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllMeetings()}
             }
         }
-        getAllMeetings()
+
 
     }
 
@@ -68,11 +70,12 @@ class MeetingsVM @Inject constructor(
 
         viewModelScope.launch {
             repo.deleteMeeting(id).collect{
-                if(it !is Resource.Loading)
+                if(it !is Resource.Loading){
                     Toast.makeText(context,it.message, Toast.LENGTH_LONG).show()
+                getAllMeetings()}
             }
         }
-        getAllMeetings()
+
     }
 
 
