@@ -342,13 +342,15 @@ fun MembersListPage() {
                     .padding(16.dp),
                 textAlign = TextAlign.Center, color = Color.White
             )*/
-            Text(
-                text = "Check your internet connection.",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                textAlign = TextAlign.Center, color = Color.White
-            )
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+                Text(
+                    text = membersViewModel.membersList.message!!,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    textAlign = TextAlign.Center, color = Color.White
+                )
+            }
         }
         if(membersViewModel.membersList is Resource.Success){
             LazyColumn(modifier = Modifier.padding(15.dp)) {

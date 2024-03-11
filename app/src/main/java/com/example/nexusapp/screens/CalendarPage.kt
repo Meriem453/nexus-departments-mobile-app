@@ -155,7 +155,7 @@ fun Calendar(navigator: DestinationsNavigator) {
                         if(eventsViewModel.eventsList is Resource.Failed){
 
                                 Text(
-                                    text = "Error" + eventsViewModel.eventsList.message,
+                                    text = eventsViewModel.eventsList.message!!,
                                     fontSize = 16.sp,
                                     color = Color.Gray
                                 )

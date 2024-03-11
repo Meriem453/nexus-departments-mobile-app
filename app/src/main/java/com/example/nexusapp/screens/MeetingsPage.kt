@@ -139,12 +139,13 @@ Column(modifier = Modifier
         }
     }
     if(viewModel.meetings  is Resource.Failed){
-
-        Text(
-            text = "Error" + viewModel.meetings.message,
-            fontSize = 16.sp,
-            color = Color.Gray
-        )
+        Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = viewModel.meetings.message!!,
+                fontSize = 16.sp,
+                color = Color.Gray
+            )
+        }
     }
     if(viewModel.meetings  is Resource.Success) {
         LazyColumn(

@@ -121,12 +121,14 @@ fun ProjectsPage(navigator: DestinationsNavigator) {
             }
         }
         if (viewModel.projects is Resource.Failed) {
+            Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize()) {
 
-            Text(
-                text = "Error" + viewModel.projects.message,
-                fontSize = 16.sp,
-                color = Color.Gray
-            )
+                Text(
+                    text = viewModel.projects.message!!,
+                    fontSize = 16.sp,
+                    color = Color.Gray
+                )
+            }
         }
         if (viewModel.projects is Resource.Success) {
             LazyColumn(
