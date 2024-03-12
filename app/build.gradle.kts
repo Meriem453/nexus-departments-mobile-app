@@ -1,3 +1,7 @@
+import java.util.Properties
+import java.io.FileInputStream
+
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -7,7 +11,14 @@ plugins {
     id ("kotlin-parcelize")
 }
 
+val localPropertiesFile = rootProject.file("local.properties")
+val apiProperties = Properties().apply {
+    load(FileInputStream(localPropertiesFile))
+}
 android {
+
+
+
     namespace = "com.example.nexusapp"
     compileSdk = 34
 
@@ -22,9 +33,17 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+
+    }
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "API_KEY", "\"${apiProperties.getProperty("api.key")}\"")
+        }
         release {
             isMinifyEnabled = true
             proguardFiles(
@@ -32,6 +51,8 @@ android {
                 "proguard-rules.pro"
             )
             signingConfig = signingConfigs.getByName("debug")
+            buildConfigField("String", "API_KEY", "\"${apiProperties.getProperty("api.key")}\"")
+
         }
     }
     compileOptions {

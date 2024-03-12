@@ -21,6 +21,29 @@
 #-renamesourcefileattribute SourceFile
 
 
+# Keep Bouncy Castle classes
+-keep class org.bouncycastle.** { *; }
+
+# Keep Conscrypt classes
+-keep class org.conscrypt.** { *; }
+
+# Keep OpenJSSE classes
+-keep class org.openjsse.** { *; }
+
+# Prevent removal of certain class members (useful for reflection)
+-keepclassmembers class org.bouncycastle.** {*;}
+-keepclassmembers class org.conscrypt.** {*;}
+-keepclassmembers class org.openjsse.** {*;}
+
+# Prevent obfuscation of certain class names
+-dontwarn org.bouncycastle.**
+-dontwarn org.conscrypt.**
+-dontwarn org.openjsse.**
+
+# Prevent optimization of certain classes
+-optimizations !class/unboxing/enum
+
+
 -keep class com.example.nexusapp.models.** { *; }
 
 -dontwarn com.google.protobuf.java_com_google_android_gmscore_sdk_target_granule__proguard_group_gtm_N1281923064GeneratedExtensionRegistryLite$Loader
